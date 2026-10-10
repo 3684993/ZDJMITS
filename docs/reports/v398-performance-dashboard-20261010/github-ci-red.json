@@ -1,0 +1,86 @@
+{
+  "runId": "38017315117",
+  "jobs": [
+    {
+      "id": 114110359550,
+      "name": "verify",
+      "status": "completed",
+      "conclusion": "failure",
+      "html_url": "https://github.com/3684993/ZDJMITS/actions/runs/38017315117/job/114110359550",
+      "steps": [
+        {
+          "name": "Set up job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 1,
+          "started_at": "2026-10-10T02:32:07Z",
+          "completed_at": "2026-10-10T02:32:08Z"
+        },
+        {
+          "name": "Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 2,
+          "started_at": "2026-10-10T02:32:08Z",
+          "completed_at": "2026-10-10T02:32:23Z"
+        },
+        {
+          "name": "Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 3,
+          "started_at": "2026-10-10T02:32:23Z",
+          "completed_at": "2026-10-10T02:32:34Z"
+        },
+        {
+          "name": "Diff check",
+          "status": "completed",
+          "conclusion": "failure",
+          "number": 4,
+          "started_at": "2026-10-10T02:32:34Z",
+          "completed_at": "2026-10-10T02:32:35Z"
+        },
+        {
+          "name": "Install locked dependencies",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 5,
+          "started_at": "2026-10-10T02:32:35Z",
+          "completed_at": "2026-10-10T02:32:35Z"
+        },
+        {
+          "name": "Full offline verification",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 6,
+          "started_at": "2026-10-10T02:32:35Z",
+          "completed_at": "2026-10-10T02:32:35Z"
+        },
+        {
+          "name": "Post Run actions/setup-node@v4",
+          "status": "completed",
+          "conclusion": "skipped",
+          "number": 11,
+          "started_at": "2026-10-10T02:32:35Z",
+          "completed_at": "2026-10-10T02:32:35Z"
+        },
+        {
+          "name": "Post Run actions/checkout@v4",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 12,
+          "started_at": "2026-10-10T02:32:35Z",
+          "completed_at": "2026-10-10T02:32:37Z"
+        },
+        {
+          "name": "Complete job",
+          "status": "completed",
+          "conclusion": "success",
+          "number": 13,
+          "started_at": "2026-10-10T02:32:37Z",
+          "completed_at": "2026-10-10T02:32:37Z"
+        }
+      ]
+    }
+  ]
+}

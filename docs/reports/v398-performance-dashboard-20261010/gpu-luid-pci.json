@@ -1,0 +1,92 @@
+[
+  {
+    "pid": 14020,
+    "device": 0,
+    "bus": 5,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x0000edc6",
+    "dedicatedBytes": 32768
+  },
+  {
+    "pid": 14020,
+    "device": 0,
+    "bus": 19,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x0000f452",
+    "dedicatedBytes": 1077248
+  },
+  {
+    "pid": 14020,
+    "device": 0,
+    "bus": 22,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x000122ec",
+    "dedicatedBytes": 17347268608
+  },
+  {
+    "pid": 22336,
+    "device": 0,
+    "bus": 5,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x0000edc6",
+    "dedicatedBytes": 32768
+  },
+  {
+    "pid": 22336,
+    "device": 0,
+    "bus": 19,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x0000f452",
+    "dedicatedBytes": 17348333568
+  },
+  {
+    "pid": 22336,
+    "device": 0,
+    "bus": 22,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x000122ec",
+    "dedicatedBytes": 10448896
+  },
+  {
+    "pid": 3400,
+    "device": 0,
+    "bus": 5,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x0000edc6",
+    "dedicatedBytes": 5532409856
+  },
+  {
+    "pid": 3400,
+    "device": 0,
+    "bus": 19,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x0000f452",
+    "dedicatedBytes": 1077248
+  },
+  {
+    "pid": 3400,
+    "device": 0,
+    "bus": 22,
+    "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+    "status": "MEASURED",
+    "function": 0,
+    "luid": "0x00000000_0x000122ec",
+    "dedicatedBytes": 1077248
+  }
+]

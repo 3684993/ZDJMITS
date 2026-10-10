@@ -1,0 +1,26 @@
+[
+  {
+    "viewport": {
+      "width": 1440,
+      "height": 1050
+    },
+    "renderMs": 1029.7585,
+    "overflow": false,
+    "calls": 10,
+    "pageErrors": [],
+    "canvasCount": 11,
+    "fixtureOnly": true
+  },
+  {
+    "viewport": {
+      "width": 390,
+      "height": 844
+    },
+    "renderMs": 870.3166999999999,
+    "overflow": false,
+    "calls": 10,
+    "pageErrors": [],
+    "canvasCount": 11,
+    "fixtureOnly": true
+  }
+]

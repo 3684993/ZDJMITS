@@ -1,0 +1,65 @@
+(node:15500) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23732) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23580) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-performance-dashboard
+
+(node:8496) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21728) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11688) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24216) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ apps/dashboard/src/views/PerformanceView.test.ts (2 tests | 2 failed) 87ms
+   × renders real sources, clears failed live facts and never mixes untyped currency totals 70ms
+     → expected 'OBSERVABILITY · READ ONLY性能监控真实采样 · 断…' not to contain '123.45'
+   × does not poll hidden pages, aborts on unmount, masks stale metrics 16ms
+     → expected 'OBSERVABILITY · READ ONLY性能监控真实采样 · 断…' not to contain '42.0'
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  apps/dashboard/src/views/PerformanceView.test.ts > renders real sources, clears failed live facts and never mixes untyped currency totals
+AssertionError: expected 'OBSERVABILITY · READ ONLY性能监控真实采样 · 断…' not to contain '123.45'
+
+Expected: "123.45"
+Received: "OBSERVABILITY · READ ONLY性能监控真实采样 · 断连告警 · AI任务与交易保护。未接入的 GPU/PCI/SSH 计数器显示 UNKNOWN，不使用模拟值。Engine 1采样 1970/1/1 08:01:40原生主机采样 · 每 10s 最多一次15 分钟1 小时6 小时24 小时7 天本机采样只有当前 Engine 的短窗内存历史；不将 6h/24h/7d 当作已有完整覆盖SOCKS / SSH 代理灰 · 未确认没有代理链路状态Binance 交易网络灰 · 状态未确认缺少最近60秒的交易网络健康报告Binance 私有同步绿 · 同步正常账户快照新鲜；不等同于独立签名TP已全部核对primary绿 · 空闲模型连接正常，当前无任务整机 CPU（原生采样）42.0%CPU tick 增量 · 首次采样 UNKNOWN系统内存占用50.0%0 MiB / 0 MiBEngine RSS / Heap0 MiBHeap Used 0 MiB受保护的当前持仓0 / 0来源 DashboardSnapshot；不替代最新交易所签名TP核验数据点 0 · 当前实例 test可用 0 MiB · 来源 NODE_OS_CPU_TIMES_AND_MEMORYGPU 0 · Intel Arc B580Scout 8081（历史配置）计算使用率UNKNOWN专用 / 共享显存UNKNOWN / UNKNOWN服务 PID · PCI绑定UNVERIFIEDGPU 1 · RX 7900 XTX物理 PCI Bus 19（待本机核对）计算使用率UNKNOWN专用 / 共享显存UNKNOWN / UNKNOWN服务 PID · PCI绑定UNVERIFIEDGPU 2 · RX 7900 XTX物理 PCI Bus 22（待本机核对）计算使用率UNKNOWN专用 / 共享显存UNKNOWN / UNKNOWN服务 PID · PCI绑定UNVERIFIEDprimary绿 · 空闲 ·  · 当前任务空闲Active / Queue0 / UNKNOWN累计运行 / 失败UNKNOWN / UNKNOWN最近推理延迟UNKNOWN物理GPU分配、真实tokens/s、首token延迟：UNKNOWN，需本机模型计数器和PID/LUID证据，不能以输出tokens/总wall time冒充tokens/s。Scout本页样本任务0失败0排队P95UNKNOWN队列时间覆盖0 / 0Primary / 建仓本页样本任务0失败0排队P95UNKNOWN队列时间覆盖0 / 0Review / 复核本页样本任务0失败0排队P95UNKNOWN队列时间覆盖0 / 0查看 AI 大脑详细运行记录 →代理路由未确认HTTP 429 / 418UNKNOWN / UNKNOWN治理器UNKNOWN私有同步READYWS 市场状态UNKNOWNWS 解码计量UNKNOWNHTTP 451 / 502 · SSH wire bytesUNKNOWN · UNKNOWN451 不直接归咎代理；HTTP 状态、SOCKS握手、SSH链路与交易所限制必须分层验证。WS 解码 payload 不是 SSH 传输字节数。当前动态候选池UNKNOWN挂单（本地投影）UNKNOWN当前仓位 / TP Protected0 / 0账户未实现盈亏 (USD)UNKNOWN本地确认净收益，不含资金费123.45资金费归因 UNKNOWN cyclesUNKNOWN全口径确认净收益987.65同一 origin 漏斗转化率 / 回撤UNKNOWN / UNKNOWN上述本地交易收益为累计范围，并非筛选时间窗；不可与钱包变化相加。USDT/USDC未独立确认换汇或资金费不完整时，不构造假净收益。刷新只读诊断 15 秒（隐藏页面暂停）；最后请求 1970/1/1 08:01:40。状态灯反映已有证据，不是自动交易或代理切换指令。GPU调度与TP改价均未在本页启用。"
+
+ ❯ apps/dashboard/src/views/PerformanceView.test.ts:13:100
+     11| afterEach(()=>{vi.useRealTimers();vi.restoreAllMocks();vi.clearAllMock…
+     12| it('renders real sources, clears failed live facts and never mixes unt…
+     13|  const w=mountView();await flushPromises();expect(w.text()).toContain(…
+       |                                                                                                    ^
+     14|  vi.mocked(api.performanceHost).mockRejectedValue(new Error('offline')…
+     15|  await vi.advanceTimersByTimeAsync(15000);await flushPromises();expect…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  apps/dashboard/src/views/PerformanceView.test.ts > does not poll hidden pages, aborts on unmount, masks stale metrics
+AssertionError: expected 'OBSERVABILITY · READ ONLY性能监控真实采样 · 断…' not to contain '42.0'
+
+Expected: "42.0"
+Received: "OBSERVABILITY · READ ONLY性能监控真实采样 · 断连告警 · AI任务与交易保护。未接入的 GPU/PCI/SSH 计数器显示 UNKNOWN，不使用模拟值。Engine 1采样 1970/1/1 08:00:00原生主机采样 · 每 10s 最多一次15 分钟1 小时6 小时24 小时7 天本机采样只有当前 Engine 的短窗内存历史；不将 6h/24h/7d 当作已有完整覆盖SOCKS / SSH 代理灰 · 未确认没有代理链路状态Binance 交易网络灰 · 状态未确认缺少最近60秒的交易网络健康报告Binance 私有同步绿 · 同步正常账户快照新鲜；不等同于独立签名TP已全部核对primary绿 · 空闲模型连接正常，当前无任务整机 CPU（原生采样）42.0%CPU tick 增量 · 首次采样 UNKNOWN系统内存占用50.0%0 MiB / 0 MiBEngine RSS / Heap0 MiBHeap Used 0 MiB受保护的当前持仓0 / 0来源 DashboardSnapshot；不替代最新交易所签名TP核验数据点 0 · 当前实例 test可用 0 MiB · 来源 NODE_OS_CPU_TIMES_AND_MEMORYGPU 0 · Intel Arc B580Scout 8081（历史配置）计算使用率UNKNOWN专用 / 共享显存UNKNOWN / UNKNOWN服务 PID · PCI绑定UNVERIFIEDGPU 1 · RX 7900 XTX物理 PCI Bus 19（待本机核对）计算使用率UNKNOWN专用 / 共享显存UNKNOWN / UNKNOWN服务 PID · PCI绑定UNVERIFIEDGPU 2 · RX 7900 XTX物理 PCI Bus 22（待本机核对）计算使用率UNKNOWN专用 / 共享显存UNKNOWN / UNKNOWN服务 PID · PCI绑定UNVERIFIEDprimary绿 · 空闲 ·  · 当前任务空闲Active / Queue0 / UNKNOWN累计运行 / 失败UNKNOWN / UNKNOWN最近推理延迟UNKNOWN物理GPU分配、真实tokens/s、首token延迟：UNKNOWN，需本机模型计数器和PID/LUID证据，不能以输出tokens/总wall time冒充tokens/s。Scout本页样本任务0失败0排队P95UNKNOWN队列时间覆盖0 / 0Primary / 建仓本页样本任务0失败0排队P95UNKNOWN队列时间覆盖0 / 0Review / 复核本页样本任务0失败0排队P95UNKNOWN队列时间覆盖0 / 0查看 AI 大脑详细运行记录 →代理路由未确认HTTP 429 / 418UNKNOWN / UNKNOWN治理器UNKNOWN私有同步READYWS 市场状态UNKNOWNWS 解码计量UNKNOWNHTTP 451 / 502 · SSH wire bytesUNKNOWN · UNKNOWN451 不直接归咎代理；HTTP 状态、SOCKS握手、SSH链路与交易所限制必须分层验证。WS 解码 payload 不是 SSH 传输字节数。当前动态候选池UNKNOWN挂单（本地投影）UNKNOWN当前仓位 / TP Protected0 / 0账户未实现盈亏 (USD)UNKNOWN本地确认净收益，不含资金费123.45资金费归因 UNKNOWN cyclesUNKNOWN全口径确认净收益987.65同一 origin 漏斗转化率 / 回撤UNKNOWN / UNKNOWN上述本地交易收益为累计范围，并非筛选时间窗；不可与钱包变化相加。USDT/USDC未独立确认换汇或资金费不完整时，不构造假净收益。刷新只读诊断 15 秒（隐藏页面暂停）；最后请求 1970/1/1 08:01:40。状态灯反映已有证据，不是自动交易或代理切换指令。GPU调度与TP改价均未在本页启用。"
+
+ ❯ apps/dashboard/src/views/PerformanceView.test.ts:19:65
+     17| it('does not poll hidden pages, aborts on unmount, masks stale metrics…
+     18|  vi.mocked(api.performanceHost).mockResolvedValue({...host,asOf:1} as …
+     19|  const w=mountView();await flushPromises();expect(w.text()).not.toCont…
+       |                                                                 ^
+     20|  vi.spyOn(document,'visibilityState','get').mockReturnValue('hidden');…
+     21|  w.unmount();await vi.advanceTimersByTimeAsync(60000);expect(api.perfo…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed (2)
+   Start at  10:02:52
+   Duration  2.22s (transform 203ms, setup 0ms, collect 1.10s, tests 87ms, environment 681ms, prepare 95ms)
+
+(node:26600) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

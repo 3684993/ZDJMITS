@@ -1,0 +1,6 @@
+Exception calling "Replace" with "3" argument(s): "The path is not of a legal form."
+At D:\MITS-WORKTREES\v398-performance-dashboard\scripts\performance\collect-windows-gpu.ps1:45 char:64
++ ... shot.json"){[IO.File]::Replace("$PSScriptRoot/gpu-snapshot.tmp","$PSS ...
++                 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: (:) [], ParentContainsErrorRecordException
+    + FullyQualifiedErrorId : ArgumentException

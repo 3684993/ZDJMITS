@@ -6,6 +6,7 @@ const viewLoaders:Record<DashboardRouteName,()=>Promise<any>>={
   temporal:()=>import('./views/TemporalIntelligenceView.vue'),
   intelligence:()=>import('./views/IntelligenceView.vue'),
   brain:()=>import('./views/BrainView.vue'),
+  performance:()=>import('./views/PerformanceView.vue'),
   positions:()=>import('./views/PositionsView.vue'),
   'human-managed':()=>import('./views/HumanManagedView.vue'),
   orders:()=>import('./views/OrdersView.vue'),

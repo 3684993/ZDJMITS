@@ -1,0 +1,21 @@
+{
+  "command": "npm run verify:ci",
+  "exitCodeObserved": 0,
+  "log": "verify-ci-clean-final.log",
+  "passedGroups": [
+    2,
+    62,
+    136,
+    569,
+    595,
+    407,
+    402
+  ],
+  "passedTotal": 2173,
+  "additionalGates": [
+    "final clean inventory199 verify:s00 exit0",
+    "latest collector3samples/schema exit0",
+    "PowerShell parser0 errors"
+  ],
+  "scope": "offline, no release acceptance"
+}

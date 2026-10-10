@@ -7,6 +7,16 @@ ChatGPT 本轮已从GitHub核对 Draft PR31/33/32 的精确HEAD与CI SUCCESS，�
 - **本轮Codex指令**：`docs/prompts/CODEX_V398_TRADE24H_CONFLICT_AND_CONTROLLED_DEPLOY_20261010.md`；实施回执 `docs/reports/v398-trade24h-release-20261010/INITIAL_CODE_AND_SAFETY_STATE.md`；后续必须完整 verify/CI、综合 PR31/33/32和本PR整合CI、受控部署实证并Github存档。
 
 **旧24小时尝试已在北京时间2026-10-10 08:34:00.270 因 LOCAL_TP_GATE_NOT_CLOSED 正式 ABORTED**（main `acceptance/state.json` 已终止），没有有效旧计时可继续/再停止；用户明确授权后续一次满足门禁的Engine-only受控重启和完整**新T0**24h。当前没有Windows主机部署工具，GitHub PR、CI不等于本机部署；02:10Z signed25/25只是历史，只读最新全仓签名TP/Production0/TESTNET/私有同步/订单双ID/no-add/HUMAN_MANAGED及备份任何UNKNOWN即 NO_GO，不得为赶进度停保护Engine。后续Codex获用户正式重启授权，但不能绕过安全性证明。
+> **GitHub main 更新（提交 b55f427eeda1，2026-10-10 09:36+08）：** `main` 已将原24h验收终止原始证据同步到 `docs/reports/v398-engine-cutover-20261010/acceptance/state.json`（现为 `ABORTED_SAFETY_FAILURE`）及 [ACCEPTANCE_ABORT_RECEIPT_20261010.md](https://github.com/3684993/ZDJMITS/blob/main/docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md)。本功能分支始于更早main 662d7f3，若本分支文件仍有旧08:24 `RUNNING`，是尚未同步main的历史遗留，不能据此推翻最新权威已中止状态。Codex必须先核对最新main的验收事实和PR #31合并基线，避免旧文档覆盖新证据。该更新是文档证据同步，不是重启或新24h开始。
+
+# 2026-10-10 09:35+08 之后的新实施进度 — 性能仪表盘首批实码已在GitHub分支
+
+**最新优先交接**：本轮 ChatGPT 已核对原始验收ABORTED证据并提交了真正可接入真实OS/Engine只读数据的首批性能驾驶舱到 GitHub branch [`chatgpt/v398-performance-real-metrics-d0-d2-20261010`](https://github.com/3684993/ZDJMITS/tree/chatgpt/v398-performance-real-metrics-d0-d2-20261010)。**还未合并main、未本机npm测试、未部署、也未开启模型负载借用。**
+- **直接Codex任务指令**：[CODEX_V398_GPU_PERFORMANCE_DASHBOARD_PHASE1_20261010](./CODEX_V398_GPU_PERFORMANCE_DASHBOARD_PHASE1_20261010.md)；**实施执行板**：[V398_GPU_PERFORMANCE_EXECUTION_BOARD_20261010](../plans/V398_GPU_PERFORMANCE_EXECUTION_BOARD_20261010.md)；**真实源码交付收据（未验证）**：[CHATGPT_INITIAL_CODE_DELIVERY](../reports/v398-performance-dashboard-20261010/CHATGPT_INITIAL_CODE_DELIVERY.md)；主任务Issue[#30](https://github.com/3684993/ZDJMITS/issues/30)。
+- 已提交实码：Engine Native CPU/RAM/EngineRSS/heap轻量采样+只读`/api/v3/observability/performance/host`；Dashboard Vue3/ECharts5 `/performance` 中文页面、AI/私有同步/代理红黄绿灰灯、真实有限AI run统计、主机实时趋势和交易TP/收益现有可信快照。GPU/PCI/VRAM、真实token/s/SSH wire流量证据未取得，明确展示UNKNOWN而非伪造；须由Codex接下去实测补采样/测试/CI。GPU2 Review/Primary跨角色借用需后续独立统一原子capacity lease PR，不可只改route。
+- **验收状态重要更正（证据优先）**：`main` 中 `docs/reports/v398-engine-cutover-20261010/acceptance/state.json` 08:24的RUNNING已过期。PR#25分支的 `docs/reports/v398-network-optimization-20261010/acceptance-aborted.json`、`acceptance-abort-checkpoint.json` 是原监控副本，证实 **2026-10-10 08:34:00.270+08 原24h验收ABORTED_SAFETY_FAILURE / LOCAL_TP_GATE_NOT_CLOSED**，本地TP14/15 missing1，private15.952s，Production0。后来本地TP缓存17/17不等于所有当前仓位新鲜签名验证，原验收**不可恢复、续算或判PASS**。仍不得为了dashboard/模型利用率而先重启安全保护Engine；先只读验证最新TP身份和当前新attempt。
+- 网络并行开放PR [#25](https://github.com/3684993/ZDJMITS/pull/25) Demo WS routing、[#27](https://github.com/3684993/ZDJMITS/pull/27) REST recvWindow/weights、[#29](https://github.com/3684993/ZDJMITS/pull/29) scoped mark feeds；各自CI已通过但未merge/deploy。本轮不要误把这些来源当前main；HTTP451及地理限制不等于代理BUG，禁止绕过。
+- 接下来由Codex独立worktree修复本分支所有TS/Vue/类型/样例不足，单测/full verify/S00/CI、物理bus19/bus22→PID/8083/8084 mapping30–60m真实任务基线、Windows GPU sampler/数据合同/模型任务归因，再分独立G1原子lease、R2 TP SHADOW小PR。所有报告、测试记录、脱敏截图都必须在GitHub `docs/reports/v398-performance-dashboard-20261010/`，不能只放本机；原始秘钥/私有订单/数据库例外严禁上传。NO_SEPARATE_ADD、Primary唯一Entry、HUMAN_MANAGED、TP、Production0依旧优先。
 
 
 ---
@@ -922,3 +932,21 @@ No strategy/model/TP/Entry parameter changes are authorized in that review.
 ## 2026-10-10 original24h acceptance terminal state
 
 ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED (local14/15). All19 historical checkpoints/state/cursor now synchronized; old9-record prefix preserved. No24h PASS or clock continuation; derived elapsed17m10.585s differs from retained lagging elapsed field16.17665min. Post-abort09:34 read-only originalidentity/private17.380s/localTP24/24/Production0 is not signed full-position proof or new acceptance. Hidden task last run0 and terminal checkpoint stop are expected. No lifecycle/live/task/observer modifications. See docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md and acceptance JSON validation. All future repair/release/new24h need applicable authorization and gates; networkPR25/27/29 remain offline/unmerged.
+
+
+## 2026-10-10 性能驾驶舱 D0-D2 实码交接
+
+PR31 已在独立 worktree 验证并修复真实源码；GPU/PID/PCI 映射、typed只读sidecar、资金红黄绿灰与分币种收益趋势已实现。详见 docs/reports/v398-performance-dashboard-20261010/ 下 D0/METRIC_CONTRACT/D1_D2/SCREENSHOT_REVIEW 与日志。两27B GGUF/模板/ctx相同但 reasoning/output limit 不同，不能开启借用。G1统一容量租约、GPU2 TP SHADOW各独立PR，未部署。旧24h仍08:34 ABORTED_SAFETY_FAILURE；02:10Z签名25/25 TP通过只是一时只读样本，全套发布门禁UNKNOWN，未重启、未开启新24h。原工作目录及dirty D:/MITS保留，网络PR25/27/29独立未纳入。后续以最终PR HEAD精确CI回读为准；不得将离线模拟/fixture截图当线上收益或GPU改善。
+
+
+### 性能阶段实际交付与最终边界
+
+PR31驾驶舱含资金/收益图，121点自然窗口30.055分钟（Primary计数+11/失败+1，Review+26/失败+0；缺失/错误保留）。最终collector收窄PID查询、修复Windows原子替换、异常>100%判UNKNOWN，warm采样1.15–1.21s墙钟/47–63ms CPU，只有3点不可冒充长期证明。运行数据已脱敏归档，干净源码S00机械清单199，未改排除规则。
+
+独立PR33容量租约最终HEAD402b850f73fd10018fb03db0b5deaeda493dd499，GitHub CI38018026331 success；PR32 TP SHADOW最终HEAD6ac46f8a93c096b5764bc05508ba47aa015bf381，CI38018034694 success。源码与全部日志在各分支统一reports目录，PR31另归档两者最终CI快照。PR33借用默认关闭（27B reasoning/output不等价、审批policy接线未做）；PR32生产provider/候选生成/调度接线及挂单事实触发优化未做。禁止真实TP改价/补仓，Primary唯一Entry不变。
+
+原24h仍ABORTED，不部署不重启；02:10Z签名25/25 TP只是历史一时样本，Production当前全套门禁/region eligibility等UNKNOWN，未来必须新鲜全部门禁和完整新24h。PR31最后源码修复/归档HEAD CI以Issue30和PR的实际回读为准，不借其他分支绿灯。
+
+### PR31 源码精确 CI 回读
+
+源码248e5f8b7d8d4a4e6e178dfde52a563d6a1abbb1完整GitHub Actions38022146483 SUCCESS。本机2173项完整验证成功；成功作业日志与回执已归档统一reports目录，详见FINAL_DELIVERY.md。随后纯归档提交的最终HEAD CI以PR31/Issue30精确回读为准。未部署未重启，当前发布门禁UNKNOWN，旧24h仍ABORTED。

@@ -1,0 +1,14 @@
+[
+  {
+    "parseErrors": [],
+    "file": "collect-model-identity.ps1"
+  },
+  {
+    "parseErrors": [],
+    "file": "collect-windows-gpu.ps1"
+  },
+  {
+    "parseErrors": [],
+    "file": "map-gpu-luid.ps1"
+  }
+]

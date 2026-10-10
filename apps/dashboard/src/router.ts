@@ -8,6 +8,7 @@ const routes=[{path:'/',component:Shell,children:[
   {path:'temporal',name:'temporal',component:page('temporal')},
   {path:'intelligence',name:'intelligence',component:page('intelligence')},
   {path:'brain',name:'brain',component:page('brain')},
+  {path:'performance',name:'performance',component:page('performance')},
   {path:'positions',name:'positions',component:page('positions')},
   {path:'human-managed',name:'human-managed',component:page('human-managed')},
   {path:'orders',name:'orders',component:page('orders')},

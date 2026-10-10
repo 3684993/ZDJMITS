@@ -1,0 +1,323 @@
+[
+  {
+    "collectionCpuMs": 906.25,
+    "ttlMs": 45000,
+    "collectionMs": 2899,
+    "instanceId": "c0c9100c-d197-4726-aee1-30d9ad9b2f4d",
+    "errors": [],
+    "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+    "resources": [
+      {
+        "idleReason": "WAITING_CANDIDATE_OR_SHARED_EVENT",
+        "id": "scout-b580",
+        "failures": 0,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600166890,
+        "role": "SCOUT",
+        "currentStatus": "WAITING_CANDIDATE_OR_SHARED_EVENT",
+        "active": 0,
+        "totalRuns": 56,
+        "lastLatencyMs": 29180
+      },
+      {
+        "idleReason": "NO_ELIGIBLE_CANDIDATE",
+        "id": "brain-7900-primary",
+        "failures": 2,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600166891,
+        "role": "PRIMARY_BRAIN",
+        "currentStatus": "DEGRADED",
+        "active": 0,
+        "totalRuns": 54,
+        "lastLatencyMs": 57319
+      },
+      {
+        "idleReason": "WAITING_REVIEW_TASK",
+        "id": "review-7900-gpu2",
+        "failures": 3,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600166891,
+        "role": "REVIEW_BRAIN",
+        "currentStatus": "DEGRADED",
+        "active": 0,
+        "totalRuns": 61,
+        "lastLatencyMs": 21688
+      }
+    ],
+    "asOf": 1791600166655,
+    "schemaVersion": 1,
+    "services": [
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 3400,
+        "rawCounterUtilizationPct": 0,
+        "duty": "SCOUT",
+        "dedicatedBytes": 5535035392,
+        "utilizationPct": 0,
+        "processStartedAt": 1791514774332,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 13197312,
+        "port": 8081,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8081"
+      },
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 14020,
+        "rawCounterUtilizationPct": 0,
+        "duty": "REVIEW_BRAIN",
+        "dedicatedBytes": 17348378624,
+        "utilizationPct": 0,
+        "processStartedAt": 1791515445128,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 418267136,
+        "port": 8083,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8083"
+      },
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 22336,
+        "rawCounterUtilizationPct": 0,
+        "duty": "PRIMARY_BRAIN",
+        "dedicatedBytes": 17359347712,
+        "utilizationPct": 0,
+        "processStartedAt": 1791515847749,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 1089355776,
+        "port": 8084,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8084"
+      }
+    ]
+  },
+  {
+    "collectionCpuMs": 62.5,
+    "ttlMs": 45000,
+    "collectionMs": 1210,
+    "instanceId": "c0c9100c-d197-4726-aee1-30d9ad9b2f4d",
+    "errors": [],
+    "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+    "resources": [
+      {
+        "idleReason": "RUNNING",
+        "id": "scout-b580",
+        "failures": 0,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600182685,
+        "role": "SCOUT",
+        "currentStatus": "RUNNING",
+        "active": 1,
+        "totalRuns": 56,
+        "lastLatencyMs": 29180
+      },
+      {
+        "idleReason": null,
+        "id": "brain-7900-primary",
+        "failures": 2,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600182686,
+        "role": "PRIMARY_BRAIN",
+        "currentStatus": "ANALYZING",
+        "active": 1,
+        "totalRuns": 54,
+        "lastLatencyMs": 57319
+      },
+      {
+        "idleReason": "WAITING_REVIEW_TASK",
+        "id": "review-7900-gpu2",
+        "failures": 3,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600182686,
+        "role": "REVIEW_BRAIN",
+        "currentStatus": "DEGRADED",
+        "active": 0,
+        "totalRuns": 61,
+        "lastLatencyMs": 21688
+      }
+    ],
+    "asOf": 1791600181667,
+    "schemaVersion": 1,
+    "services": [
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 3400,
+        "rawCounterUtilizationPct": 63.62,
+        "duty": "SCOUT",
+        "dedicatedBytes": 5535035392,
+        "utilizationPct": 63.62,
+        "processStartedAt": 1791514774332,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 13197312,
+        "port": 8081,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8081"
+      },
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 14020,
+        "rawCounterUtilizationPct": 0,
+        "duty": "REVIEW_BRAIN",
+        "dedicatedBytes": 17348378624,
+        "utilizationPct": 0,
+        "processStartedAt": 1791515445128,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 418267136,
+        "port": 8083,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8083"
+      },
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 22336,
+        "rawCounterUtilizationPct": 0,
+        "duty": "PRIMARY_BRAIN",
+        "dedicatedBytes": 17359347712,
+        "utilizationPct": 0,
+        "processStartedAt": 1791515847749,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 1089355776,
+        "port": 8084,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8084"
+      }
+    ]
+  },
+  {
+    "collectionCpuMs": 46.875,
+    "ttlMs": 45000,
+    "collectionMs": 1151,
+    "instanceId": "c0c9100c-d197-4726-aee1-30d9ad9b2f4d",
+    "errors": [],
+    "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+    "resources": [
+      {
+        "idleReason": "WAITING_CANDIDATE_OR_SHARED_EVENT",
+        "id": "scout-b580",
+        "failures": 0,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600197073,
+        "role": "SCOUT",
+        "currentStatus": "WAITING_CANDIDATE_OR_SHARED_EVENT",
+        "active": 0,
+        "totalRuns": 57,
+        "lastLatencyMs": 10133
+      },
+      {
+        "idleReason": null,
+        "id": "brain-7900-primary",
+        "failures": 2,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600197073,
+        "role": "PRIMARY_BRAIN",
+        "currentStatus": "ANALYZING",
+        "active": 1,
+        "totalRuns": 54,
+        "lastLatencyMs": 57319
+      },
+      {
+        "idleReason": "WAITING_REVIEW_TASK",
+        "id": "review-7900-gpu2",
+        "failures": 3,
+        "queueDepth": 0,
+        "healthCheckedAt": 1791600197073,
+        "role": "REVIEW_BRAIN",
+        "currentStatus": "IDLE",
+        "active": 0,
+        "totalRuns": 61,
+        "lastLatencyMs": 21688
+      }
+    ],
+    "asOf": 1791600196678,
+    "schemaVersion": 1,
+    "services": [
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 3400,
+        "rawCounterUtilizationPct": 0,
+        "duty": "SCOUT",
+        "dedicatedBytes": 5535035392,
+        "utilizationPct": 0,
+        "processStartedAt": 1791514774332,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 13197312,
+        "port": 8081,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8081"
+      },
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 14020,
+        "rawCounterUtilizationPct": 0,
+        "duty": "REVIEW_BRAIN",
+        "dedicatedBytes": 17348378624,
+        "utilizationPct": 0,
+        "processStartedAt": 1791515445128,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 418267136,
+        "port": 8083,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8083"
+      },
+      {
+        "physicalDeviceIdVerified": false,
+        "pid": 22336,
+        "rawCounterUtilizationPct": 98.888,
+        "duty": "PRIMARY_BRAIN",
+        "dedicatedBytes": 17359347712,
+        "utilizationPct": 98.888,
+        "processStartedAt": 1791515847749,
+        "measureStatus": "MEASURED",
+        "sharedBytes": 1089355776,
+        "port": 8084,
+        "luid": [
+          "0x00000000_0x0000edc6",
+          "0x00000000_0x0000f452",
+          "0x00000000_0x000122ec"
+        ],
+        "physicalDeviceId": null,
+        "resourceId": "llama:8084"
+      }
+    ]
+  }
+]

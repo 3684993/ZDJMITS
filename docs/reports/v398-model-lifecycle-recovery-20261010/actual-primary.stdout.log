@@ -1,0 +1,28 @@
+
+Detected RX 7900 XTX Vulkan devices:
+  Vulkan1 : AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free) free=23748/24560 MiB [FREE]
+  Vulkan2 : AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free) free=23748/24560 MiB [FREE]
+
+============================================================
+ Qwen3.8-27B / ZDJ-MITS PRIMARY_BRAIN / llama.cpp Vulkan SAFE
+============================================================
+Physical GPU    : Vulkan2 - AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free)
+GPU isolation   : GGML_VK_VISIBLE_DEVICES=2
+Child device    : Vulkan0
+Preferred GPU   : Vulkan2
+Model           : D:\.lmstudio\models\lmstudio-community\Qwen3.8-27B-GGUF\Qwen3.8-27B-Q4_K_M.gguf
+Context         : 65536
+Max output      : 4096
+Reasoning       : OFF
+KV              : q8_0 / q8_0
+Batch/Ubatch    : 1024 / 256
+Ctx checkpoints : 0 (when supported)
+API             : http://127.0.0.1:8084/v1
+
+READY. Role=ZDJ_PRIMARY_BRAIN PID=16772 PhysicalGPU=Vulkan2 API=http://127.0.0.1:8084/v1
+
+ZDJ_PRIMARY_BRAIN endpoint: http://127.0.0.1:8084/v1
+Preferred physical GPU: Vulkan2
+If preferred GPU is busy, another safe FREE 7900 XTX is selected.
+Status: .\start-qwen3.8-27b-zdj-vulkan1.ps1 -Mode Status
+Stop  : .\start-qwen3.8-27b-zdj-vulkan1.ps1 -Mode Stop

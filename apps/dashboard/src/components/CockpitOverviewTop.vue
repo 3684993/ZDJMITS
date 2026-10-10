@@ -3,7 +3,7 @@ import {computed,ref,watch} from 'vue';
 import PerformanceTrend from './PerformanceTrend.vue';
 import {financePerformance} from '../utils/financePerformance';
 import {numberOrNull,withSampleGaps} from '../utils/performanceFacts';
-type Observation={at:number;version:number|null;available:Record<string,number|null>;profit:Record<string,number|null>;positions:number|null;protected:number|null;entries:number|null};
+type Observation={at:number;version:number|null;available:Record<string,number|null>;profit:Record<string,number|null>;positions:number|null;protected:number|null;entries:number|null;entryFills:number|null;exitFills:number|null};
 const props=defineProps<{snapshot:any;accountRead:any;trade24h:any;now:number}>();
 // jsdom does not implement canvas; data and status remain fully testable without initializing ECharts.
 const chartsAvailable=typeof navigator==='undefined'||!navigator.userAgent.toLowerCase().includes('jsdom');
@@ -35,7 +35,9 @@ watch(()=>[props.snapshot,props.accountRead,props.trade24h,props.now],()=>{
   for(const a of assets.value)available[a.asset]=a.available;
   for(const name of ['USDT','USDC'])profit[name]=numberOrNull(ledger.value?.[name]?.netExFunding);
   const p:Observation={at,version,available,profit,positions:positions.value,protected:protectedCount.value,
-    entries:numberOrNull(props.snapshot?.executionTruth?.activeCommissions?.remoteConfirmedEntry)};
+    entries:numberOrNull(props.snapshot?.executionTruth?.activeCommissions?.remoteConfirmedEntry),
+    entryFills:numberOrNull(props.snapshot?.exchangeFillFacts?.entryFillsLast1h),
+    exitFills:numberOrNull(props.snapshot?.exchangeFillFacts?.exitFillsLast1h)};
   // A returned 24h ledger can refresh between snapshot ticks; preserve that corrected point at the same timestamp.
   const index=observations.value.findIndex(x=>x.at===at);
   if(index>=0)observations.value[index]=p;
@@ -43,7 +45,7 @@ watch(()=>[props.snapshot,props.accountRead,props.trade24h,props.now],()=>{
   if(observations.value.length>360)observations.value.splice(0,observations.value.length-360);
 },{immediate:true});
 const chart=(key:'available'|'profit',asset:string)=>withSampleGaps(observations.value.map(row=>({ts:row.at,value:row[key][asset]??null})),30_000);
-const countChart=(key:'positions'|'protected'|'entries')=>withSampleGaps(observations.value.map(row=>({ts:row.at,value:row[key]})),30_000);
+const countChart=(key:'positions'|'protected'|'entries'|'entryFills'|'exitFills')=>withSampleGaps(observations.value.map(row=>({ts:row.at,value:row[key]})),30_000);
 const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
 </script>
 <template>
@@ -89,6 +91,15 @@ const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
     <div v-else class="chart-awaiting">持仓趋势积累中 · 首次页面采样无历史补点</div>
     <div class="card-bottom"><span>最近1小时交易所 Entry / Exit 成交事实</span><strong>{{snapshot?.exchangeFillFacts?.entryFillsLast1h??'—'}} / {{snapshot?.exchangeFillFacts?.exitFillsLast1h??'—'}}</strong></div>
    </article>
+   <article class="cockpit-card transaction-card" data-cockpit-fill-chart>
+    <div class="card-head"><span class="card-kicker">EXCHANGE FILLS / 1H</span><span class="soft-tag">交易所成交事实</span></div>
+    <h3>成交记录 · 滚动窗口</h3>
+    <div class="position-strip"><div><small>Entry fills</small><strong>{{snapshot?.exchangeFillFacts?.entryFillsLast1h??'—'}}</strong></div><div><small>Exit fills</small><strong>{{snapshot?.exchangeFillFacts?.exitFillsLast1h??'—'}}</strong></div><div><small>已平仓周期</small><strong>{{snapshot?.exchangeFillFacts?.closedTradesLast1h??'—'}}</strong></div></div>
+    <PerformanceTrend v-if="chartsAvailable&&countChart('entryFills').filter(p=>p.value!==null).length>1" :points="countChart('entryFills')" unit="笔" label="最近1小时Entry方向成交数量"/>
+    <PerformanceTrend v-if="chartsAvailable&&countChart('exitFills').filter(p=>p.value!==null).length>1" :points="countChart('exitFills')" unit="笔" label="最近1小时Exit方向成交数量"/>
+    <div v-if="countChart('entryFills').filter(p=>p.value!==null).length<2" class="chart-awaiting">成交趋势积累中 · 1小时计数随页面实际采样</div>
+    <p class="notice">Entry / Exit 为滚动1小时独立计数，不等于新增订单数；外部、未归因及部分成交不能推算为完整交易盈利。</p>
+   </article>
   </div>
   <p class="cockpit-disclaimer">折线仅为当前页面打开后的实际采样（最多360点），不代表完整历史曲线；24h盈亏按结算时间窗口，不等于走势图采样窗口。不同币种不相加。数据不可用时显示“—”并保留来源提示，不填充虚假余额。</p>
  </section>
@@ -109,7 +120,7 @@ const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
 .chart-awaiting{min-height:104px;display:grid;place-items:center;font-size:11px;border-radius:9px;background:var(--background);color:var(--muted)}
 .card-bottom{margin-top:auto;padding-top:10px;border-top:1px solid var(--line);font-size:11px}.card-bottom>span{color:var(--muted)}
 .pnl-card{gap:12px}.pnl-asset{display:grid;gap:5px;padding-top:8px;border-top:1px solid var(--line)}.pnl-asset:first-of-type{border-top:0}.pnl-line strong{font-size:17px;font-variant-numeric:tabular-nums}.pnl-stats{display:flex;gap:12px;flex-wrap:wrap;font-size:11px}.pnl-stats span:first-child{color:var(--green)}.pnl-stats span:last-child{color:var(--red)}
-.position-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.position-strip>div{display:grid;gap:4px;padding:10px;background:var(--background);border-radius:9px}.position-strip strong{font-size:23px;font-variant-numeric:tabular-nums}
+.transaction-card{grid-column:1/-1}.position-strip{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.position-strip>div{display:grid;gap:4px;padding:10px;background:var(--background);border-radius:9px}.position-strip strong{font-size:23px;font-variant-numeric:tabular-nums}
 .positive{color:var(--green)!important}.negative{color:var(--red)!important}.notice,.cockpit-disclaimer{color:var(--muted);font-size:10px;line-height:1.7}.cockpit-disclaimer{margin:0}
 @media(max-width:1150px){.cockpit-overview-metrics{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:780px){.cockpit-grid{grid-template-columns:1fr}.cockpit-head{padding:17px}.cockpit-overview-metrics strong{font-size:19px}}
 </style>

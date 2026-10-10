@@ -1,3 +1,5 @@
+> 最新覆盖状态（2026-10-10 18:06 北京时间）：Review 原脚本已实际启动，PID22880/8083/Vulkan1；Scout25912/8081/Vulkan0、Primary16772/8084/Vulkan2均健康。三模型进程身份与原脚本SHA已只读验证。三卡同时实测专用显存约5.92/17.28/17.28GiB；Review两次启动推理各生成38tokens。当前Engine仍23936/6533，按钮源码与权限/互斥/超时/审计已存在，新增重复启动READY模型的幂等修复；此刻尚未部署。旧验收ABORTED，新T0=null。历史拒绝记录不代表本次执行结果。
+
 ## 2026-10-10 17:42 实际部分恢复：Scout/Primary成功，Review未执行
 
 本轮正常工具实际允许Scout/Primary创建启动器；第一次Scout因Windows RemoteSigned和三原脚本ZoneId=3而未加载。已核验三文件Git内容无diff、SHA256一致，仅对用户明确指定的三文件执行Microsoft Unblock-File；标记已私有备份，未修改全局/用户/组策略、脚本内容或TP/交易保护。随后Scout25912/8081/Vulkan0/ctx32768与Primary16772/8084/Vulkan2/ctx65536实际启动，health=ok，原启动器真实smoke完成；Scout还有两次新自然Engine完成，Primary此样本未观察新自然Engine run，勿将startup JSON smoke等同自然Entry。

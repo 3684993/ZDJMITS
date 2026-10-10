@@ -1,0 +1,43 @@
+{
+  "models": [
+    {
+      "port": 8081,
+      "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.5-9B-GGUF\\Qwen3.5-9B-Q4_K_M.gguf",
+      "executable": "D:\\llama-vulkan\\llama-server.exe",
+      "logRoot": "D:\\llama-vulkan\\logs\\qwen35-b580-vulkan",
+      "model": "qwen3.5:9b",
+      "id": "scout-b580",
+      "physicalDevice": "Vulkan0",
+      "stateFile": "D:/llama-vulkan/runtime/qwen35-b580-vulkan/state.json",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "launcher": "D:/MITS/scripts/1/start-qwen3.5-9b-vulkan.ps1",
+      "launcherSha256": "E6432A7BF22FAAECF429B39463E7C979BACA2B2D3E8192930D3425E9C0C48523"
+    },
+    {
+      "port": 8083,
+      "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+      "executable": "D:\\llama-vulkan\\llama-server.exe",
+      "logRoot": "D:\\llama-vulkan\\logs\\harness-qwen38-vulkan1",
+      "model": "qwen/qwen3.8-27b",
+      "id": "review-7900-gpu2",
+      "physicalDevice": "Vulkan1",
+      "stateFile": "D:/llama-vulkan/runtime/harness-qwen38-vulkan1/state.json",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "launcher": "D:/MITS/scripts/1/start-qwen3.8-27b-harness-vulkan1.ps1",
+      "launcherSha256": "0D60F7018D4CF0C76DD031F04A83D8F7070F93AC741B91F5CBA1FE39C4E513A5"
+    },
+    {
+      "port": 8084,
+      "modelPath": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+      "executable": "D:\\llama-vulkan\\llama-server.exe",
+      "logRoot": "D:\\llama-vulkan\\logs\\zdj-qwen38",
+      "model": "qwen/qwen3.8-27b",
+      "id": "brain-7900-primary",
+      "physicalDevice": "Vulkan2",
+      "stateFile": "D:/llama-vulkan/runtime/zdj-qwen38/state.json",
+      "executableSha256": "5ED8B8FC6316EB051FC793B59F54C57B0CD2B40E344327E969C5A9C70C7384BA",
+      "launcher": "D:/MITS/scripts/1/start-qwen3.8-27b-zdj-vulkan1.ps1",
+      "launcherSha256": "2AC06791EFDA10575F58A281484E6C3E814632F6D1003F90A3B9BF80496DEB6D"
+    }
+  ]
+}

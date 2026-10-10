@@ -20,7 +20,7 @@ export class ModelLifecycleService {
     if(!this.options.manifest)throw Error('MODEL_MANAGEMENT_NOT_CONFIGURED');
     const script=fileURLToPath(new URL('../../../../scripts/model-lifecycle.ps1',import.meta.url));
     try{
-      const {stdout}=await execute('pwsh.exe',['-NoProfile','-NonInteractive','-ExecutionPolicy','Bypass','-File',script,'-Manifest',this.options.manifest,'-ResourceId',id,'-Action',action,'-ExpectedEnginePid',String(process.pid),...(identity?['-ExpectedPid',String(identity.pid??0),'-ExpectedStartUtc',String(identity.processStartedAt??'')]:[])],{windowsHide:true,timeout:action==='status'?12_000:330_000,maxBuffer:128*1024});
+      const {stdout}=await execute('pwsh.exe',['-NoProfile','-NonInteractive','-File',script,'-Manifest',this.options.manifest,'-ResourceId',id,'-Action',action,'-ExpectedEnginePid',String(process.pid),...(identity?['-ExpectedPid',String(identity.pid??0),'-ExpectedStartUtc',String(identity.processStartedAt??'')]:[])],{windowsHide:true,timeout:action==='status'?12_000:330_000,maxBuffer:128*1024});
       return JSON.parse(stdout.trim().replace(/^\uFEFF/,''));
     }catch(error){
       const e=error as any,reason=String(e.stderr??'').match(/\b(?:MODEL|LAUNCHER|EXECUTABLE|MANIFEST|CONFIG)_[A-Z_]+\b/)?.[0];
@@ -46,6 +46,9 @@ export class ModelLifecycleService {
       const before=await this.status(id,true);
       this.options.validate?.(id,before);
       this.options.guard();
+      if((action==='start'&&before.status==='READY'&&before.identityVerified===true)||(action==='stop'&&before.status==='STOPPED')){
+        await this.audit({resourceId:id,action,result:'ALREADY_IN_REQUESTED_STATE',pid:before.pid??null});complete=true;return before;
+      }
       mutationStarted=true;
       const result=this.options.perform?await this.options.perform(id,action as ModelAction,before):await this.command(id,String(action),before);
       this.options.guard();

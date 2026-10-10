@@ -1,0 +1,28 @@
+
+Detected RX 7900 XTX Vulkan devices:
+  Vulkan1 : AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free) free=23748/24560 MiB [FREE]
+  Vulkan2 : AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free) free=23748/24560 MiB [USED by llama-server PID=16772; role=ZDJ_PRIMARY_BRAIN; managed GPU claim]
+
+============================================================
+ Qwen3.8-27B / DeepSeek Harness / llama.cpp Vulkan SAFE
+============================================================
+Physical GPU    : Vulkan1 - AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free)
+GPU isolation   : GGML_VK_VISIBLE_DEVICES=1
+Child device    : Vulkan0
+Preferred GPU   : Vulkan1
+Model           : D:\.lmstudio\models\lmstudio-community\Qwen3.8-27B-GGUF\Qwen3.8-27B-Q4_K_M.gguf
+Context         : 65536
+Max output      : 16384
+Reasoning       : ON / deepseek / budget 4096
+KV              : q8_0 / q8_0
+Batch/Ubatch    : 1024 / 256
+Ctx checkpoints : 0 (when supported)
+API             : http://127.0.0.1:8083/v1
+
+READY. Role=HARNESS_ADVISOR PID=22880 PhysicalGPU=Vulkan1 API=http://127.0.0.1:8083/v1
+
+HARNESS_ADVISOR endpoint: http://127.0.0.1:8083/v1
+Preferred physical GPU: Vulkan1
+If preferred GPU is busy, another safe FREE 7900 XTX is selected.
+Status: .\start-qwen3.8-27b-harness-vulkan1.ps1 -Mode Status
+Stop  : .\start-qwen3.8-27b-harness-vulkan1.ps1 -Mode Stop

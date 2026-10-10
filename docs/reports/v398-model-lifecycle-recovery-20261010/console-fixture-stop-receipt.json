@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-10T18:06:11.1285327+08:00",
+  "targetPid": 25012,
+  "helperPid": 21472,
+  "consolePids": [
+    21472,
+    25012
+  ],
+  "probeOnly": false,
+  "signal": "CTRL_C_EVENT",
+  "forceTermination": false
+}

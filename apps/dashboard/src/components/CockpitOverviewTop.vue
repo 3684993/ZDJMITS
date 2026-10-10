@@ -60,7 +60,7 @@ const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
   </div>
   <div class="cockpit-grid">
    <article v-for="record in records" :key="record.asset" class="cockpit-card" :data-asset-chart="record.asset">
-    <div class="card-head"><span class="card-kicker">AVAILABLE MARGIN</span><span class="availability" :class="record.balance?.tone??'unknown'"><i></i>{{record.balance?.available===null?'待同步':record.balance?.available!<500?'低于 500':record.balance?.available!<1000?'500–999':'充足'}}</span></div>
+    <div class="card-head"><span class="card-kicker">AVAILABLE MARGIN</span><span class="availability" :class="record.balance?.tone??'unknown'"><i></i>{{record.balance?.tone==='bad'?'低于 500':record.balance?.tone==='warn'?'500–999':record.balance?.tone==='good'?'充足':'待同步'}}</span></div>
     <h3>{{record.asset}} 可用资金</h3>
     <strong class="money-big">{{native(record.balance?.available,record.asset,3)}}</strong>
     <small>钱包余额 {{native(record.balance?.wallet,record.asset,3)}} · {{record.balance?.source??'签名来源待同步'}}</small>

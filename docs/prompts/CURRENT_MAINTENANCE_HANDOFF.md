@@ -1,3 +1,5 @@
+> 2026-10-10 最新重新授权部署实测：用户再次授权立即部署/Engine重启，已准备精确CI通过的 e3dc48b 源码独立发布包，npm ci 与完整工作区 build PASS，候选 build `3.9.8-a790207862ad258b41a0`。两次独立新鲜签名 TP 核验均在 SOCKS_NEGOTIATION 阶段超时，保护评估 UNVERIFIED；末读私有同步 age=105659ms、consecutiveFailures=3，超过30秒门禁。当前本地TP27/27不能代替新鲜签名证明。本次发布 NO_GO_FRESH_SIGNED_TP_UNVERIFIED，未停止/启动 Engine12140，未重启模型、修改授权/TP或进行人工交易所写入；优雅退出路径也尚未重新证明。新24h NOT_STARTED/T0=null。失败证据及构建日志：`docs/reports/v398-cockpit-visual-20261010/AUTHORIZED_DEPLOY_RECHECK.json` 与 `e3-*`；源码完成与发布包构建不等于上线。以下历史交接保留。
+
 > 2026-10-10 20:00 北京时间维护交接（覆盖下方历史状态）：PR #40 已在精确 HEAD `e3dc48b6832f48569b76a1240bb8040f5f6f3dfd` 的两次 CI 全部 SUCCESS 后合并 main，合并提交 `7495b7d3fcc4d54a454faff23e004134363c5be7`。CI：https://github.com/3684993/ZDJMITS/actions/runs/38049860753 、https://github.com/3684993/ZDJMITS/actions/runs/38049858036 。PR #39 已合并；PR #37 仅选择性整合，不另合并。
 >
 > 已提交图表：首屏 USDT/USDC 可用资金结构及红黄绿灰阈值、交易所七日收益、本地24小时账本盈亏、资金费、持仓及 TP 风险、有证据的采样趋势；新增双币种权益勾稽、多空名义敞口、资金费归因覆盖、交易所确认委托与本地 UNKNOWN 分层。源码合并不代表部署。

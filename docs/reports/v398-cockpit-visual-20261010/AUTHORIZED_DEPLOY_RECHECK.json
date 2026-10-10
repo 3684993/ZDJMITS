@@ -1,0 +1,54 @@
+{
+  "observedAt": "2026-10-10T12:08:47.396Z",
+  "sourceCommit": "e3dc48b6832f48569b76a1240bb8040f5f6f3dfd",
+  "sourceHash": "6cfc6e079aefb5fc4790195cd22bb528c1f9a6c6adcd39586f2acdc0e7ce44ef",
+  "artifactHash": "a790207862ad258b41a0e7fc3618100eca616d70a022ad73a494249692b7374c",
+  "buildId": "3.9.8-a790207862ad258b41a0",
+  "stage": "D:/MITS-RELEASES/ZDJMITS-v398-cockpit-e3dc48b",
+  "npmCi": "PASS",
+  "build": "PASS",
+  "deployment": "NO_GO_FRESH_SIGNED_TP_UNVERIFIED",
+  "engine": {
+    "pid": 12140,
+    "status": "DEGRADED"
+  },
+  "localTp": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 27,
+    "protected": 27,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  },
+  "production": {
+    "environment": "TESTNET",
+    "lockedToTestnet": true,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0
+  },
+  "private": {
+    "ageMs": 105659,
+    "consecutiveFailures": 3
+  },
+  "signedAttempts": 2,
+  "signedFailurePhase": "SOCKS_NEGOTIATION",
+  "engineStopAttemptsThisTurn": 0,
+  "engineStartsThisTurn": 0,
+  "modelRestarts": 0,
+  "authorizationChanges": 0,
+  "manualExchangeWrites": 0,
+  "acceptance24h": {
+    "state": "NOT_STARTED",
+    "t0": null
+  }
+}

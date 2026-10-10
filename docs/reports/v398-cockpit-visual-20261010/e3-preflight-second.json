@@ -1,0 +1,35 @@
+{
+  "observedAt": "2026-10-10T12:07:49.323Z",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "methods": [
+    "GET"
+  ],
+  "exchangeWrites": 0,
+  "requests": [
+    {
+      "endpoint": "/fapi/v1/time",
+      "startedAt": "2026-10-10T12:07:49.323Z",
+      "completedAt": "2026-10-10T12:07:57.337Z",
+      "errorType": "Error",
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": null,
+        "networkTiming": {
+          "startedAt": 1791634069326,
+          "proxyConnectStartedAt": 1791634069333,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": null,
+          "secureConnectedAt": null,
+          "responseAt": null,
+          "completedAt": 1791634077336,
+          "reusedSocket": false,
+          "failurePhase": "SOCKS_NEGOTIATION"
+        }
+      }
+    }
+  ],
+  "gate": "UNKNOWN",
+  "errorType": "Error",
+  "protectionAssessment": "UNVERIFIED"
+}

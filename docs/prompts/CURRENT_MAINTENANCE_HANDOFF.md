@@ -1,3 +1,11 @@
+# 2026-10-10 用户要求立刻恢复全部模型与部署（最新权威状态）
+- 用户明确要求在 Windows 主机**现在受控部署并逐个启动已离线的三个Qwen模型**，无需反复概念性许可。PR38源代码已验证本机2210 tests和GitHub两个exact-head SUCCESS，已于2026-10-10由ChatGPT合并`main`，合并SHA `84d5d4f81b3ad6c73b1f7744c441d4f887de9638`。
+- GitHub主分支已提交立即执行指令：`docs/prompts/CODEX_V398_IMMEDIATE_AUTHORIZED_MODEL_RECOVERY_20261010.md`。Issue#30/#35和PR#38已留正式交接评论。当前GitHub连接**不能操作本机Windows，也不具备Codex任务启动接口**；合并/评论不是启动。部署、三个模型真实推理验证、实际Engine重启仍**NOT_PERFORMED / NOT_PROVEN**，新24小时验收T0=null，旧验收ABORTED。
+- `blocked by policy` 是Codex外部执行环境的自动审批拒绝，执行日志显示`attemptExecuted=false`，无详细拒绝规则；不是本项目后端`MODEL_OPERATION_PERMISSION_DENIED`。无法靠删库内模块移除平台审批。Codex须通过正常交互授权或经主机授权的操作者执行，不得绕过平台访问控制。项目模型令牌、固定manifest/hash/PID/锁/drain以及现网签名TP/TESTNET/Production0不可去掉。
+- 截止证据：Engine23936、旧source6533/代理仍运行，三个模型没有监听，退出根因UNKNOWN，后一次signed TP 28/28，之前1次29笔身份不一致不能抹去。最新现场保护门禁必须在操作时重新检查。**后续工作以真实主机恢复和运行证据为优先，不再停留在日志推断/PR Draft中。**
+
+---
+
 # 2026-10-10 三模型离线维护最终 GitHub 交付
 
 Draft PR38；最终源码 d39024d97f681c46c94e7537dd688f6bf271096a，主实现43eca77；本机264文件/2210测试及完整 verify:ci PASS，精确源码 Windows CI38032096492 SUCCESS（完整日志已归档）。模型管理后端及设置按钮、AI/代理/交易网络/私有同步灯已提交，默认管理操作关闭，正式部署需私有 manifest/运维密钥/审查过的 PowerShell7 PATH。

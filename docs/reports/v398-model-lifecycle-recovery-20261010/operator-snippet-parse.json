@@ -1,0 +1,27 @@
+[
+  {
+    "executed": false,
+    "parseErrors": 0,
+    "file": "operator-snippet-0.ps1"
+  },
+  {
+    "executed": false,
+    "parseErrors": 0,
+    "file": "operator-snippet-1.ps1"
+  },
+  {
+    "executed": false,
+    "parseErrors": 0,
+    "file": "operator-snippet-2.ps1"
+  },
+  {
+    "executed": false,
+    "parseErrors": 0,
+    "file": "operator-snippet-3.ps1"
+  },
+  {
+    "executed": false,
+    "parseErrors": 0,
+    "file": "operator-snippet-4.ps1"
+  }
+]

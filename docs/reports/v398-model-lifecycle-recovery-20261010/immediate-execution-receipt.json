@@ -1,0 +1,161 @@
+{
+  "observedAt": "2026-10-10T08:57:58.002525+00:00",
+  "sourceCommit": "4c84631226c5373b04b1c3c73a820bf2a11448a5",
+  "runtimeBefore": {
+    "pid": 23936,
+    "instanceId": "d071f59f-9eba-4efa-b3da-3d4289f3671f",
+    "buildId": "3.9.8-0de7665352d82b261c1d",
+    "uptimeMs": 13286447,
+    "lastRestartAt": 1791608981357
+  },
+  "productionWriteBoundary": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 51,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": 1791618288029,
+    "lastWritePath": "/fapi/v1/order"
+  },
+  "takeProfit": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 26,
+    "protected": 26,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  },
+  "privateSyncSeparateObservation": {
+    "lastSuccessAt": 1791622385965,
+    "consecutiveFailures": 0,
+    "snapshotAgeMs": 1785,
+    "lastError": null
+  },
+  "stage": {
+    "stagePath": "D:/MITS-RELEASES/ZDJMITS-v398-models-4c84631",
+    "frozenGitHead": "4c84631226c5373b04b1c3c73a820bf2a11448a5",
+    "cleanSource": true,
+    "sourceHash": "3611b8d300f091946b7dc479e951c8f1ee45dafc4f11ae50ce9e8be71b467de5",
+    "artifactHash": "5b239d299d94d9ce70a85c835040337d9d4c36ee2456cd3d48b6ebde7eadc688",
+    "buildId": "3.9.8-5b239d299d94d9ce70a8",
+    "entrypointSha256": "df014d7d4da78af092844fa646c3ac1409bff38ec27c35da5db3de0caf072376",
+    "settings": {
+      "version": 253,
+      "payloadSha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151"
+    }
+  },
+  "sealedFiles": 1999,
+  "newApprovalActive": false,
+  "rollback": {
+    "oldPid": 23936,
+    "oldBuildId": "3.9.8-0de7665352d82b261c1d",
+    "sourceHash": "6a320a861565a991d24a36d847801f99c8e762c8362344dbd6fb09de1e5770e8",
+    "artifactHash": "0de7665352d82b261c1d620fc65de91e24d628ccffe875b1ee7a878b8a1fd7f6",
+    "oldApprovalUnchanged": true,
+    "preserveCurrentDurableDb": true
+  },
+  "platformAttempt": {
+    "target": "Scout8081",
+    "command": "Start-Process PowerShell7 -NoProfile -File original reviewed Scout launcher -Mode Start -NoWatchdog -WindowStyle Hidden; redirected private stdout/stderr",
+    "executionState": "DENIED_BEFORE_EXECUTION",
+    "reason": "blocked by policy",
+    "additionalReasonProvided": false,
+    "receiptCreated": false,
+    "interactiveEscalationAvailable": false
+  },
+  "recovery": {
+    "Scout": "NOT_EXECUTED",
+    "Review": "NOT_ATTEMPTED",
+    "Primary": "NOT_ATTEMPTED"
+  },
+  "modelInference": "NOT_PROVEN",
+  "deployment": "NOT_PERFORMED",
+  "engineRestartAttempts": 0,
+  "originalExitRootCause": "UNKNOWN",
+  "newAcceptance": {
+    "status": "NOT_STARTED",
+    "T0": null
+  },
+  "previousAcceptance": "ABORTED_SAFETY_FAILURE_20261010_0834",
+  "additionalDeploymentConstraint": "Existing stop-zdj-lan.ps1 uses Stop-Process -Force; it does not prove graceful shutdown and must not be represented as graceful.",
+  "finalReadback": {
+    "asOf": 1791622831556,
+    "runtime": {
+      "pid": 23936,
+      "instanceId": "d071f59f-9eba-4efa-b3da-3d4289f3671f",
+      "buildId": "3.9.8-0de7665352d82b261c1d",
+      "lastRestartAt": 1791608981357
+    },
+    "takeProfit": {
+      "status": "READY",
+      "unverifiedTp": 0,
+      "required": 26,
+      "protected": 26,
+      "missing": 0,
+      "repairing": 0,
+      "repairFailed": 0,
+      "manualReviewRequired": 0,
+      "positionFactUnresolved": 0,
+      "positionFactUnresolvedSymbols": [],
+      "orphanTp": 0,
+      "duplicateTp": 0,
+      "qtyMismatch": 0,
+      "wrongSide": 0,
+      "tpMissing": 0,
+      "retryQueue": 0
+    },
+    "production": {
+      "environment": "TESTNET",
+      "executionMode": "TESTNET_ENABLED",
+      "lockedToTestnet": true,
+      "testnetWrites": 51,
+      "productionWrites": 0,
+      "blockedProductionWriteAttempts": 0,
+      "lastWriteAt": 1791618288029,
+      "lastWritePath": "/fapi/v1/order"
+    },
+    "privateSyncSeparateObservation": {
+      "lastSuccessAt": 1791622823625,
+      "consecutiveFailures": 0,
+      "snapshotAgeMs": 8134,
+      "lastError": null
+    },
+    "listeners": [
+      {
+        "LocalAddress": "127.0.0.1",
+        "LocalPort": 20091,
+        "OwningProcess": 18300
+      },
+      {
+        "LocalAddress": "0.0.0.0",
+        "LocalPort": 8080,
+        "OwningProcess": 23936
+      }
+    ]
+  },
+  "localVerification": {
+    "exitCode": 0,
+    "completedAt": "2026-10-10T16:57:15.2305791+08:00",
+    "sourceCommit": "4c84631226c5373b04b1c3c73a820bf2a11448a5",
+    "files": 264,
+    "tests": 2210,
+    "engineShards": [
+      575,
+      623,
+      399,
+      408
+    ],
+    "originalVerifyLogSha256": "4380cd3be13cee06935fee706ac2dc19fdd8fb4b895c5799651baaae087a6ee3"
+  }
+}

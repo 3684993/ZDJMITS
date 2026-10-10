@@ -1,0 +1,10 @@
+[
+  {
+    "Path": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.5-9B-GGUF\\Qwen3.5-9B-Q4_K_M.gguf",
+    "Hash": "CD76EC205963B3B33350093E6904D9DE16C4E666FD104E1F632D25C7F15F2A13"
+  },
+  {
+    "Path": "D:\\.lmstudio\\models\\lmstudio-community\\Qwen3.8-27B-GGUF\\Qwen3.8-27B-Q4_K_M.gguf",
+    "Hash": "E00082F779FA385CEE8C68A3EC8833A75778CC87272240B942F74E0B8243E520"
+  }
+]

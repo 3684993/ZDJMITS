@@ -8,7 +8,7 @@ type AssetName='USDT'|'USDC'|'UNKNOWN';
 const assetOf=(row:ProjectedRow):AssetName=>row.moneyAsset==='USDT'?'USDT':row.moneyAsset==='USDC'?'USDC':'UNKNOWN';
 const finite=(n:unknown):n is number=>typeof n==='number'&&Number.isFinite(n);
 const settledIn=(row:ProjectedRow,from:number,to:number)=>
-  row.status==='CLOSED'&&finite(row.closedAt)&&row.closedAt>=from&&row.closedAt<=to;
+  row.status==='CLOSED'&&finite(row.closedAt)&&row.closedAt>=from&&row.closedAt<to;
 const provenLocal=(row:TradeRecord)=>
   ledgerClosedComplete(row).eligible&&finite(row.tradingNetPnlExFunding)&&
   ['SYSTEM','LOCAL_LIFECYCLE_REPAIR_FROM_EXCHANGE_FACT'].includes(row.source)&&
@@ -71,7 +71,7 @@ export function projectTrade24hReadModel(input:{
   const windowStatus=!input.autoSync?.lastSuccessAt?'SYNC_COVERAGE_UNCONFIRMED':
     input.autoSync.status==='ERROR'?'SYNC_ERROR':'RETAINED_LEDGER_ONLY';
   return{
-    asOf,window:{from,to:asOf,durationMs:DAY_MS,basis:'CLOSED_AT_SETTLED_LEDGER'},
+    asOf,window:{from,to:asOf,durationMs:DAY_MS,basis:'CLOSED_AT_SETTLED_LEDGER_HALF_OPEN'},
     status:windowStatus,
     source:'ENGINE_RETAINED_CLOSED_COMPLETE_LINKED_CYCLES',
     accountingBasis:'TRADING_NET_EX_FUNDING_NATIVE_QUOTE_ASSET',
@@ -82,7 +82,7 @@ export function projectTrade24hReadModel(input:{
       ledgerUnprovenClosedRows:closed.filter(row=>!row.economicEligibility.ledgerClosedComplete).length,
       cycleCollisionRows:closed.filter(row=>provenLocal(row)&&cycleCounts.get(row.cycleId!)!==1).length,
       unknownAssetCycles,
-      closedObservedWithoutSettledAt:input.records.filter(row=>row.status!=='CLOSED'&&finite(row.observedClosedAt)&&row.observedClosedAt>=from&&row.observedClosedAt<=asOf).length,
+      closedObservedWithoutSettledAt:input.records.filter(row=>row.status!=='CLOSED'&&finite(row.observedClosedAt)&&row.observedClosedAt>=from&&row.observedClosedAt<asOf).length,
       lastSyncSuccessAt:input.autoSync?.lastSuccessAt??null,
       syncStatus:input.autoSync?.status??'UNKNOWN',
     },

@@ -5,9 +5,10 @@ import { api } from "../api/client";
 import { money } from "../format";
 import Panel from "../components/Panel.vue";
 import StatusBadge from "../components/StatusBadge.vue";
+import CockpitOverviewTop from "../components/CockpitOverviewTop.vue";
 const s = useSystemStore(),
   pipeline = ref<any>(null),
-  assets = ref<any[]>([]),riskOverridePreview=ref<any>(null),riskOverrideOpen=ref(false),riskOverrideBusy=ref(false),riskOverrideError=ref<string|null>(null),riskOverrideReason=ref('Testnet 日内风险人工复核'),
+  assets = ref<any[]>([]),assetRead=ref<any>(null),trade24h=ref<any>(null),riskOverridePreview=ref<any>(null),riskOverrideOpen=ref(false),riskOverrideBusy=ref(false),riskOverrideError=ref<string|null>(null),riskOverrideReason=ref('Testnet 日内风险人工复核'),
   account = () => s.snapshot?.account as any,
   control = () => pipeline.value?.runtimeControl ?? s.snapshot?.runtimeControl;
 const autoMode = () =>
@@ -277,13 +278,16 @@ function load(): Promise<void> {
   return loading;
 }
 async function loadCurrent() {
+  if(document.hidden)return;
+  const controller=new AbortController();requestController=controller;const timeout=setTimeout(()=>controller.abort(),10000);now.value=Date.now();
   try {
-    const [p, a] = await Promise.all([api.pipeline(), api.accountAssets()]);
+    const [p, a] = await Promise.all([api.pipeline(controller.signal), api.accountAssets(controller.signal)]);
     if (disposed) return;
     pipeline.value = p;
     assets.value = a.assets ?? [];
+    assetRead.value = a;
     refreshError.value = null;
-  } catch { if (!disposed) refreshError.value = '状态刷新失败，以下为最后一次成功快照'; }
+  } catch { if (!disposed) {refreshError.value = '状态刷新失败，以下为最后一次成功快照';assetRead.value={status:'UNAVAILABLE'};} } finally {clearTimeout(timeout);requestController=null;}
 }
 async function pause() {
   await api.pauseTrading("Dashboard 手动暂停新建仓");
@@ -295,21 +299,36 @@ async function resume() {
 }
 async function openRiskOverride(){riskOverrideError.value=null;try{riskOverridePreview.value=await api.riskPausePreview();if(!riskOverridePreview.value?.canOverride){riskOverrideError.value='当前状态不允许人工解除风险暂停';return;}riskOverrideOpen.value=true;}catch(e){riskOverrideError.value=e instanceof Error?e.message:String(e);}}
 async function confirmRiskOverride(){riskOverrideBusy.value=true;riskOverrideError.value=null;try{await api.overrideRiskPause(riskOverrideReason.value);riskOverrideOpen.value=false;await Promise.all([load(),s.refresh()]);}catch(e){riskOverrideError.value=e instanceof Error?e.message:String(e);}finally{riskOverrideBusy.value=false;}}
-function refreshVisible() { if (!document.hidden) void load(); }
+const now=ref(Date.now());let requestController:AbortController|null=null;
+let financeTimer:ReturnType<typeof setInterval>|null=null,financeInFlight=false;
+async function loadTrade24h(){
+  // This read is separate from the fast pipeline refresh; never triggers an exchange sync.
+  if(financeInFlight||document.hidden||typeof api.tradeRecords24h!=='function')return;
+  financeInFlight=true;
+  const controller=new AbortController();const timeout=setTimeout(()=>controller.abort(),10000);
+  try{const result=await api.tradeRecords24h(controller.signal);if(!disposed)trade24h.value=result;}catch{if(!disposed)trade24h.value=null;}
+  finally{clearTimeout(timeout);financeInFlight=false;}
+}
+function refreshVisible() { if(document.hidden)requestController?.abort(); if (!document.hidden) {void load();void loadTrade24h();} }
 onMounted(() => {
-  void load();
-  refreshTimer = setInterval(refreshVisible, 3000);
+  void load();void loadTrade24h();
+  refreshTimer = setInterval(()=>{if(!document.hidden)void load();}, 15000);
+  financeTimer=setInterval(()=>{if(!document.hidden)void loadTrade24h();}, 15000);
   document.addEventListener('visibilitychange', refreshVisible);
 });
 onUnmounted(() => {
-  disposed = true;
+  disposed = true;requestController?.abort();
   clearInterval(refreshTimer);
+  if(financeTimer)clearInterval(financeTimer);
   document.removeEventListener('visibilitychange', refreshVisible);
 });
 </script>
 <template>
   <div class="page-stack">
     <div v-if="refreshError" class="policy-card danger-lite">{{ refreshError }}</div>
+    <CockpitOverviewTop :snapshot="s.snapshot" :account-read="assetRead" :trade24h="trade24h" :now="now"/>
+    <details class="cockpit-raw-details" data-cockpit-raw-details>
+      <summary>展开：原始交易所资产明细与活动委托身份证据</summary>
     <Panel title="真实资产"
       ><div class="table-scroll"><table class="data-table">
         <thead>
@@ -383,6 +402,7 @@ onUnmounted(() => {
         </template>
       </div>
     </div>
+    </details>
     <div v-if="account()?.valuation" class="policy-card" :class="account().valuation.status==='ACCOUNT_VALUATION_INCONSISTENT'?'danger-lite':''" data-account-valuation><strong>{{account().valuation.status==='ACCOUNT_VALUATION_INCONSISTENT'?'ACCOUNT_VALUATION_INCONSISTENT':'同一 Binance 快照的账户口径'}}</strong><span>USDT 保证金权益 {{money(account().valuation.usdtMarginEquityUsd)}} + USDC 保证金权益 {{money(account().valuation.usdcMarginEquityUsd)}} = 总资产 {{money(account().valuation.combinedStablecoinMarginEquityUsd)}}；USDT/USDC 钱包 {{money(account().valuation.combinedStablecoinWalletUsd)}}，可用 {{money(account().valuation.combinedStablecoinAvailableUsd)}}，浮盈亏 {{money(account().valuation.combinedStablecoinUnrealizedPnlUsd)}}。Entry 可执行保证金另按交易所 availableBalance 计算；BTC 等其它资产不计入。{{account().valuation.status==='PARTIAL'?'缺失 USDT/USDC 关键事实时总资产为 UNKNOWN。':''}}</span></div>
     <Panel v-if="s.snapshot?.performanceTracking" :title="`收益基线与最近 ${s.snapshot.performanceTracking.rolling.days} 天`" subtitle="账户基线、本地交易账本和 Binance 交易所收入事实三种口径并列显示；互相校验，不直接相加。">
       <div class="facts wide" data-performance-tracking>

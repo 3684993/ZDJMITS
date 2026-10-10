@@ -1,3 +1,5 @@
+param([Parameter(Mandatory)][string]$OutputDirectory)
+if(![IO.Path]::IsPathFullyQualified($OutputDirectory)){throw 'ABSOLUTE_OPERATIONAL_DIRECTORY_REQUIRED'}
 # Read-only Windows graphics adapter lookup. No model initialization or device changes.
 $ErrorActionPreference='Stop'
 Add-Type -TypeDefinition @'
@@ -32,5 +34,5 @@ foreach($counter in $counters | Where-Object { $_.InstanceName -match '^pid_(\d+
     catch{$result+=@{pid=$servicePid;luid=$luid;bus=$null;dedicatedBytes=$counter.CookedValue;status='UNKNOWN'}}
   }
 }
-$result | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath "$PSScriptRoot/gpu-luid-pci.json" -Encoding UTF8
+$result | ConvertTo-Json -Depth 5 | Set-Content -LiteralPath "$OutputDirectory/gpu-luid-pci.json" -Encoding UTF8
 $result | ConvertTo-Json -Depth 5

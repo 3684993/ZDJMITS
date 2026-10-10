@@ -10,10 +10,13 @@ async function readBounded(file:string){
   }finally{await handle.close();}
 }
 export function createGpuPerformanceReader(options:{file?:string;now?:()=>number;readText?:()=>Promise<string>}={}){
-  const now=options.now??Date.now,readText=options.readText??(()=>readBounded(options.file??path.resolve('scripts/performance/gpu-snapshot.json')));
+  const file=options.file??process.env.ZDJ_GPU_SNAPSHOT_PATH;
+  const pathError=!options.readText&&(!file||!path.isAbsolute(file))?'GPU_SNAPSHOT_ABSOLUTE_PATH_NOT_CONFIGURED':null;
+  const now=options.now??Date.now,readText=options.readText??(()=>readBounded(file!));
   let history:GpuSnapshot[]=[],dropped=0,cached:GpuSnapshot|null=null,checkedAt=-Infinity,reason:string|null=null;
   let flight:Promise<void>|null=null;
   async function refresh(){try{
+    if(pathError)throw new Error(pathError);
     const raw=await readText();if(Buffer.byteLength(raw)>maxBytes)throw new Error('GPU_SNAPSHOT_SIZE');
     const sample=GpuSnapshotSchema.parse(JSON.parse(raw));
     if(sample.asOf>now()+1000)throw new Error('GPU_SNAPSHOT_FUTURE');
@@ -21,7 +24,7 @@ export function createGpuPerformanceReader(options:{file?:string;now?:()=>number
     if(cached?.instanceId!==sample.instanceId){history=[];dropped=0;}
     if(cached?.asOf!==sample.asOf||cached.instanceId!==sample.instanceId){history.push(sample);if(history.length>361){history.shift();dropped++;}}
     cached=sample;reason=null;
-  }catch{reason='GPU_SNAPSHOT_UNAVAILABLE_OR_INVALID';}finally{checkedAt=now();}}
+  }catch{reason=pathError??'GPU_SNAPSHOT_UNAVAILABLE_OR_INVALID';}finally{checkedAt=now();}}
   async function read():Promise<GpuPerformanceRead>{
     if(now()-checkedAt>=10000){if(!flight)flight=refresh().finally(()=>{flight=null;});await flight;}
     const status=reason?'UNKNOWN':!cached?'UNKNOWN':now()-cached.asOf>45000?'STALE':'MEASURED';

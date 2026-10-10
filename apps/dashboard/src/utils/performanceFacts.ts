@@ -16,6 +16,20 @@ export function aiLamp(resource:any,now=Date.now()):LampFact{
   if(Number(resource.active)>0)return{tone:'good',text:'推理中',detail:'模型连接正常，存在自然任务'};
   return{tone:'good',text:'空闲',detail:String(resource.nextStep??'模型连接正常，当前无任务')};
 }
+export function exchangeLamp(snapshot:any,incidents:any[]=[],now=Date.now()):LampFact{
+  const active=Array.isArray(incidents)?incidents.filter((row:any)=>row?.active===true):[];
+  const error=active.find((row:any)=>['EXCHANGE','NETWORK'].includes(row.category)&&row.httpStatus===451);
+  if(error)return{tone:'bad',text:'HTTP 451',detail:'已记录活跃的交易所HTTP拒绝；无法凭此断定SOCKS故障，不得切换出口绕过'};
+  const limited=active.find((row:any)=>[418,429,502,503].includes(row.httpStatus));
+  if(limited)return{tone:'warn',text:'交易所HTTP告警',detail:'活跃HTTP '+limited.httpStatus+'，应与SOCKS/SSH超时分层排查'};
+  const service=Array.isArray(snapshot?.health)?snapshot.health.find((r:any)=>r.id==='trading-network'):null;
+  if(!service||stale(service.updatedAt,now,60_000))
+    return{tone:'unknown',text:'状态未确认',detail:'缺少最近60秒的交易网络健康报告'};
+  if(service.status==='OFFLINE')return{tone:'bad',text:'网络离线',detail:String(service.detail??'交易网络无法使用')};
+  if(service.status==='DEGRADED')return{tone:'warn',text:'网络降级',detail:String(service.detail??'交易网络服务降级')};
+  if(service.status==='HEALTHY')return{tone:'good',text:'网络报告正常',detail:'引擎交易网络健康监测；不代表账户地区授权、签名TP或每条WS事件已独立验证'};
+  return{tone:'unknown',text:'状态未确认',detail:'未识别的交易网络健康状态'};
+}
 export function proxyLamp(routes:any):LampFact{
   if(!Array.isArray(routes)||!routes.length)return{tone:'unknown',text:'未确认',detail:'没有代理链路状态'};
   if(routes.some((r:any)=>r.rest?.throughProxy===false||r.rest?.failClosed===false))

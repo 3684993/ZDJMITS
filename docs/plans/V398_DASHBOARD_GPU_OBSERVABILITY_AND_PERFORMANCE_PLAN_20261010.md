@@ -1,5 +1,8 @@
 # v3.9.8仪表盘性能优化 — GPU利用率、模型推理、代理与交易生命周期统一可观测性实施计划
 
+> **GitHub main 更新（提交 b55f427eeda1，2026-10-10 09:36+08）：** `main` 已将原24h验收终止原始证据同步到 `docs/reports/v398-engine-cutover-20261010/acceptance/state.json`（现为 `ABORTED_SAFETY_FAILURE`）及 [ACCEPTANCE_ABORT_RECEIPT_20261010.md](https://github.com/3684993/ZDJMITS/blob/main/docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md)。本功能分支始于更早main 662d7f3，若本分支文件仍有旧08:24 `RUNNING`，是尚未同步main的历史遗留，不能据此推翻最新权威已中止状态。Codex必须先核对最新main的验收事实和PR #31合并基线，避免旧文档覆盖新证据。该更新是文档证据同步，不是重启或新24h开始。
+
+
 > **2026-10-10 新的有证据进度更正：** 本计划原文首段所写24h RUNNING已被2026-10-10 **08:34:00.270+08** 的监测副本 `ABORTED_SAFETY_FAILURE / LOCAL_TP_GATE_NOT_CLOSED` 推翻：localTP protected14/required15/缺1，参见PR#25分支 `docs/reports/v398-network-optimization-20261010/acceptance-aborted.json`。稍后本地cache恢复不等于 fresh signed TP全覆盖，旧验收不得续算。ChatGPT已在独立分支 `chatgpt/v398-performance-real-metrics-d0-d2-20261010` 提交 D1真实CPU/内存/EngineRSS sampler、只读API、D2 Vue/ECharts `/performance` /状态灯实码与初始测试，**仍需Codex执行本机完整verify/CI及真实GPU采样、原子lease独立PR；未部署**。新增执行板 [V398_GPU_PERFORMANCE_EXECUTION_BOARD_20261010](./V398_GPU_PERFORMANCE_EXECUTION_BOARD_20261010.md)，新增 Codex执行文件 [CODEX_V398_GPU_PERFORMANCE_DASHBOARD_PHASE1_20261010](../prompts/CODEX_V398_GPU_PERFORMANCE_DASHBOARD_PHASE1_20261010.md)。主Issue #30。
 
 

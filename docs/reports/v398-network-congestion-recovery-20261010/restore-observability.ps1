@@ -22,7 +22,7 @@ foreach($name in @('ZDJ-MITS Manual Engine','ZDJ-MITS-AfterReboot-TESTNET','ZDJ-
   $arguments='-NoProfile -File "'+$script+'" -FollowCurrentReceipt -HostReceiptPath "'+(Join-Path $release.privateRoot 'engine-receipt.json')+'" -HostLifecyclePath "'+(Join-Path $release.privateRoot 'engine-lifecycle.jsonl')+'" -RepositoryRoot "'+$release.stage+'" -SourceCommit "'+$release.sourceCommit+'" -IntervalSeconds 45 -MaxBytes 25165824'
  }else{
   $script=Join-Path $release.stage 'docs/reports/v398-network-congestion-recovery-20261010/launch-current-reviewed-task.ps1'
-  $arguments='-NoProfile -File "'+$script+'" -Manifest "'+[IO.Path]::GetFullPath($Manifest)+'"'
+  $arguments='-NoProfile -File "'+$script+'" -Manifest "'+(Join-Path $release.privateRoot 'release-manifest.json')+'"'
  }
  $action=New-ScheduledTaskAction -Execute (Get-Command powershell.exe).Source -Argument $arguments -WorkingDirectory $release.stage
  Set-ScheduledTask -TaskName $name -TaskPath $taskPath -Action $action|Out-Null

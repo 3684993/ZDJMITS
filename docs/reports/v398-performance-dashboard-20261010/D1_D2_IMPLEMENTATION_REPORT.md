@@ -19,3 +19,7 @@ npm ci 原依赖279 packages；既有审计4项(2 moderate,2 critical)，未执�
 Hosted RED: a549a7b run38017315117 failed Diff check on report/log blank EOF before install/tests; github-ci-red.json/log retained. Archive whitespace mechanically normalized (trailing whitespace/EOF only), no test result altered; repeat hosted CI required.
 
 Additional actual RED/FIX/GREEN: Windows PowerShell5 converts null backup filename to empty string for File.Replace, causing invalid-path failure. collector-atomic-red.log retained; fixed with NullString.Value, collector-atomic-green.json and three-sample scoped smoke/schema pass. WDDM >100 outliers now individual UNKNOWN/null with raw evidence preserved. Ignored operational JSON/logs were wrongly captured by mechanical S00 scan; after sampling completion, archived owned outputs and moved them to restricted operations storage, mechanically regenerated clean source inventory199 and verify:s00 passed. No exclusions or gate relaxation. Final clean verify log verify-ci-clean-final.log; previous local2173 pass preserved.
+
+### PR31 源码精确 CI 回读
+
+源码248e5f8b7d8d4a4e6e178dfde52a563d6a1abbb1完整GitHub Actions38022146483 SUCCESS。本机2173项完整验证成功；成功作业日志与回执已归档统一reports目录，详见FINAL_DELIVERY.md。随后纯归档提交的最终HEAD CI以PR31/Issue30精确回读为准。未部署未重启，当前发布门禁UNKNOWN，旧24h仍ABORTED。

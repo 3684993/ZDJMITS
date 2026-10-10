@@ -1,0 +1,38 @@
+{
+  "observedAt": "2026-10-10T15:38:28.093Z",
+  "settingsVersion": 253,
+  "settingsPayloadSha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "exchangeWrites": 0,
+  "productionWrites": 0,
+  "recvWindowMs": 5000,
+  "requests": [
+    {
+      "endpoint": "/fapi/v1/time",
+      "startedAt": 1791646708093,
+      "completedAt": 1791646716097,
+      "httpStatus": null,
+      "exchangeCode": null,
+      "errorType": "Error",
+      "dispatch": {
+        "status": null,
+        "networkTiming": {
+          "startedAt": 1791646708096,
+          "proxyConnectStartedAt": 1791646708101,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": null,
+          "secureConnectedAt": null,
+          "responseAt": null,
+          "completedAt": 1791646716097,
+          "reusedSocket": false,
+          "responseStatus": null,
+          "responseDecodedBytes": 0,
+          "failurePhase": "SOCKS_NEGOTIATION"
+        }
+      }
+    }
+  ],
+  "gate": "UNKNOWN",
+  "errorType": "Error"
+}

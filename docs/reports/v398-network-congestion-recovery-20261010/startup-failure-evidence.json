@@ -1,0 +1,1877 @@
+{
+  "sync": {
+    "snapshotAgeMs": 3205,
+    "lastSuccessAt": 1791646315221,
+    "consecutiveFailures": 0,
+    "durationMs": 3429
+  },
+  "acceptance": "NOT_STARTED_NETWORK_AND_PRIVATE_GATE_FAILED",
+  "production": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "proxy": {
+    "at": "2026-10-10T15:31:33.5966455Z",
+    "proxy": "127.0.0.1:20091",
+    "target": "demo-fapi.binance.com:443",
+    "stages": [
+      {
+        "phase": "LOCAL_TCP_CONNECT",
+        "elapsedMs": 281
+      },
+      {
+        "phase": "SOCKS_GREETING",
+        "elapsedMs": 281
+      }
+    ],
+    "healthy": false,
+    "pid": 12212,
+    "failurePhase": "SOCKS_CONNECT_REPLY",
+    "error": "PROBE_DEADLINE_EXHAUSTED",
+    "elapsedMs": 8012
+  },
+  "pid": 23828,
+  "budgets": [
+    {
+      "queued": 0,
+      "active": 0,
+      "dispatches": [],
+      "scope": "TESTNET:default",
+      "status": "AVAILABLE"
+    },
+    {
+      "queued": 0,
+      "active": 2,
+      "dispatches": [
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646259023,
+          "queuedAt": 1791646244005,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646244005,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646244005,
+            "proxyConnectStartedAt": 1791646244006,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646259023,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646259016,
+          "queuedAt": 1791646244005,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646244005,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646244005,
+            "proxyConnectStartedAt": 1791646251973,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646259016,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646259973,
+          "queuedAt": 1791646251973,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646251973,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646251973,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646259973,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "AGENT_QUEUE"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646274033,
+          "queuedAt": 1791646259022,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646259022,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646259022,
+            "proxyConnectStartedAt": 1791646259022,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646274033,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646274034,
+          "queuedAt": 1791646259024,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646259024,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646259024,
+            "proxyConnectStartedAt": 1791646259024,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646274034,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646274034,
+          "queuedAt": 1791646259027,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646259027,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646259027,
+            "proxyConnectStartedAt": 1791646259028,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646274034,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646274042,
+          "queuedAt": 1791646259027,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646259027,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646259027,
+            "proxyConnectStartedAt": 1791646259028,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646274042,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646274042,
+          "queuedAt": 1791646259027,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646259027,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646259028,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646274042,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "AGENT_QUEUE"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646267982,
+          "queuedAt": 1791646259973,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646259973,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646259974,
+            "proxyConnectStartedAt": 1791646259974,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646267982,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646275996,
+          "queuedAt": 1791646267988,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646267988,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646267988,
+            "proxyConnectStartedAt": 1791646267988,
+            "proxyConnectedAt": 1791646275021,
+            "socketAssignedAt": 1791646275021,
+            "secureConnectedAt": 1791646275822,
+            "responseAt": null,
+            "completedAt": 1791646275996,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "FIRST_BYTE"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646289056,
+          "queuedAt": 1791646274040,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646274040,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646274040,
+            "proxyConnectStartedAt": 1791646274041,
+            "proxyConnectedAt": 1791646275018,
+            "socketAssignedAt": 1791646275018,
+            "secureConnectedAt": 1791646275461,
+            "responseAt": 1791646276223,
+            "completedAt": 1791646289056,
+            "reusedSocket": false,
+            "responseStatus": 200,
+            "responseDecodedBytes": 659227,
+            "failurePhase": "RESPONSE_BODY"
+          }
+        },
+        {
+          "status": 200,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646275909,
+          "queuedAt": 1791646274040,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646274040,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646274041,
+            "proxyConnectStartedAt": 1791646274041,
+            "proxyConnectedAt": 1791646275019,
+            "socketAssignedAt": 1791646275019,
+            "secureConnectedAt": 1791646275462,
+            "responseAt": 1791646275909,
+            "completedAt": 1791646275909,
+            "reusedSocket": false,
+            "responseStatus": 200,
+            "responseDecodedBytes": 979,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 200,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646275971,
+          "queuedAt": 1791646274040,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646274040,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646274041,
+            "proxyConnectStartedAt": 1791646274041,
+            "proxyConnectedAt": 1791646275021,
+            "socketAssignedAt": 1791646275021,
+            "secureConnectedAt": 1791646275463,
+            "responseAt": 1791646275971,
+            "completedAt": 1791646275971,
+            "reusedSocket": false,
+            "responseStatus": 200,
+            "responseDecodedBytes": 937,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646284002,
+          "queuedAt": 1791646275996,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646275996,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646275996,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646275997,
+            "secureConnectedAt": 1791646275997,
+            "responseAt": null,
+            "completedAt": 1791646284002,
+            "reusedSocket": true,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "FIRST_BYTE"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646292019,
+          "queuedAt": 1791646284009,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646284009,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646284010,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646284010,
+            "secureConnectedAt": 1791646284010,
+            "responseAt": null,
+            "completedAt": 1791646292019,
+            "reusedSocket": true,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "FIRST_BYTE"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303976,
+          "queuedAt": 1791646289140,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646289140,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646289140,
+            "proxyConnectStartedAt": 1791646289141,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303976,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303980,
+          "queuedAt": 1791646289140,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646289140,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646289141,
+            "proxyConnectStartedAt": 1791646289141,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303980,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303980,
+          "queuedAt": 1791646289140,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646289140,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646289141,
+            "proxyConnectStartedAt": 1791646289141,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303980,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646300024,
+          "queuedAt": 1791646292020,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646292020,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646292020,
+            "proxyConnectStartedAt": 1791646292020,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646300024,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303975,
+          "queuedAt": 1791646300027,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646300027,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646300027,
+            "proxyConnectStartedAt": 1791646300027,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303975,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303981,
+          "queuedAt": 1791646303975,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646303975,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646303975,
+            "proxyConnectStartedAt": 1791646303975,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303981,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303982,
+          "queuedAt": 1791646303978,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646303978,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646303979,
+            "proxyConnectStartedAt": 1791646303979,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303982,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303985,
+          "queuedAt": 1791646303978,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646303978,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646303979,
+            "proxyConnectStartedAt": 1791646303979,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303985,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303986,
+          "queuedAt": 1791646303978,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646303978,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646303979,
+            "proxyConnectStartedAt": 1791646303979,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303986,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303986,
+          "queuedAt": 1791646303981,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646303981,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646303981,
+            "proxyConnectStartedAt": 1791646303982,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303986,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303986,
+          "queuedAt": 1791646303984,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646303984,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646303984,
+            "proxyConnectStartedAt": 1791646303985,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303986,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303989,
+          "queuedAt": 1791646303984,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646303984,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646303985,
+            "proxyConnectStartedAt": 1791646303985,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303989,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646303989,
+          "queuedAt": 1791646303984,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646303984,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646303985,
+            "proxyConnectStartedAt": 1791646303985,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646303989,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646305089,
+          "queuedAt": 1791646303986,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646305087,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646305087,
+            "proxyConnectStartedAt": 1791646305088,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646305089,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646305090,
+          "queuedAt": 1791646303988,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646305087,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646305088,
+            "proxyConnectStartedAt": 1791646305088,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646305090,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646305102,
+          "queuedAt": 1791646303988,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646305087,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646305088,
+            "proxyConnectStartedAt": 1791646305089,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646305102,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646305102,
+          "queuedAt": 1791646303988,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646305087,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646305088,
+            "proxyConnectStartedAt": 1791646305089,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646305102,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "USER_DATA_STREAM",
+          "decision": "ADMITTED",
+          "completedAt": 1791646304977,
+          "queuedAt": 1791646304483,
+          "endpoint": "/fapi/v1/listenKey",
+          "admittedAt": 1791646304976,
+          "purpose": "CREATE_LISTEN_KEY",
+          "networkTiming": {
+            "startedAt": 1791646304976,
+            "proxyConnectStartedAt": 1791646304977,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646304977,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646305102,
+          "queuedAt": 1791646305090,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646305090,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646305090,
+            "proxyConnectStartedAt": 1791646305090,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646305102,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646305103,
+          "queuedAt": 1791646305101,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646305101,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646305101,
+            "proxyConnectStartedAt": 1791646305101,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646305103,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646305147,
+          "queuedAt": 1791646305101,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646305101,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646305101,
+            "proxyConnectStartedAt": 1791646305101,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646305146,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646306122,
+          "queuedAt": 1791646305101,
+          "endpoint": "/fapi/v1/depth",
+          "admittedAt": 1791646306099,
+          "purpose": "QUOTE_BOOK_RECOVERY",
+          "networkTiming": {
+            "startedAt": 1791646306099,
+            "proxyConnectStartedAt": 1791646306100,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646306122,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646306122,
+          "queuedAt": 1791646305103,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646306099,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646306100,
+            "proxyConnectStartedAt": 1791646306100,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646306122,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "USER_DATA_STREAM",
+          "decision": "ADMITTED",
+          "completedAt": 1791646305989,
+          "queuedAt": 1791646305988,
+          "endpoint": "/fapi/v1/listenKey",
+          "admittedAt": 1791646305988,
+          "purpose": "CREATE_LISTEN_KEY",
+          "networkTiming": {
+            "startedAt": 1791646305988,
+            "proxyConnectStartedAt": 1791646305989,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646305989,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646306163,
+          "queuedAt": 1791646306122,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646306122,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646306123,
+            "proxyConnectStartedAt": 1791646306123,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646306163,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646306170,
+          "queuedAt": 1791646306141,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646306142,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646306142,
+            "proxyConnectStartedAt": 1791646306156,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646306170,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646306170,
+          "queuedAt": 1791646306142,
+          "endpoint": "/fapi/v1/ticker/24hr",
+          "admittedAt": 1791646306142,
+          "purpose": "READ_24HR",
+          "networkTiming": {
+            "startedAt": 1791646306142,
+            "proxyConnectStartedAt": 1791646306156,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646306170,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646306191,
+          "queuedAt": 1791646306163,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646306163,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646306163,
+            "proxyConnectStartedAt": 1791646306163,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646306191,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "RATE_LIMIT_CONTROL",
+          "decision": "ADMITTED",
+          "completedAt": 1791646306192,
+          "queuedAt": 1791646306170,
+          "endpoint": "/fapi/v1/exchangeInfo",
+          "admittedAt": 1791646306170,
+          "purpose": "READ_EXCHANGEINFO",
+          "networkTiming": {
+            "startedAt": 1791646306175,
+            "proxyConnectStartedAt": 1791646306175,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646306192,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646307012,
+          "queuedAt": 1791646306191,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646307010,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646307011,
+            "proxyConnectStartedAt": 1791646307011,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646307012,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646307124,
+          "queuedAt": 1791646307012,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646307122,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646307123,
+            "proxyConnectStartedAt": 1791646307123,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646307124,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646307153,
+          "queuedAt": 1791646307124,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646307124,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646307124,
+            "proxyConnectStartedAt": 1791646307124,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646307153,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "USER_DATA_STREAM",
+          "decision": "ADMITTED",
+          "completedAt": 1791646308001,
+          "queuedAt": 1791646308000,
+          "endpoint": "/fapi/v1/listenKey",
+          "admittedAt": 1791646308000,
+          "purpose": "CREATE_LISTEN_KEY",
+          "networkTiming": {
+            "startedAt": 1791646308000,
+            "proxyConnectStartedAt": 1791646308000,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646308001,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": null,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646308182,
+          "queuedAt": 1791646308180,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646308180,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646308180,
+            "proxyConnectStartedAt": 1791646308180,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": null,
+            "secureConnectedAt": null,
+            "responseAt": null,
+            "completedAt": 1791646308182,
+            "reusedSocket": false,
+            "responseStatus": null,
+            "responseDecodedBytes": 0,
+            "failurePhase": "SOCKS_NEGOTIATION"
+          }
+        },
+        {
+          "status": 200,
+          "source": "CLOCK",
+          "decision": "ADMITTED",
+          "completedAt": 1791646312196,
+          "queuedAt": 1791646309827,
+          "endpoint": "/fapi/v1/time",
+          "admittedAt": 1791646309827,
+          "purpose": "READ_TIME",
+          "networkTiming": {
+            "startedAt": 1791646309827,
+            "proxyConnectStartedAt": 1791646309828,
+            "proxyConnectedAt": 1791646310349,
+            "socketAssignedAt": 1791646310349,
+            "secureConnectedAt": 1791646311248,
+            "responseAt": 1791646312196,
+            "completedAt": 1791646312196,
+            "reusedSocket": false,
+            "responseStatus": 200,
+            "responseDecodedBytes": 28,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 200,
+          "source": "USER_DATA_STREAM",
+          "decision": "ADMITTED",
+          "completedAt": 1791646314948,
+          "queuedAt": 1791646312016,
+          "endpoint": "/fapi/v1/listenKey",
+          "admittedAt": 1791646312016,
+          "purpose": "CREATE_LISTEN_KEY",
+          "networkTiming": {
+            "startedAt": 1791646312016,
+            "proxyConnectStartedAt": 1791646312016,
+            "proxyConnectedAt": 1791646312699,
+            "socketAssignedAt": 1791646312699,
+            "secureConnectedAt": 1791646313620,
+            "responseAt": 1791646314948,
+            "completedAt": 1791646314948,
+            "reusedSocket": false,
+            "responseStatus": 200,
+            "responseDecodedBytes": 80,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 400,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": 1791646313598,
+          "queuedAt": 1791646312197,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646312197,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": {
+            "startedAt": 1791646312197,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646312198,
+            "secureConnectedAt": 1791646312198,
+            "responseAt": 1791646313597,
+            "completedAt": 1791646313598,
+            "reusedSocket": true,
+            "responseStatus": 400,
+            "responseDecodedBytes": 44,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 200,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": 1791646316285,
+          "queuedAt": 1791646312197,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646312197,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": {
+            "startedAt": 1791646312197,
+            "proxyConnectStartedAt": 1791646312198,
+            "proxyConnectedAt": 1791646313621,
+            "socketAssignedAt": 1791646313621,
+            "secureConnectedAt": 1791646314951,
+            "responseAt": 1791646316285,
+            "completedAt": 1791646316285,
+            "reusedSocket": false,
+            "responseStatus": 200,
+            "responseDecodedBytes": 537,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 200,
+          "source": "PRIVATE_STATE",
+          "decision": "ADMITTED",
+          "completedAt": 1791646315220,
+          "queuedAt": 1791646312197,
+          "endpoint": "/fapi/v3/account",
+          "admittedAt": 1791646312197,
+          "purpose": "READ_ACCOUNT",
+          "networkTiming": {
+            "startedAt": 1791646312198,
+            "proxyConnectStartedAt": 1791646312198,
+            "proxyConnectedAt": 1791646313180,
+            "socketAssignedAt": 1791646313180,
+            "secureConnectedAt": 1791646314040,
+            "responseAt": 1791646315220,
+            "completedAt": 1791646315220,
+            "reusedSocket": false,
+            "responseStatus": 200,
+            "responseDecodedBytes": 10174,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 400,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": 1791646314940,
+          "queuedAt": 1791646313618,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646313618,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": {
+            "startedAt": 1791646313618,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646313619,
+            "secureConnectedAt": 1791646313619,
+            "responseAt": 1791646314940,
+            "completedAt": 1791646314940,
+            "reusedSocket": true,
+            "responseStatus": 400,
+            "responseDecodedBytes": 44,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 400,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": 1791646316255,
+          "queuedAt": 1791646314947,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646314947,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": {
+            "startedAt": 1791646314947,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646314948,
+            "secureConnectedAt": 1791646314948,
+            "responseAt": 1791646316255,
+            "completedAt": 1791646316255,
+            "reusedSocket": true,
+            "responseStatus": 400,
+            "responseDecodedBytes": 44,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 200,
+          "source": "MARKET_DATA",
+          "decision": "ADMITTED",
+          "completedAt": 1791646316186,
+          "queuedAt": 1791646315221,
+          "endpoint": "/fapi/v1/premiumIndex",
+          "admittedAt": 1791646315221,
+          "purpose": "READ_PREMIUMINDEX",
+          "networkTiming": {
+            "startedAt": 1791646315221,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646315230,
+            "secureConnectedAt": 1791646315230,
+            "responseAt": 1791646316186,
+            "completedAt": 1791646316186,
+            "reusedSocket": true,
+            "responseStatus": 200,
+            "responseDecodedBytes": 231,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 200,
+          "source": "BACKGROUND_AUDIT",
+          "decision": "ADMITTED",
+          "completedAt": 1791646316631,
+          "queuedAt": 1791646315221,
+          "endpoint": "/fapi/v1/income",
+          "admittedAt": 1791646315221,
+          "purpose": "READ_INCOME",
+          "networkTiming": {
+            "startedAt": 1791646315230,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646315230,
+            "secureConnectedAt": 1791646315230,
+            "responseAt": 1791646316631,
+            "completedAt": 1791646316631,
+            "reusedSocket": true,
+            "responseStatus": 200,
+            "responseDecodedBytes": 64999,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 400,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": 1791646317120,
+          "queuedAt": 1791646316284,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646316284,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": {
+            "startedAt": 1791646316284,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646316285,
+            "secureConnectedAt": 1791646316285,
+            "responseAt": 1791646317119,
+            "completedAt": 1791646317120,
+            "reusedSocket": true,
+            "responseStatus": 400,
+            "responseDecodedBytes": 44,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 200,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": 1791646317145,
+          "queuedAt": 1791646316328,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646316328,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": {
+            "startedAt": 1791646316328,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646316329,
+            "secureConnectedAt": 1791646316329,
+            "responseAt": 1791646317145,
+            "completedAt": 1791646317145,
+            "reusedSocket": true,
+            "responseStatus": 200,
+            "responseDecodedBytes": 543,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 400,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": 1791646318039,
+          "queuedAt": 1791646317144,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646317144,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": {
+            "startedAt": 1791646317144,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646317144,
+            "secureConnectedAt": 1791646317145,
+            "responseAt": 1791646318039,
+            "completedAt": 1791646318039,
+            "reusedSocket": true,
+            "responseStatus": 400,
+            "responseDecodedBytes": 44,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": 200,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": 1791646318062,
+          "queuedAt": 1791646317221,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646317221,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": {
+            "startedAt": 1791646317221,
+            "proxyConnectStartedAt": null,
+            "proxyConnectedAt": null,
+            "socketAssignedAt": 1791646317221,
+            "secureConnectedAt": 1791646317221,
+            "responseAt": 1791646318062,
+            "completedAt": 1791646318062,
+            "reusedSocket": true,
+            "responseStatus": 200,
+            "responseDecodedBytes": 544,
+            "failurePhase": null
+          }
+        },
+        {
+          "status": null,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": null,
+          "queuedAt": 1791646318061,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646318061,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": null
+        },
+        {
+          "status": null,
+          "source": "ORDER_VERIFICATION",
+          "decision": "ADMITTED",
+          "completedAt": null,
+          "queuedAt": 1791646318143,
+          "endpoint": "/fapi/v1/order",
+          "admittedAt": 1791646318143,
+          "purpose": "EXACT_ORDER_FACT",
+          "networkTiming": null
+        }
+      ],
+      "scope": "TESTNET:proxy-05d851d4af74",
+      "status": "AVAILABLE"
+    }
+  ],
+  "ws": {
+    "asOf": 1791646318433,
+    "state": "CONNECTING",
+    "retainedSymbols": 24,
+    "streamTraffic": {
+      "PUBLIC": {
+        "last60sDecodedBytes": 180821,
+        "last60sMessages": 520,
+        "last60sByType": {
+          "CONTROL_OR_OTHER": {
+            "messages": 2,
+            "decodedBytes": 44
+          },
+          "DEPTH": {
+            "messages": 108,
+            "decodedBytes": 112737
+          },
+          "BOOK_TICKER": {
+            "messages": 410,
+            "decodedBytes": 68040
+          }
+        },
+        "totalByType": {
+          "CONTROL_OR_OTHER": {
+            "messages": 2,
+            "decodedBytes": 44
+          },
+          "DEPTH": {
+            "messages": 108,
+            "decodedBytes": 112737
+          },
+          "BOOK_TICKER": {
+            "messages": 410,
+            "decodedBytes": 68040
+          }
+        },
+        "totalDecodedBytes": 180821,
+        "totalMessages": 520,
+        "windowAsOf": 1791646318433,
+        "windowResolutionMs": 1000,
+        "requestedGlobalStreams": [],
+        "subscriptionEvidence": "EXCHANGE_ACKED",
+        "measurement": "DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES"
+      },
+      "MARKET": {
+        "last60sDecodedBytes": 0,
+        "last60sMessages": 0,
+        "last60sByType": {},
+        "totalByType": {},
+        "totalDecodedBytes": 0,
+        "totalMessages": 0,
+        "windowAsOf": 1791646318433,
+        "windowResolutionMs": 1000,
+        "requestedGlobalStreams": [],
+        "subscriptionEvidence": "PENDING_EXCHANGE_ACK",
+        "measurement": "DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES"
+      }
+    },
+    "lanes": {
+      "PUBLIC": {
+        "state": "LIVE",
+        "connectedAt": 1791646316173,
+        "lastMessageAt": 1791646318433,
+        "reconnects": 6,
+        "lastError": null,
+        "subscriptions": 48,
+        "confirmedSubscriptions": 48,
+        "pendingControls": 0,
+        "lastAckAt": 1791646317145
+      },
+      "MARKET": {
+        "state": "CONNECTING",
+        "connectedAt": 1791646286117,
+        "lastMessageAt": 1791646286117,
+        "reconnects": 5,
+        "lastError": "connect ECONNREFUSED 127.0.0.1:20091",
+        "subscriptions": 144,
+        "confirmedSubscriptions": 0,
+        "pendingControls": 0,
+        "lastAckAt": null
+      }
+    },
+    "quoteFactFreshness": {
+      "evaluatedAt": 1791646318433,
+      "maxAgeMs": 5000,
+      "retainedSymbols": 24,
+      "staleByField": {
+        "last": 24,
+        "mark": 24,
+        "bid": 12,
+        "ask": 12
+      },
+      "samples": [
+        {
+          "symbol": "SOLUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646317232,
+              "ageMs": 1201,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646317232,
+              "ageMs": 1201,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "BCHUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646280562,
+              "ageMs": 37871,
+              "fresh": false
+            },
+            "ask": {
+              "at": 1791646280562,
+              "ageMs": 37871,
+              "fresh": false
+            }
+          }
+        },
+        {
+          "symbol": "ETHUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646317464,
+              "ageMs": 969,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646317464,
+              "ageMs": 969,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "BNBUSDC",
+          "fields": {
+            "bid": {
+              "at": 1791646281139,
+              "ageMs": 37294,
+              "fresh": false
+            },
+            "ask": {
+              "at": 1791646281139,
+              "ageMs": 37294,
+              "fresh": false
+            }
+          }
+        },
+        {
+          "symbol": "XLMUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646281025,
+              "ageMs": 37408,
+              "fresh": false
+            },
+            "ask": {
+              "at": 1791646281025,
+              "ageMs": 37408,
+              "fresh": false
+            }
+          }
+        },
+        {
+          "symbol": "BTCUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646317322,
+              "ageMs": 1111,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646317322,
+              "ageMs": 1111,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "NEARUSDC",
+          "fields": {
+            "bid": {
+              "at": 1791646317396,
+              "ageMs": 1037,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646317396,
+              "ageMs": 1037,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "INJUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646280561,
+              "ageMs": 37872,
+              "fresh": false
+            },
+            "ask": {
+              "at": 1791646280561,
+              "ageMs": 37872,
+              "fresh": false
+            }
+          }
+        },
+        {
+          "symbol": "TIAUSDC",
+          "fields": {
+            "bid": {
+              "at": 1791646316718,
+              "ageMs": 1715,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646316718,
+              "ageMs": 1715,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "RAYSOLUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646281082,
+              "ageMs": 37351,
+              "fresh": false
+            },
+            "ask": {
+              "at": 1791646281082,
+              "ageMs": 37351,
+              "fresh": false
+            }
+          }
+        },
+        {
+          "symbol": "ONDOUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646317395,
+              "ageMs": 1038,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646317395,
+              "ageMs": 1038,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "ADAUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646317463,
+              "ageMs": 970,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646317463,
+              "ageMs": 970,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "FETUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646280695,
+              "ageMs": 37738,
+              "fresh": false
+            },
+            "ask": {
+              "at": 1791646280695,
+              "ageMs": 37738,
+              "fresh": false
+            }
+          }
+        },
+        {
+          "symbol": "JTOUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646316605,
+              "ageMs": 1828,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646316605,
+              "ageMs": 1828,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "ENAUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646281277,
+              "ageMs": 37156,
+              "fresh": false
+            },
+            "ask": {
+              "at": 1791646281277,
+              "ageMs": 37156,
+              "fresh": false
+            }
+          }
+        },
+        {
+          "symbol": "LDOUSDT",
+          "fields": {
+            "bid": {
+              "at": 1791646316609,
+              "ageMs": 1824,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791646316609,
+              "ageMs": 1824,
+              "fresh": true
+            }
+          }
+        }
+      ]
+    },
+    "recovery": {
+      "active": 0,
+      "queued": 0,
+      "maxConcurrent": 2,
+      "minStartIntervalMs": 500
+    },
+    "unit": "DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES",
+    "readOnly": true
+  },
+  "entryPermission": {
+    "status": "ANALYSIS_ONLY",
+    "executionFactsStatus": "BLOCKED",
+    "mode": "ANALYSIS_ONLY",
+    "analysisAllowed": true,
+    "riskObservation": true,
+    "orderAuthorization": false,
+    "reason": "ENTRY_APPROVAL_INVALID_OR_EXPIRED",
+    "executionMode": "TESTNET_ENABLED",
+    "autoExecutionMode": "AUTO_RUNNING"
+  },
+  "at": "2026-10-10T15:31:58.4815378Z",
+  "startAttempts": 1,
+  "tp": {
+    "status": "READY",
+    "required": 27,
+    "protected": 27,
+    "missing": 0,
+    "unverifiedTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "repairFailed": 0,
+    "positionFactUnresolved": 0
+  },
+  "privateStatus": "READY",
+  "health": "OFFLINE",
+  "engineSignals": 0
+}

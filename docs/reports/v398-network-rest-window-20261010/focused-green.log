@@ -1,0 +1,40 @@
+(node:24668) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25640) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run src/adapters/exchange/ExternalTradeAdapterTiming.test.ts src/adapters/binance/BinanceOfficialWeights.test.ts src/adapters/binance/BinanceTransportConnectionReuse.test.ts src/adapters/binance/requestBudget.test.ts
+
+(node:2456) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 C:/Users/5700x/.codex/worktrees/v398-network-rest-window/MITS/apps/engine
+
+(node:19812) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24288) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:7596) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15136) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/adapters/binance/BinanceOfficialWeights.test.ts (6 tests) 5ms
+ ✓ src/adapters/exchange/ExternalTradeAdapterTiming.test.ts (17 tests) 18ms
+ ✓ src/adapters/binance/requestBudget.test.ts (26 tests) 105ms
+(node:23492) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24756) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23024) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/adapters/binance/BinanceTransportConnectionReuse.test.ts (5 tests) 558ms
+
+ Test Files  4 passed (4)
+      Tests  54 passed (54)
+   Start at  08:58:29
+   Duration  1.02s (transform 278ms, setup 0ms, collect 682ms, tests 686ms, environment 1ms, prepare 454ms)
+
+(node:9784) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

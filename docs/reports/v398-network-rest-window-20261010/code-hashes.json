@@ -1,0 +1,22 @@
+[
+  {
+    "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapter.ts",
+    "sha256": "d1283a3e1fd9abb1f5bf4ff69bf81b09d79717a032f9eec60fac954b86aae1b9"
+  },
+  {
+    "path": "apps/engine/src/adapters/exchange/ExternalTradeAdapterTiming.test.ts",
+    "sha256": "5e64e76aa7fec30c85362fedb4d9b0dec87d963c9829c6895f079d7c4fe5a378"
+  },
+  {
+    "path": "apps/engine/src/adapters/binance/BinanceTransport.ts",
+    "sha256": "2683983c1f79bcb4dcf96da81401b55186da33eb3825dc8f3ddc6319d2ea04f0"
+  },
+  {
+    "path": "apps/engine/src/adapters/binance/BinanceOfficialWeights.test.ts",
+    "sha256": "919db0a850dc0cb3b0aa0d67fc61c49f6315962cd80091cb2551adbd3a5b7a1a"
+  },
+  {
+    "path": "package-lock.json",
+    "sha256": "6a75110f6a141f8098b2bbade98796ad5ad2acf1defd683eb86f5c39f09e29ca"
+  }
+]

@@ -33,10 +33,11 @@ export class ExternalTradeAdapter implements ExchangeTradeAdapter {
     await this.serverTimeFlight;
   }
   private async signed<T>(method:string,path:string,params:Record<string,string|number|boolean>={},purpose?:string,source?:string){
+    if(!Number.isInteger(this.recvWindowMs)||this.recvWindowMs<1000||this.recvWindowMs>60000)throw new Error('BINANCE_RECV_WINDOW_INVALID');
     const write=method!=='GET';
     if(write){try{this.transport.assertTestnetExchangeWrite();this.writeStats.testnetWrites++;this.writeStats.lastWriteAt=Date.now();this.writeStats.lastWritePath=path;}catch(error){this.writeStats.blockedProductionWriteAttempts++;throw error;}}
     const credentials=this.creds();await this.refreshServerTime();
-    const attempt=async()=>{const timestamp=Date.now()+(this.serverTime?.offset??0),q=new URLSearchParams();for(const[k,v]of Object.entries({...params,recvWindow:Math.min(60_000,Math.max(this.recvWindowMs,60_000)),timestamp}))q.set(k,typeof v==='number'&&BINANCE_DECIMAL_PARAMS.has(k)?binanceDecimal(v):String(v));const payload=q.toString();q.set('signature',createHmac('sha256',credentials.apiSecret).update(payload).digest('hex'));return this.transport.json<T>(`${path}?${q}`,{method,purpose,source,headers:{'X-MBX-APIKEY':credentials.apiKey}});};
+    const attempt=async()=>{const timestamp=Date.now()+(this.serverTime?.offset??0),q=new URLSearchParams();for(const[k,v]of Object.entries({...params,recvWindow:this.recvWindowMs,timestamp}))q.set(k,typeof v==='number'&&BINANCE_DECIMAL_PARAMS.has(k)?binanceDecimal(v):String(v));const payload=q.toString();q.set('signature',createHmac('sha256',credentials.apiSecret).update(payload).digest('hex'));return this.transport.json<T>(`${path}?${q}`,{method,purpose,source,headers:{'X-MBX-APIKEY':credentials.apiKey}});};
     try{return await attempt();}catch(error){const message=error instanceof Error?error.message:String(error);if(!/"code"\s*:\s*-1021\b|\b-1021\b/.test(message))throw error;this.serverTime=null;await this.refreshServerTime(true);return attempt();}
   }
   /** Shared rolling allowance for exhaustive history reads; exhaustion is fail-closed, never partial. */

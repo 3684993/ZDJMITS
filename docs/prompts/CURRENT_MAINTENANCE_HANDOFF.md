@@ -885,3 +885,9 @@ No strategy/model/TP/Entry parameter changes are authorized in that review.
 `local-identity-completion.json` 随后观测6个active origin；更晚独立只读事务 `natural-origin-completion.json` 取得7个历史origin及其exact intent/clientOrderId/原始quantity上限/任务订单投影（账户标识省略）。AAVE投影filled1.4，ZEC0.327，VVV8.01，另4个filled0；订单投影与授权数量在公开JSON中可复核。计数变化来自持续运行与不同观测时间，不拼为同一快照。现在已存在自然授权及成交投影，旧“未发生”条件不再成立；这些有限记录尚不能证明完整逐lot交易所链、所有独立补仓拦截或跨重启接受，相关验收仍UNKNOWN，不强迫交易/重启制造样本。
 
 代码提交3327c84的GitHub Actions已SUCCESS；证据提交1cd6d75的272项远端哈希PASS，其Actions在回执时in_progress。最后归档提交仅证据/报告变化，不改变已加载Engine源码/dist。额外在线原生GET未完成的UNKNOWN、临时私有备份保留、风险校准INSUFFICIENT_EVIDENCE等边界继续有效。
+
+## 2026-10-10 N3 independent REST timing/weight repair — offline only
+
+分支codex/v398-network-n3-recvwindow独立基于main3cb72de，未依赖N1 PR25。实际签名查询回归复现recvWindow恒60000：17项中10fail/7pass；修复为遵守合法配置，非法值在clock/network/write boundary前拒绝，5s默认不再被静默放宽。官方USD-M leverageBracket=1、commissionRate=20，而代码都30；weight回归2fail/4pass后仅修正两个估算，保持预算上限/并发/PRIVATE/TP reserve/响应头权威和429/418约束。451/429/418/502/503 unknown/SOCKS8000ms均为内存mock单次POST失败，无真实交易所/数据库操作、无盲重试/出口fallback。
+
+最终本分支npm ci/full verify PASS253files/2180tests，专项4files/54tests，S00/VPN回环PASS；精确PR CI待独立核验。原失败、timing-only完整pass与最后完整日志全部保留。报告docs/reports/v398-network-rest-window-20261010/REST_TIMING_REPORT.md。原24h已08:34因TP gate中止，未恢复或重启，N1样本17/17是本地缓存而非新签名证明；现网/代理/授权/TP保护及禁补仓全不变。N2实际降噪/真实负载A/B及余下N3 ACK/depth/private-event/socket共享仍待下一独立阶段，不能宣称整个网络优化完成。

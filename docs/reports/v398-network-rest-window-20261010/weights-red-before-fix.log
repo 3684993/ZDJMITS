@@ -1,0 +1,77 @@
+(node:23064) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26320) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run src/adapters/binance/BinanceOfficialWeights.test.ts
+
+(node:24060) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 C:/Users/5700x/.codex/worktrees/v398-network-rest-window/MITS/apps/engine
+
+(node:19900) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11584) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25868) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11724) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/adapters/binance/BinanceOfficialWeights.test.ts (6 tests | 2 failed) 9ms
+   × uses official leverageBracket request weight1 without changing its private/source classification 6ms
+     → expected 30 to be 1 // Object.is equality
+   × uses official commissionRate request weight20 without changing its private/source classification 0ms
+     → expected 30 to be 20 // Object.is equality
+   ✓ uses official multiAssetsMargin request weight30 without changing its private/source classification 0ms
+   ✓ uses official positionSide/dual request weight30 without changing its private/source classification 0ms
+   ✓ uses official income request weight30 without changing its private/source classification 0ms
+   ✓ uses official openOrders request weight40 without changing its private/source classification 0ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/adapters/binance/BinanceOfficialWeights.test.ts > uses official leverageBracket request weight1 without changing its private/source classification
+AssertionError: expected 30 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 30
+
+ ❯ src/adapters/binance/BinanceOfficialWeights.test.ts:5:101
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/adapters/binance/BinanceOfficialWeights.test.ts > uses official commissionRate request weight20 without changing its private/source classification
+AssertionError: expected 30 to be 20 // Object.is equality
+
+- Expected
++ Received
+
+- 20
++ 30
+
+ ❯ src/adapters/binance/BinanceOfficialWeights.test.ts:5:101
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  2 failed | 4 passed (6)
+   Start at  08:58:26
+   Duration  456ms (transform 96ms, setup 0ms, collect 150ms, tests 9ms, environment 0ms, prepare 98ms)
+
+(node:8812) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path C:\Users\5700x\.codex\worktrees\v398-network-rest-window\MITS\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location C:\Users\5700x\.codex\worktrees\v398-network-rest-window\MITS\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/adapters/binance/BinanceOfficialWeights.test.ts

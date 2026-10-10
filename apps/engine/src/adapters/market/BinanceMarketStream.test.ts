@@ -55,7 +55,7 @@ describe('BinanceMarketStream cache and gap recovery',()=>{
 
 it('paces split public/market subscriptions independently below the per-connection message limit',async()=>{
  vi.useFakeTimers();const stream=new BinanceMarketStream({} as never,vi.fn()),sent={PUBLIC:[] as number[],MARKET:[] as number[]};
- try{for(const laneName of ['PUBLIC','MARKET'] as const)(stream as any).lanes[laneName].socket={readyState:1,send:()=>sent[laneName].push(Date.now()),close:vi.fn()};(stream as any).symbols=new Set(Array.from({length:175},(_,i)=>`S${i}USDT`));(stream as any).subscribeSymbols();await vi.advanceTimersByTimeAsync(4000);expect(sent.PUBLIC).toHaveLength(2);expect(sent.MARKET).toHaveLength(8);expect(stream.metrics().subscriptions).toBeLessThan(1024);for(const rows of [sent.PUBLIC,sent.MARKET])for(const at of rows)expect(rows.filter(t=>t>=at&&t<at+1000).length).toBeLessThanOrEqual(3);}finally{stream.stop();vi.useRealTimers();}
+ try{for(const laneName of ['PUBLIC','MARKET'] as const)(stream as any).lanes[laneName].socket={readyState:1,send:()=>sent[laneName].push(Date.now()),close:vi.fn()};(stream as any).symbols=new Set(Array.from({length:175},(_,i)=>`S${i}USDT`));(stream as any).subscribeSymbols();await vi.advanceTimersByTimeAsync(4000);expect(sent.PUBLIC).toHaveLength(2);expect(sent.MARKET).toHaveLength(9);expect((stream as any).lanes.PUBLIC.subscribed.size).toBeLessThan(1024);expect((stream as any).lanes.MARKET.subscribed.size).toBeLessThan(1024);for(const rows of [sent.PUBLIC,sent.MARKET])for(const at of rows)expect(rows.filter(t=>t>=at&&t<at+1000).length).toBeLessThanOrEqual(3);}finally{stream.stop();vi.useRealTimers();}
 });
 
 it('isolates closed 5m/15m bars and rejects a late open-bar downgrade',()=>{
@@ -211,4 +211,41 @@ it('reconciles every event class to lane totals at one snapshot time, including 
     }
     expect(JSON.stringify(traffic)).not.toContain('REJECTEDUSDT');
   } finally {vi.useRealTimers();}
+});
+
+describe('retained-only USD-M market streams under SSH congestion',()=>{
+ it('replaces both global MARKET arrays with per-symbol facts for normal retained cohorts',()=>{
+   const stream=new BinanceMarketStream({} as never,vi.fn());
+   stream.updateSymbols(['BTCUSDT','ETHUSDC']);
+   const desired=(stream as any).desired('MARKET') as Set<string>;
+   expect([...desired].sort()).toEqual([
+     'btcusdt@ticker','btcusdt@markPrice@1s','btcusdt@kline_1m','btcusdt@kline_5m','btcusdt@kline_15m','btcusdt@aggTrade',
+     'ethusdc@ticker','ethusdc@markPrice@1s','ethusdc@kline_1m','ethusdc@kline_5m','ethusdc@kline_15m','ethusdc@aggTrade'
+   ].sort());
+   expect(desired.has('!ticker@arr')).toBe(false);
+   expect(desired.has('!markPrice@arr@1s')).toBe(false);
+   stream.updateSymbols(['ETHUSDC']);
+   const shrunk=(stream as any).desired('MARKET') as Set<string>;
+   expect(shrunk.size).toBe(6);
+   expect([...shrunk].every(value=>value.startsWith('ethusdc@'))).toBe(true);
+   stream.stop();
+ });
+ it('keeps every retained symbol when stream budget requires a controlled fallback',()=>{
+   const stream=new BinanceMarketStream({} as never,vi.fn());
+   stream.updateSymbols(Array.from({length:175},(_,i)=>`S${i}USDT`));
+   const medium=(stream as any).desired('MARKET') as Set<string>;
+   expect(medium.size).toBe(876);
+   expect(medium.has('!ticker@arr')).toBe(false);
+   expect(medium.has('!markPrice@arr@1s')).toBe(true);
+   expect(medium.has('s174usdt@ticker')).toBe(true);
+   expect(medium.size).toBeLessThan(1024);
+   stream.updateSymbols(Array.from({length:192},(_,i)=>`S${i}USDT`));
+   const wide=(stream as any).desired('MARKET') as Set<string>;
+   expect(wide.size).toBe(770);
+   expect(wide.has('!ticker@arr')).toBe(true);
+   expect(wide.has('!markPrice@arr@1s')).toBe(true);
+   expect(wide.has('s191usdt@kline_15m')).toBe(true);
+   expect(wide.size).toBeLessThan(1024);
+   stream.stop();
+ });
 });

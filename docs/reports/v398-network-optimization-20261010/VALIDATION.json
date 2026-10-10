@@ -1,0 +1,20 @@
+{
+  "observedAt": "2026-10-10T00:49:11.1774048Z",
+  "npmCiExit": 0,
+  "focusedFiles": 3,
+  "focusedTests": 73,
+  "fullVerifyExit": 0,
+  "vitestFiles": 252,
+  "vitestTests": 2179,
+  "engineFiles": 217,
+  "engineTests": 1988,
+  "s00": "PASS",
+  "vpnLoopback": "PASS via verify:scripts isolated mocks",
+  "typecheck": "PASS",
+  "build": "PASS",
+  "initialS00Failure": "PRESERVED_INTENTIONAL_DEFAULT_IDENTITY_CHANGE",
+  "unresolvedDependencyAdvisories": 4,
+  "deployment": "NOT_DEPLOYED",
+  "runtimeMutations": 0,
+  "ci": "PENDING_PR_HEAD"
+}

@@ -1,4 +1,5 @@
 import {isIP} from 'node:net';
+import {resolveBinanceWsEndpoint, type BinanceWsLane} from './wsEndpoint.js';
 import {binanceReadContext} from './binanceReadContext.js';
 import { createHash, randomUUID } from 'node:crypto';
 import { getBinanceRequestBudget, binanceBudgetLane, binanceHealthBlocksEntry, binanceEntryBlockReason, type RequestBudgetMeta } from './requestBudget.js';
@@ -58,11 +59,10 @@ export class BinanceTransport {
  restRoute(){const host=new URL(this.effectiveBaseUrl()).hostname;return{mode:'CONFIGURED' as const,throughProxy:Boolean(this.agent),host,routeIdentity:this.routeIdentity,proxyUrl:this.agent?this.settings.proxy.url:null,failClosed:true,deprecatedTestnetRestHost:host==='testnet.binancefuture.com'};}
  private restAgent(){this.assertProxy();return this.agent!;}
  assertTestnetExchangeWrite(){const url=new URL(this.effectiveBaseUrl());if(this.settings.exchange.environment!=='TESTNET'||this.settings.executionMode!=='TESTNET_ENABLED'||!isAllowedTestnetRestHost(url.hostname))throw new Error('TESTNET_ONLY_WRITE_LOCK: Binance Demo Testnet write disabled for this environment/host');this.assertProxy();}
- private configuredWsUrl(){const exchange=this.settings.exchange as typeof this.settings.exchange & {testnetWsBaseUrl?:string;productionWsBaseUrl?:string};return exchange.environment==='TESTNET'?(exchange.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(exchange.productionWsBaseUrl??'wss://fstream.binance.com/ws');}
- private splitWsRoot(){const raw=new URL(this.configuredWsUrl());if(this.settings.exchange.environment==='TESTNET'&&raw.hostname==='stream.binancefuture.com')raw.hostname='fstream.binancefuture.com';raw.pathname='/';raw.search='';raw.hash='';return raw.toString().replace(/\/$/,'');}
- effectiveWsUrl(lane?:'PUBLIC'|'MARKET'){if(!lane)return this.configuredWsUrl();return `${this.splitWsRoot()}/${lane.toLowerCase()}/ws`;}
+ private configuredWsUrl(){const exchange=this.settings.exchange as typeof this.settings.exchange & {testnetWsBaseUrl?:string;productionWsBaseUrl?:string};return exchange.environment==='TESTNET'?(exchange.testnetWsBaseUrl??'wss://demo-fstream.binance.com'):(exchange.productionWsBaseUrl??'wss://fstream.binance.com');}
+ effectiveWsUrl(lane:BinanceWsLane='PUBLIC'){return resolveBinanceWsEndpoint(this.settings.exchange.environment,this.configuredWsUrl(),lane);}
  websocketOptions(){this.assertProxy();return{agent:this.agent!};}
- websocketRoute(){const configuredUrl=this.configuredWsUrl(),publicUrl=this.effectiveWsUrl('PUBLIC'),marketUrl=this.effectiveWsUrl('MARKET');return{url:configuredUrl,publicUrl,marketUrl,throughProxy:Boolean(this.agent),proxyUrl:this.agent?this.settings.proxy.url:null,tlsServername:new URL(marketUrl).hostname,routeIdentity:this.routeIdentity,failClosed:true};}
+ websocketRoute(){const configuredUrl=this.configuredWsUrl(),publicUrl=this.effectiveWsUrl('PUBLIC'),marketUrl=this.effectiveWsUrl('MARKET'),privateUrl=this.effectiveWsUrl('PRIVATE');return{url:configuredUrl,publicUrl,marketUrl,privateUrl,throughProxy:Boolean(this.agent),proxyUrl:this.agent?this.settings.proxy.url:null,tlsServername:new URL(marketUrl).hostname,routeIdentity:this.routeIdentity,failClosed:true};}
  private assertBinance(url:URL){if(!(url.hostname==='binance.com'||url.hostname.endsWith('.binance.com'))&&!(url.hostname==='binancefuture.com'||url.hostname.endsWith('.binancefuture.com')))throw new Error(`Refusing non-Binance transport host: ${url.hostname}`);this.assertProxy();}
  private async ensureRequestWeightLimit(){if(this.budget.health().limitSource==='BINANCE_EXCHANGE_INFO')return;if(!this.requestLimitFlight){const flight=this.json<any>('/fapi/v1/exchangeInfo',{source:'RATE_LIMIT_CONTROL',purpose:'REQUEST_WEIGHT_DISCOVERY'}).then(()=>{}).finally(()=>{if(this.requestLimitFlight===flight)this.requestLimitFlight=null;});this.requestLimitFlight=flight;}await this.requestLimitFlight;}
  async json<T>(pathOrUrl:string,init:{method?:string;headers?:Record<string,string>;body?:string;timeoutMs?:number;source?:string;purpose?:string;signal?:AbortSignal;onDispatch?:(startedAt:number)=>void}={}):Promise<T>{

@@ -2,7 +2,8 @@
   "historicalCommit": "d3f6d262f3bcc05dbd3d9b793f8a3f41da7e5fee",
   "historicalPackageLockSource": "d3f6d262f3bcc05dbd3d9b793f8a3f41da7e5fee:package-lock.json",
   "currentSource": "config/settings.default.json",
-  "currentSha256": "bf818ea7d5800d92fa63d26cbbb24c20c4ad841149f5128b168887857c397091",
+  "currentSha256": "3a069c1b372e02943b16c4d5f67c9d712fd10aa9382be318a4eda8595452b3ed",
   "currentPackageLockSha256": "9db214645f95ce22bbd1994e76cbaab35fe26fd97ee56d2e1f712d4286135094",
-  "hashNormalization": "sha256 over LF-normalized UTF-8 text"
+  "hashNormalization": "sha256 over LF-normalized UTF-8 text",
+  "currentChangeReason": "N1 explicit official Demo WS default migration; historical identity unchanged"
 }

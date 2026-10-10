@@ -1,0 +1,36 @@
+{
+  "observedAt": "2026-10-10T00:45:18.396Z",
+  "rows": [
+    {
+      "lane": "public",
+      "url": "wss://demo-fstream.binance.com/public/ws/btcusdt@bookTicker",
+      "startedAt": "2026-10-10T00:44:48.373Z",
+      "opened": true,
+      "messages": 24,
+      "decodedBytes": 3936,
+      "eventTypes": [
+        "bookTicker"
+      ],
+      "httpStatus": null,
+      "error": null,
+      "completedAt": "2026-10-10T00:45:03.385Z"
+    },
+    {
+      "lane": "market",
+      "url": "wss://demo-fstream.binance.com/market/ws/btcusdt@markPrice@1s",
+      "startedAt": "2026-10-10T00:45:03.386Z",
+      "opened": true,
+      "messages": 13,
+      "decodedBytes": 2366,
+      "eventTypes": [
+        "markPriceUpdate"
+      ],
+      "httpStatus": null,
+      "error": null,
+      "completedAt": "2026-10-10T00:45:18.396Z"
+    }
+  ],
+  "route": "EXISTING_PROXY_20091_NO_FALLBACK",
+  "privateDemoCompatibility": "NOT_PROBED_NO_LISTEN_KEY_WRITE_AUTHORIZED",
+  "exchangeWrites": 0
+}

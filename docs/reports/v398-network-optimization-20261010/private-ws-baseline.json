@@ -1,0 +1,11 @@
+{
+  "observedAt": "2026-10-10T00:48:27.1561046Z",
+  "state": "LIVE",
+  "reconnects": 0,
+  "lastMessageAt": 1791593287988,
+  "lastErrorHash": null,
+  "lastErrorClassification": null,
+  "privateEventDeliveryProof": "UNKNOWN_CURRENT_METRICS_NOT_EVENT_TYPED",
+  "localReads": 1,
+  "exchangeWrites": 0
+}

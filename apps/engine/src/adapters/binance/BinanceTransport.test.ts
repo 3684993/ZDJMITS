@@ -7,7 +7,7 @@ import {binanceBudgetLane} from './requestBudget.js';
 import {withBinanceReadContext} from './binanceReadContext.js';
 import https from 'node:https';
 import {EventEmitter} from 'node:events';
-const settings=(enabled=true)=>({executionMode:'TESTNET_ENABLED',exchange:{environment:'TESTNET',testnetBaseUrl:'https://demo-fapi.binance.com',testnetRestBaseUrl:'https://demo-fapi.binance.com',testnetWsBaseUrl:'wss://stream.binancefuture.com/ws',productionBaseUrl:'https://fapi.binance.com',productionRestBaseUrl:'https://fapi.binance.com',productionWsBaseUrl:'wss://fstream.binance.com/ws'},proxy:{enabled,url:'socks5h://127.0.0.1:20081',forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,failClosed:true,binanceRestRoute:'CONFIGURED'}});
+const settings=(enabled=true)=>({executionMode:'TESTNET_ENABLED',exchange:{environment:'TESTNET',testnetBaseUrl:'https://demo-fapi.binance.com',testnetRestBaseUrl:'https://demo-fapi.binance.com',testnetWsBaseUrl:'wss://demo-fstream.binance.com/ws',productionBaseUrl:'https://fapi.binance.com',productionRestBaseUrl:'https://fapi.binance.com',productionWsBaseUrl:'wss://fstream.binance.com/ws'},proxy:{enabled,url:'socks5h://127.0.0.1:20081',forceBinanceRest:true,forceBinanceWs:true,proxyDns:true,failClosed:true,binanceRestRoute:'CONFIGURED'}});
 
 it('reports quote dispatch time only after admission, before the wire request',async()=>{
  vi.useFakeTimers();vi.setSystemTime(10000);
@@ -52,16 +52,16 @@ it('records network phase evidence and removes pending TLS listeners when the re
  }finally{requestSpy.mockRestore();}
 });
 describe('BinanceTransport proxy-only boundary',()=>{
- it('routes REST and WebSocket through the configured proxy',()=>{const transport=new BinanceTransport(settings() as never);expect(transport.restRoute()).toMatchObject({mode:'CONFIGURED',throughProxy:true,proxyUrl:'socks5h://127.0.0.1:20081',failClosed:true});expect((transport as any).restAgent()).toBeDefined();expect(transport.websocketRoute()).toMatchObject({throughProxy:true,proxyUrl:'socks5h://127.0.0.1:20081',tlsServername:'fstream.binancefuture.com',failClosed:true});expect(transport.websocketOptions().agent).toBeDefined();});
+ it('routes REST and WebSocket through the configured proxy',()=>{const transport=new BinanceTransport(settings() as never);expect(transport.restRoute()).toMatchObject({mode:'CONFIGURED',throughProxy:true,proxyUrl:'socks5h://127.0.0.1:20081',failClosed:true});expect((transport as any).restAgent()).toBeDefined();expect(transport.websocketRoute()).toMatchObject({throughProxy:true,proxyUrl:'socks5h://127.0.0.1:20081',tlsServername:'demo-fstream.binance.com',failClosed:true});expect(transport.websocketOptions().agent).toBeDefined();});
  it('ignores a legacy DIRECT flag and still uses the configured proxy',()=>{const cfg={...settings(),proxy:{...settings().proxy,binanceRestRoute:'DIRECT',forceBinanceRest:false,forceBinanceWs:false}};const transport=new BinanceTransport(cfg as never);expect(transport.restRoute()).toMatchObject({mode:'CONFIGURED',throughProxy:true});expect((transport as any).restAgent()).toBeDefined();expect(transport.websocketRoute().throughProxy).toBe(true);});
  it('fails closed when proxy is disabled instead of silently using DIRECT',async()=>{const transport=new BinanceTransport(settings(false) as never);expect(transport.restRoute()).toMatchObject({mode:'CONFIGURED',throughProxy:false,failClosed:true});expect(()=>transport.websocketOptions()).toThrow('PROXY_REQUIRED');await expect(transport.json('/fapi/v1/time')).rejects.toThrow('PROXY_REQUIRED');});
 });
-it('derives the 2026 split Public/Market WebSocket routes while preserving the legacy private-compatible URL',()=>{
+it('derives all official WS lanes without an unrouted private fallback',()=>{
  const transport=new BinanceTransport(settings() as never);
- expect(transport.effectiveWsUrl()).toBe('wss://stream.binancefuture.com/ws');
- expect(transport.effectiveWsUrl('PUBLIC')).toBe('wss://fstream.binancefuture.com/public/ws');
- expect(transport.effectiveWsUrl('MARKET')).toBe('wss://fstream.binancefuture.com/market/ws');
- expect(transport.websocketRoute()).toMatchObject({publicUrl:'wss://fstream.binancefuture.com/public/ws',marketUrl:'wss://fstream.binancefuture.com/market/ws',tlsServername:'fstream.binancefuture.com'});
+ expect(transport.effectiveWsUrl()).toBe('wss://demo-fstream.binance.com/public/ws');
+ expect(transport.effectiveWsUrl('PUBLIC')).toBe('wss://demo-fstream.binance.com/public/ws');
+ expect(transport.effectiveWsUrl('MARKET')).toBe('wss://demo-fstream.binance.com/market/ws');
+ expect(transport.websocketRoute()).toMatchObject({publicUrl:'wss://demo-fstream.binance.com/public/ws',marketUrl:'wss://demo-fstream.binance.com/market/ws',tlsServername:'demo-fstream.binance.com'});
 });
 it('reserves the private-truth lane for listen-key maintenance without relying on signature heuristics',async()=>{const transport=new BinanceTransport(settings() as never),run=vi.spyOn((transport as any).budget,'run').mockResolvedValue({} as never);try{await transport.json('/fapi/v1/listenKey',{method:'PUT',headers:{'X-MBX-APIKEY':'isolated-test'}});expect(run.mock.calls[0]![0]).toBe(1);expect(run.mock.calls[0]![1]).toBe(1);expect(run.mock.calls[0]![3]).toMatchObject({source:'USER_DATA_STREAM',endpoint:'/fapi/v1/listenKey'});}finally{run.mockRestore();}});
 it.each([

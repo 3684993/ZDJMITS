@@ -1,0 +1,38 @@
+# N0/N1 network evidence and independent offline repair
+
+Source base: main `3cb72deff296831885b13de4ab054b1e5712fcb7`; isolated worktree `v398-network-optimization/MITS`, branch `codex/v398-network-n1`. AGENTS.md is empty. Read the requested prompt, entire referenced N0–N5 plan, current handoff, deployment receipt, 451 lessons, acceptance baseline and Issue23. Runtime remains PID23688/build3.9.8-bb45c11acbe9819a3456; GitHub documentation updates are not a deployment.
+
+## Safety exception discovered by read-only baseline
+
+The actual existing monitor had already marked the original attempt **ABORTED_SAFETY_FAILURE at 2026-10-10 08:34:00.270+08**, `LOCAL_TP_GATE_NOT_CLOSED`: local TP14/15, missing1, private age15.952s. See immutable copied `acceptance-aborted.json` / `acceptance-abort-checkpoint.json` and Issue22 comment6091779048. At08:41:50 TP15/16 missing1; at08:43:55 local cache17/17 READY, private9.129s, Production0. This later recovery does not resume an aborted acceptance or prove a fresh signed exchange TP check. No changes to the monitor, protection, Engine, proxy, models, Settings, approval, live DB or SSH server. Do not overwrite historical RUNNING receipts or claim24h PASS. TP-missing cause and Issue23 same-origin partial-fill identity are not established by this network baseline.
+
+## Two disjoint 60s decoded application windows
+
+| UTC+08 snapshot | Retained symbols | PUBLIC bytes | MARKET bytes | Global stream classes share | quoteFresh | klineFresh | Invalid sequence |
+| --- | ---: | ---: | ---: | ---: | ---: | ---: | ---: |
+| 08:41:50.887 | 44 | 2,612,405 | 14,706,995 | 79.49% | 31.82% | 63.64% | 14 |
+| 08:43:55.599 | 46 | 2,943,855 | 16,654,275 | 79.89% | 100% | 67.39% | 13 |
+
+Both MARKET reconnect counts2, PUBLIC0; subscription evidence remains LOCAL_REQUESTED_NOT_EXCHANGE_ACKED. The global-class share sums bookTicker, markPrice and24hTicker bytes, **not an achievable savings estimate**. Required retained-symbol bytes are included; unused-symbol fraction UNKNOWN. These are decoded WS application bytes, not compressed TCP/SSH wire bytes. SSH retransmissions/backlog/send queues UNKNOWN: no independently authorized management shell, dedicated forward account MaxSessions0 preserved. No shell opening or egress rotation attempted. Queue/reusedSocket/phase/source/purpose samples are retained in sanitized baseline JSON; no private orders, balances, credentials or raw SQLite uploaded. Per-request metadata does not establish socket sharing across every Transport instance.
+
+Actual route at these times: REST demo-fapi.binance.com; configured WS stream.binancefuture.com/ws, PUBLIC/MARKET rewritten by old runtime to fstream.binancefuture.com/public/ws and /market/ws. Existing proxy route hash retained in each JSON. LIVE alone does not prove private event delivery. N0 collector performs exactly five localhost GETs per saved snapshot, zero exchange GET/POST, and no lifecycle writes. Two snapshots used; optional compatibility probe below is separately counted.
+
+## N1 official contract and minimal repair
+
+[Official General Info](https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/general-info) specifies Demo REST demo-fapi.binance.com and WS demo-fstream.binance.com. [Connect](https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Connect) specifies PUBLIC/MARKET/PRIVATE routing; [User Data Streams](https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/user-data-streams) specifies private/ws/listenKey. [Migration notice](https://developers.binance.com/en/docs/products/derivatives-trading-usds-futures/websocket-market-streams/Important-WebSocket-Change-Notice) also shows private query listenKey/events and states a2026-04-23 deadline despite last-modified October9. Record this documentation date discrepancy; do not invent a newly enforced October9 cutoff.
+
+Offline repair updates both JSON and Zod default, routes all three lanes on environment-specific official hosts, explicitly binds user data to PRIVATE and adds handshake bound. Wrong environment/host/protocol/credential-bearing/query/path config rejects before listenKey creation. **Explicit legacy config requires explicit approved migration; never silently rewrite an old host or retry another host after451.** Existing dynamic configuration retains priority; new defaults do not overwrite stored live Settings. Deploying this PR against old stored WS config without separately approved migration would fail closed. This is intentionally not a deploy-ready claim.
+
+Metrics distinguish lastPong, account/order events and successful listenKey keepalive. An idle responding socket has UNKNOWN private event evidence; event counters count received events, not deduplicated fills/Entry authorizations. Existing reconciliation, TTL60s, TP, signed account authority and downstream immutable-origin/idempotency ownership remain unchanged.
+
+Same existing20091 proxy, bounded two sequential15s **public read-only subscriptions**, official Demo/public BTC bookTicker and Demo/market BTC markPrice@1s both OPEN and delivered24/13 typed events. See `demo-public-probe.json`. No REST/listenKey/credentials/write/alternate host/Production probe. This positively establishes sampled PUBLIC/MARKET Demo routing only. Actual authenticated PRIVATE Demo compatibility remains pending; offline simulated private account/order/expired-key events are not real-account delivery proof. Notice/query variant discrepancy remains a follow-up compatibility item.
+
+## N2/N3 next independent PR anchors
+
+N2 has quantified baseline and static subscription audit, not delivered bandwidth reduction. Replace all-market BBO/mark only after a retained-symbol union proof covers positions, pending orders, legal candidates and discovery, including churn/tombstones and per-field freshness. Evaluate ticker discovery dependency separately; add desired/sent/ACK state and bounded control pacing before claiming successful subscriptions. Compare synthetic replay and real post-authorized shadow windows; do not present two old-runtime windows as before/after optimization.
+
+N3 confirmed expression in ExternalTradeAdapter.signed `min(60000,max(config,60000))` always produces60000 for valid1000–60000 config; isolate an actual signed-query mock regression and conservative fix in the REST PR. Existing per-route budget, private reserve, background single-slot, clock controls, GET cancellation and UNKNOWN exact-order lookup stay protected. Static risks requiring tests: partial snapshot versus diff sequence, renewal/old socket races, event dedup at durable owner, ACK timeout and reconnect storms, shared agents across instances. Do not blindly broaden sockets, retry POST or lengthen private freshness.451 legal restriction,429/418 backoff,502/503 unknown execution and SOCKS timeout remain distinct. No proxy-script edits without a reproduced technical defect.
+
+## N4 and remaining scope
+
+N1 focused regression passes73 tests initially. First full verify stopped at intentionally changed settings-default S00 identity; preserved raw failure log, mechanically updated only current LF-normalized settings hash, original historical snapshot/lock untouched. Final full verify and exact PR CI results are recorded separately in VALIDATION.json/CI evidence when complete. No full-optimization,451-root-cause resolution, authenticated PRIVATE runtime validation, signed TP closeout or new24h acceptance claim. Deliver N0/N1 first as explicitly allowed by the task prompt; N2/N3 implementation and post-authorized runtime A/B remain next phases.

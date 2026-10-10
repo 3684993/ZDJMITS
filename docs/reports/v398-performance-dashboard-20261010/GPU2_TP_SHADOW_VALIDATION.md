@@ -11,4 +11,3 @@ shadow-npm-ci.log；shadow-verify-ci.log：完整verify脚本/S00/typecheck/buil
 
 ## Release gates
 未部署/未Engine重启/未修改Settings/未真实TP改价/补仓。原24h 08:34 ABORTED，签名TP 02:10Z的25/25仅历史样本；正式发布仍需所有新鲜门禁及新24h。SHADOW protocol tests/CI均不是release approval。
-

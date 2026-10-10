@@ -5,7 +5,7 @@ import {api,brainRuns} from '../api/client';
 import {useSystemStore} from '../stores/system';
 import Panel from '../components/Panel.vue';
 import PerformanceTrend from '../components/PerformanceTrend.vue';
-import {aiLamp,proxyLamp,privateLamp,uniqueAiRunStats,ageMs,numberOrNull,type LampFact} from '../utils/performanceFacts';
+import {aiLamp,proxyLamp,privateLamp,uniqueAiRunStats,numberOrNull,type LampFact} from '../utils/performanceFacts';
 
 type HostSample={
   asOf:number;instanceId:string;source:string;

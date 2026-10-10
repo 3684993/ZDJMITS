@@ -1,0 +1,70 @@
+(node:2756) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5764) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> zdj-mits-v3@3.9.8 build
+> npm run build -ws --if-present
+
+(node:18460) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:5128) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/contracts@3.9.8 build
+> tsc -p tsconfig.json
+
+
+> @zdj/core@3.9.8 build
+> tsc -p tsconfig.json
+
+
+> @zdj/dashboard@3.9.8 build
+> vue-tsc -b && vite build
+
+(node:9520) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2246 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                                0.42 kB │ gzip:   0.30 kB
+dist/assets/financePerformance-CX0A5Y6c.css                                    0.27 kB │ gzip:   0.19 kB
+dist/assets/BrainView-C19KGV8J.css                                             0.41 kB │ gzip:   0.25 kB
+dist/assets/SettingsView-C12tN_s6.css                                          4.20 kB │ gzip:   1.10 kB
+dist/assets/PerformanceView-BmI8qEi-.css                                       6.33 kB │ gzip:   1.42 kB
+dist/assets/OverviewView-CGDHcNOF.css                                          9.15 kB │ gzip:   1.98 kB
+dist/assets/index-Cp_LwitK.css                                                44.05 kB │ gzip:  10.05 kB
+dist/assets/positionModel-UU3TmqIC.js                                          0.28 kB │ gzip:   0.20 kB
+dist/assets/EmptyState.vue_vue_type_script_setup_true_lang-Dn1jW9uT.js         0.30 kB │ gzip:   0.24 kB
+dist/assets/format-BTnsUY7D.js                                                 0.37 kB │ gzip:   0.28 kB
+dist/assets/Panel.vue_vue_type_script_setup_true_lang-D_sP8aNS.js              0.56 kB │ gzip:   0.34 kB
+dist/assets/StatusBadge.vue_vue_type_script_setup_true_lang-DeaDQqKy.js        0.58 kB │ gzip:   0.40 kB
+dist/assets/MemoryView-B73q93tD.js                                             2.35 kB │ gzip:   1.18 kB
+dist/assets/UniverseView-BWB2eeQ2.js                                           4.95 kB │ gzip:   2.14 kB
+dist/assets/HumanManagedView-B4U7oO8-.js                                       6.89 kB │ gzip:   3.09 kB
+dist/assets/PositionsView-qxnpzzQ0.js                                          7.30 kB │ gzip:   3.14 kB
+dist/assets/OrdersView-nDaVeeNV.js                                             7.42 kB │ gzip:   2.73 kB
+dist/assets/IntelligenceView-DOjlIL9s.js                                       7.88 kB │ gzip:   2.85 kB
+dist/assets/TemporalIntelligenceView-DlaQaUC1.js                               8.24 kB │ gzip:   3.02 kB
+dist/assets/OperationsView-BwMP6IgY.js                                         8.24 kB │ gzip:   3.42 kB
+dist/assets/PositionConsole.vue_vue_type_script_setup_true_lang-D07EfwJd.js   13.21 kB │ gzip:   5.62 kB
+dist/assets/BrainView-D5aXOGop.js                                             15.17 kB │ gzip:   6.03 kB
+dist/assets/PerformanceView-Bi9shYcB.js                                       17.05 kB │ gzip:   7.19 kB
+dist/assets/TradeRecordsView-DrloEls_.js                                      23.79 kB │ gzip:   8.79 kB
+dist/assets/OverviewView-BeFyuCV_.js                                          70.04 kB │ gzip:  23.06 kB
+dist/assets/SettingsView-B6enM86f.js                                          80.87 kB │ gzip:  23.78 kB
+dist/assets/index-BdxLhg-x.js                                                292.72 kB │ gzip:  90.79 kB
+dist/assets/financePerformance-FhoCYCuQ.js                                   523.04 kB │ gzip: 175.15 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 8.97s
+
+> @zdj/engine@3.9.8 build
+> tsc -p tsconfig.json
+
+BUILD_EXIT=0

@@ -1,3 +1,15 @@
+# [当前项目新主任务 v3.9.8仪表盘性能优化：最先执行]
+
+## 2026-10-10 新聊天入口：v3.9.8仪表盘性能优化（GPU2利用率及统一驾驶舱）
+
+- **主新ChatGPT提示词**：[CHATGPT_V398_PERFORMANCE_DASHBOARD_GPU_NEXT_CHAT_20261010](./prompts/CHATGPT_V398_PERFORMANCE_DASHBOARD_GPU_NEXT_CHAT_20261010.md)。
+- **完整实施计划**：[V398_DASHBOARD_GPU_OBSERVABILITY_AND_PERFORMANCE_PLAN_20261010](./plans/V398_DASHBOARD_GPU_OBSERVABILITY_AND_PERFORMANCE_PLAN_20261010.md)。
+- **Codex任务**：[Issue #30](https://github.com/3684993/ZDJMITS/issues/30)，关联Issue #26 (双RX7900XTX 27B物理负载与统一原子lease)、#28 (持仓/挂单/TP Review SHADOW)、#24 (Binance REST/WS/SOCKS)、#23 (ENA“补仓一次”原始订单身份)。
+- **实际源码已核实：** Dashboard Vue3 + Pinia + ECharts5 + Vue Router；现有Overview/Operations/Brain及EquityChart、/brain/resources、/brain/runs、/diagnostics/binance-governance、/diagnostics/market-stream-traffic、/diagnostics/private-sync、/observability/entry等可复用。当前缺真实物理PCI↔模型PID8083/8084↔GPU利用率与主机内存的已验证绑定、统一历史曲线数据合同和跨代理/LLM/交易时间轴；须先只读证实而非以模拟指标掩盖。
+- **功能**：新增中文“性能监控”页面（/performance），CPU/内存/EngineRSS、B580+双RX7900XTX VRAM与GPU、Scout/Primary/Review的请求状态与tokens/s/queueP95、代理SSH/SOCKS/HTTP状态/451与private freshness、REST/WS、真实Primary→Intent→Order→Fill→TP→Exit漏斗、持仓时间/Review/退出、手续费/资金费/realized与unrealized盈亏、UNKNOWN账务，交互图表和15m至7d窗口。直接使用ECharts5，低开销read-only采样与同实例时间戳，不引入浏览器到交易所私有直连。
+- **优先级**：D0数据字典/物理PCI进程映射和真实30–60分钟自然任务基线；D1本机受限Windows CPU/RAM/GPU/模型指标sidecar采样且与Engine只读诊断统一；D2真实可用新视图；D3两27B原子capacity lease、空闲借用和挂单/持仓Review，TP目标仅SHADOW；D4专项回归/完整verify/CI。必须提交实码/测试/PR，不能永远只交审计文档。
+- **部署边界**：截至原回执Engine3.9.8-bb45c11 PID23688，24h T0 2026-10-10 08:16:49.685+08，原定结束10-11 08:16:49.685+08，最新验收状态需只读回读；未确认PASS不得声称成功。**此GitHub文档任务不修改现网Engine、模型、代理或TP、不重启/部署、不改Settings253**；真实改运行需用户另行授权并遵守验收重新计时。硬约束TESTNET、Production0、严格NO_ADD禁止补仓、Primary唯一Entry、HUMAN_MANAGED、签名TP身份和UNKNOWN fail-closed。历史451不无证据重标代理故障，更不能轮换地区出口规避。
+
 ## 2026-10-10 持仓/挂单管理与第二个27B Review职责优化
 
 源码实查方案：[V398_GPU2_POSITION_PENDING_TP_REVIEW_OPTIMIZATION_20261010](https://github.com/3684993/ZDJMITS/blob/main/docs/plans/V398_GPU2_POSITION_PENDING_TP_REVIEW_OPTIMIZATION_20261010.md)；执行任务：[Issue #28](https://github.com/3684993/ZDJMITS/issues/28)，与[双GPU容量调度Issue #26](https://github.com/3684993/ZDJMITS/issues/26)以及[网络Issue #24](https://github.com/3684993/ZDJMITS/issues/24)共同实施。

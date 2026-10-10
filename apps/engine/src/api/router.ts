@@ -5,6 +5,7 @@ import { projectExitProvenance } from '../services/exitProvenance.js';
 export function tradeCloseProvenance(record:any,runtime:EngineRuntime){return projectExitProvenance(record,runtime.state).closeProvenance;}
 import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.js';
 import { Router } from "express";
+import { createHostPerformanceSampler } from '../services/hostPerformanceSampler.js';
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import type { EngineRuntime } from "../runtime/appRuntime.js";
@@ -138,6 +139,9 @@ export function createApiRouter(runtime: EngineRuntime) {
       recalcNet: body?.recalcNet !== false,
     };
   };
+  // Native read-only OS sampling is cached and bounded; never shells out, never accesses the exchange.
+  const hostPerformance=createHostPerformanceSampler();
+  r.get('/observability/performance/host',(_req,res)=>res.json(hostPerformance.read()));
   r.get('/diagnostics/storage',(_req,res)=>res.json({...runtime.writes.health(),checkpoint:runtime.settingsStore.checkpointMetrics()}));
   r.get('/diagnostics/closeout',(_req,res)=>{const asOf=Date.now(),status=runtime.runtimeStatus();res.json({asOf,observationVersion:`${runtime.state.marketGeneration}:${runtime.state.runtimeControl.capital.generation}:${runtime.state.account.asOf}`,runtime:{pid:process.pid,...status},persistence:runtime.settingsStore.operationalMetrics(),pipeline:runtime.pipelineStatus(),hot:runtime.market.hotFreshnessDiagnostics(asOf),productionWriteBoundary:runtime.writeBoundaryMetrics()});});
   r.get("/snapshot", (_q, res) => res.json(publishedSnapshot));

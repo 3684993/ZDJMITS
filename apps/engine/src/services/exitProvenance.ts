@@ -18,10 +18,11 @@ export function projectExitProvenance(record: TradeRecord, context: ExitProvenan
     (ids.has(f.orderId) || ids.has(f.clientOrderId)) &&
     (linked.has(f.fillId) || (record.cycleId != null && f.cycleId === record.cycleId)));
   const rows = new Map<string, ExecutionFill>(); let identityConflict = false;
+  const conflictReasons = new Set<string>();
   for (const f of candidates) {
     const key = f.tradeId ? `${f.symbol}|${f.tradeId}` : f.fillId;
     const prior = rows.get(key);
-    if (prior && ['orderId','clientOrderId','qty','price','executionTime','cycleId'].some(k => (prior as any)[k] !== (f as any)[k])) identityConflict = true;
+    if (prior && ['orderId','clientOrderId','qty','price','executionTime','cycleId'].some(k => (prior as any)[k] !== (f as any)[k])) {identityConflict = true;conflictReasons.add('DUPLICATE_TRADE_ID_FACT_MISMATCH');}
     else rows.set(key, f);
   }
   const fills = [...rows.values()].sort((a,b) => a.executionTime-b.executionTime || a.fillId.localeCompare(b.fillId));
@@ -29,22 +30,24 @@ export function projectExitProvenance(record: TradeRecord, context: ExitProvenan
   const identities = fills.map(fill => {
     const proof = context.orderProvenance?.resolve({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});
     const roles = new Set<Role>();
-    let conflict = (proof?.proof ?? []).some(x => x.includes('CONFLICT'));
+    const proofConflictCodes=(proof?.proof ?? []).filter(x => x.includes('CONFLICT'));
+    for(const reason of proofConflictCodes)conflictReasons.add(String(reason));
+    let conflict = proofConflictCodes.length>0;
     for (const row of proof?.rows ?? []) {
-      if (row.symbol !== fill.symbol || !(same(row.clientOrderId,fill.clientOrderId) || same(row.exchangeOrderId,fill.orderId))) { conflict=true; continue; }
-      if (row.cycleId && record.cycleId && row.cycleId !== record.cycleId) conflict=true;
+      if (row.symbol !== fill.symbol || !(same(row.clientOrderId,fill.clientOrderId) || same(row.exchangeOrderId,fill.orderId))) { conflict=true;conflictReasons.add('REGISTRY_IDENTITY_MISMATCH'); continue; }
+      if (row.cycleId && record.cycleId && row.cycleId !== record.cycleId) {conflict=true;conflictReasons.add('REGISTRY_CYCLE_MISMATCH');}
       if (row.role === 'TP' || row.role === 'MANUAL' || row.role === 'EXIT') roles.add(row.role);
-      else conflict=true;
+      else {conflict=true;conflictReasons.add('REGISTRY_ROLE_UNRECOGNIZED');}
     }
     const matching = (order:any) => order.symbol === fill.symbol &&
       (same(order.exchangeOrderId,fill.orderId) || same(order.clientOrderId,fill.clientOrderId));
     for (const [orders,role] of [[context.manualOrders,'MANUAL'],[context.tpOrders,'TP']] as const) {
       for (const order of orders.values()) if (matching(order) && (role !== 'MANUAL' || order.reduceOnly === true)) {
-        if (order.cycleId && record.cycleId && order.cycleId !== record.cycleId) conflict=true;
+        if (order.cycleId && record.cycleId && order.cycleId !== record.cycleId) {conflict=true;conflictReasons.add('LOCAL_ORDER_CYCLE_MISMATCH');}
         roles.add(role);
       }
     }
-    if (roles.size > 1) conflict=true;
+    if (roles.size > 1) {conflict=true;conflictReasons.add('SAME_FILL_MULTIPLE_EXIT_ROLES');}
     identityConflict ||= conflict;
     const role: Role|null = !conflict && roles.size === 1 ? [...roles][0]! : null;
     if (role) roleQuantities[role] += quantity(fill.qty);
@@ -55,6 +58,7 @@ export function projectExitProvenance(record: TradeRecord, context: ExitProvenan
   const expectedQuantity = quantity(record.exitQty) || observedQuantity;
   const tolerance = Math.max(1e-10,expectedQuantity*1e-8);
   const quantityConflict = observedQuantity > expectedQuantity+tolerance;
+  if(quantityConflict)conflictReasons.add('EXIT_QUANTITY_EXCEEDS_RECORDED_CYCLE');
   const unknownQuantity = Math.max(0,expectedQuantity-provenQuantity);
   const complete = unknownQuantity<=tolerance && observedQuantity+tolerance>=expectedQuantity && fills.length>=record.exitFillCount && !identityConflict && !quantityConflict;
   const roles = (Object.keys(roleQuantities) as Role[]).filter(role => roleQuantities[role]>0);
@@ -65,6 +69,8 @@ export function projectExitProvenance(record: TradeRecord, context: ExitProvenan
   const lastRole = !identityConflict && lastRoles.size===1 ? [...lastRoles][0] : null;
   const finalizer = lastRole==='MANUAL'?'SYSTEM_MANUAL':lastRole==='EXIT'?'SYSTEM_EXIT':lastRole==='TP'?'TP':'UNKNOWN';
   const closeProvenance = !Number.isFinite(record.closedAt)?'OPEN':identityConflict||quantityConflict?'CONFLICT':exitComposition==='MANUAL'?'SYSTEM_MANUAL':exitComposition;
-  return {closeProvenance,exitComposition,quantityConflict,finalizer,finalizerIsTerminalProof:complete&&lastAt===fills.at(-1)?.executionTime,identityConflict,
+  return {closeProvenance,exitComposition,quantityConflict,
+    conflictReasons:[...conflictReasons].sort(),provenanceEvidenceStatus:identityConflict||quantityConflict?'CONFLICT':complete?'PROVEN':'INCOMPLETE_OR_UNKNOWN',
+    finalizer,finalizerIsTerminalProof:complete&&lastAt===fills.at(-1)?.executionTime,identityConflict,
     proofCoverage:{expectedQuantity,observedQuantity,provenQuantity,unknownQuantity,complete,roleQuantities},exitIdentityEvidence:identities};
 }

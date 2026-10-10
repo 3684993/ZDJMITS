@@ -33,7 +33,7 @@ export function exchangeLamp(snapshot:any,incidents:any[]=[],now=Date.now(),evid
   if(service.status==='OFFLINE')return{tone:'bad',text:'网络离线',detail:String(service.detail??'交易网络无法使用')};
   if(service.status==='DEGRADED')return{tone:'warn',text:'网络降级',detail:String(service.detail??'交易网络服务降级')};
   if(service.status==='HEALTHY'){
-    if(evidence!==undefined){const requests=Object.values(evidence?.budgets??{}).flatMap((b:any)=>Array.isArray(b?.recentDispatches)?b.recentDispatches:[]);if(!requests.some((r:any)=>typeof r.status==='number'&&r.status>=200&&r.status<300&&!stale(r.completedAt,now,30_000)))return{tone:'unknown',text:'网络待确认',detail:'执行门禁就绪不等于当前网络正常；没有最近30秒成功HTTP事实'};}
+    if(evidence!==undefined){const requests=Object.values(evidence?.budgets??{}).flatMap((b:any)=>Array.isArray(b?.recentDispatches)?b.recentDispatches:[]);if(!requests.some((r:any)=>typeof r.status==='number'&&r.status>=200&&r.status<300&&evidence?.routes?.some((route:any)=>route.rest?.routeIdentity===r.routeIdentity)&&!stale(r.completedAt,now,30_000)))return{tone:'unknown',text:'网络待确认',detail:'执行门禁就绪不等于当前网络正常；没有最近30秒当前路由成功HTTP事实'};}
     return{tone:'good',text:'网络报告正常',detail:'最近请求及引擎执行门禁读回；不代表账户地区授权、签名TP或每条WS事件已独立验证'};
   }
   return{tone:'unknown',text:'状态未确认',detail:'未识别的交易网络健康状态'};

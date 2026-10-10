@@ -95,10 +95,11 @@ export function createApiRouter(runtime: EngineRuntime) {
   });
   let modelGpuRead:()=>Promise<any>=async()=>({services:[],measureStatus:'UNKNOWN'});
   r.post('/settings/ai/:id/lifecycle',async(req,res)=>{
+    try{
     if(!modelOperationPermission(req.header('x-model-operation-token'),process.env.ZDJ_MODEL_OPERATION_TOKEN,req.header('origin'),req.header('host'))){await lifecycle.audit({resourceId:req.params.id,action:'REJECTED',result:'PERMISSION_DENIED'});return void res.status(403).json({error:'MODEL_OPERATION_PERMISSION_DENIED'});}
     if(!runtime.state.aiResources.some(r=>r.id===req.params.id))return void res.status(404).json({error:'MODEL_RESOURCE_UNKNOWN'});
     if(Object.keys(req.body??{}).some(k=>k!=='action'))return void res.status(400).json({error:'MODEL_ACTION_FIELDS_FORBIDDEN'});
-    try{res.json(await lifecycle.operate(req.params.id,req.body?.action));}
+    res.json(await lifecycle.operate(req.params.id,req.body?.action));}
     catch(error){res.status(409).json({error:((error as Error).message??'UNKNOWN').split('\n')[0]!.slice(0,180)});}
   });
   const incidentTracker=new OperationalIncidentTracker();

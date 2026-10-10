@@ -1,0 +1,52 @@
+{
+  "guardianRestartBudget": 0,
+  "guardianPid": 22496,
+  "completion": "BLOCKED_SAFETY_AND_REMOTE_PERMISSION_GATE",
+  "stable30": "NOT_STARTED_GATE_FAILED",
+  "production": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 0,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": null,
+    "lastWritePath": null
+  },
+  "latestIndependentSignedGate": "UNKNOWN",
+  "at": "2026-10-10T15:53:54.5445926Z",
+  "natural90": "NOT_STARTED_GATE_FAILED",
+  "engineStopSignals": 0,
+  "latestMain": "2dc0bb4620e0d3026433875584d3dc1d06f463e5",
+  "entryPermission": {
+    "status": "ANALYSIS_ONLY",
+    "executionFactsStatus": "BLOCKED",
+    "mode": "ANALYSIS_ONLY",
+    "analysisAllowed": true,
+    "riskObservation": true,
+    "orderAuthorization": false,
+    "reason": "ENTRY_APPROVAL_INVALID_OR_EXPIRED",
+    "executionMode": "TESTNET_ENABLED",
+    "autoExecutionMode": "AUTO_RUNNING"
+  },
+  "sshSendQ": "UNKNOWN_REMOTE_COMMAND_CHANNEL_DENIED",
+  "enginePid": 23828,
+  "proxyRestartAttempts": 2,
+  "runtimeSource": "b84c919ed38c35ece4b60ff4473db2e312f00636",
+  "privateStatus": "UNAVAILABLE",
+  "privateAgeMs": 1169348,
+  "localTp": {
+    "status": "READY",
+    "required": 26,
+    "protected": 26,
+    "missing": 0,
+    "unverifiedTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "repairFailed": 0,
+    "positionFactUnresolved": 0
+  },
+  "engineStartAttempts": 1,
+  "proxyPid": 12300
+}

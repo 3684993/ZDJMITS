@@ -16,4 +16,4 @@
 
 ## Codex 验证和完成
 
-在独立工作树验证所有受影响的 Vue/tsc 和完整 `npm run verify:ci`、ECharts绘制/响应式移动端、真实账户API数据和浏览器时钟偏差处理。运行截图需要标明现场or fixture。构建后检查CI精确HEAD，对应host新PID/identity只有现场有真实证据才声称。所有代码/验证/脱敏图/报告/CI日志提交GitHub，不只保留本机；更新project-memory和handoff。 
+在独立工作树验证所有受影响的 Vue/tsc 和完整 `npm run verify:ci`、ECharts绘制/响应式移动端、真实账户API数据和浏览器时钟偏差处理。运行截图需要标明现场or fixture。构建后检查CI精确HEAD，对应host新PID/identity只有现场有真实证据才声称。所有代码/验证/脱敏图/报告/CI日志提交GitHub，不只保留本机；更新project-memory和handoff。

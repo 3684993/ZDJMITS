@@ -1,0 +1,2562 @@
+﻿[
+    {
+        "ttlMs":  45000,
+        "collectionMs":  18295,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+                       "ENGINE_PROJECTION_UNAVAILABLE"
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+
+                      ],
+        "asOf":  1791597586863,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  72.091,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  9368,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+                       "ENGINE_PROJECTION_UNAVAILABLE"
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+
+                      ],
+        "asOf":  1791597620207,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5235,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597649061,
+                                                      1791597649061,
+                                                      1791597649061
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "DEGRADED",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                41,
+                                                40,
+                                                21
+                                            ],
+                              "lastLatencyMs":  [
+                                                    11417,
+                                                    92599,
+                                                    20933
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597644593,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5342,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "RUNNING",
+                                                 null,
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597664112,
+                                                      1791597664112,
+                                                      1791597664113
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "RUNNING",
+                                                    "ANALYZING",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             1,
+                                             1,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                41,
+                                                40,
+                                                21
+                                            ],
+                              "lastLatencyMs":  [
+                                                    11417,
+                                                    92599,
+                                                    20933
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597664833,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  79.342,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  73.96,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5043,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 null,
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597679095,
+                                                      1791597679095,
+                                                      1791597679095
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "ANALYZING",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             0,
+                                             1,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                42,
+                                                40,
+                                                21
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10180,
+                                                    92599,
+                                                    20933
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597685188,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  99.595,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5598,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 null,
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597709144,
+                                                      1791597709145,
+                                                      1791597709145
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "ANALYZING",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             0,
+                                             1,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                42,
+                                                40,
+                                                21
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10180,
+                                                    92599,
+                                                    20933
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597705246,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  66.475,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  8772,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "AI_RESOURCE_BUSY",
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597724211,
+                                                      1791597724211,
+                                                      1791597724211
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "DEGRADED",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                42,
+                                                41,
+                                                21
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10180,
+                                                    60130,
+                                                    20933
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597725852,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  98.522,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5566,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "RUNNING",
+                                                 null,
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597754169,
+                                                      1791597754170,
+                                                      1791597754169
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "RUNNING",
+                                                    "ANALYZING",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             1,
+                                             1,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                42,
+                                                41,
+                                                22
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10180,
+                                                    60130,
+                                                    19788
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597749632,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  98.588,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  98.731,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  99.034,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  6662,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 null,
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 1,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597769255,
+                                                      1791597769255,
+                                                      1791597769255
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "ANALYZING",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             1,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                41,
+                                                23
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    60130,
+                                                    19467
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597770203,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  99.323,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  99.362,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  6771,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 null,
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597787293,
+                                                      1791597787293,
+                                                      1791597787293
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "ANALYZING",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             0,
+                                             1,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                41,
+                                                24
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    60130,
+                                                    23889
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597791885,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  99.47,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  6549,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 null,
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597818080,
+                                                      1791597818080,
+                                                      1791597818080
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "ANALYZING",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             0,
+                                             1,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                41,
+                                                24
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    60130,
+                                                    23889
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597813670,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  76.168,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5843,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "AI_RESOURCE_BUSY",
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597833922,
+                                                      1791597833922,
+                                                      1791597833923
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "DEGRADED",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                24
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    23889
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597835235,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  7097,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_EXECUTABLE_CANDIDATE",
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597855416,
+                                                      1791597855416,
+                                                      1791597855416
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "DEGRADED",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                24
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    23889
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597856096,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  100.221,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5001,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597868123,
+                                                      1791597868123,
+                                                      1791597868124
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "IDLE",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                25
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    22142
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597878214,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  99.795,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5480,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597898748,
+                                                      1791597898748,
+                                                      1791597898748
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "IDLE",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                26
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    20371
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597898226,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  99.271,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5276,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597913760,
+                                                      1791597913760,
+                                                      1791597913760
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "IDLE",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                27
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    22582
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597918719,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  6684,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597928926,
+                                                      1791597928926,
+                                                      1791597928927
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "IDLE",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                27
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    22582
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597939006,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  98.682,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5157,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597960537,
+                                                      1791597960537,
+                                                      1791597960537
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "IDLE",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                28
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    18598
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597960695,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5949,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597976887,
+                                                      1791597976887,
+                                                      1791597976887
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "IDLE",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                28
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    18598
+                                                ]
+                          }
+                      ],
+        "asOf":  1791597980866,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  99.895,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5507,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791597992001,
+                                                      1791597992001,
+                                                      1791597992001
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "IDLE",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                29
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    20349
+                                                ]
+                          }
+                      ],
+        "asOf":  1791598001832,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  99.178,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5698,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                 "NO_ELIGIBLE_CANDIDATE",
+                                                 null
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 1
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791598022136,
+                                                      1791598022136,
+                                                      1791598022141
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "WAITING_CANDIDATE_OR_SHARED_EVENT",
+                                                    "IDLE",
+                                                    "ANALYZING"
+                                                ],
+                              "active":  [
+                                             0,
+                                             0,
+                                             1
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                30
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    19725
+                                                ]
+                          }
+                      ],
+        "asOf":  1791598022346,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  0,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  100.672,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    },
+    {
+        "ttlMs":  45000,
+        "collectionMs":  5933,
+        "instanceId":  "f400edfd-e43a-497e-9905-0d980c855d3a",
+        "errors":  [
+
+                   ],
+        "sampleSource":  "WINDOWS_WDDM_PROCESS_COUNTERS",
+        "resources":  [
+                          {
+                              "idleReason":  [
+                                                 "RUNNING",
+                                                 null,
+                                                 "WAITING_REVIEW_TASK"
+                                             ],
+                              "id":  [
+                                         "scout-b580",
+                                         "brain-7900-primary",
+                                         "review-7900-gpu2"
+                                     ],
+                              "failures":  [
+                                               0,
+                                               1,
+                                               0
+                                           ],
+                              "queueDepth":  [
+                                                 0,
+                                                 0,
+                                                 0
+                                             ],
+                              "healthCheckedAt":  [
+                                                      1791598037204,
+                                                      1791598037204,
+                                                      1791598037204
+                                                  ],
+                              "role":  [
+                                           "SCOUT",
+                                           "PRIMARY_BRAIN",
+                                           "REVIEW_BRAIN"
+                                       ],
+                              "currentStatus":  [
+                                                    "RUNNING",
+                                                    "ANALYZING",
+                                                    "IDLE"
+                                                ],
+                              "active":  [
+                                             1,
+                                             1,
+                                             0
+                                         ],
+                              "totalRuns":  [
+                                                43,
+                                                42,
+                                                31
+                                            ],
+                              "lastLatencyMs":  [
+                                                    10245,
+                                                    68653,
+                                                    20614
+                                                ]
+                          }
+                      ],
+        "asOf":  1791598043059,
+        "schemaVersion":  1,
+        "services":  [
+                         {
+                             "resourceId":  "llama:8081",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  13197312,
+                             "processStartedAt":  1791514774332,
+                             "duty":  "SCOUT",
+                             "utilizationPct":  100.024,
+                             "port":  8081,
+                             "measureStatus":  "MEASURED",
+                             "pid":  3400,
+                             "dedicatedBytes":  5534564352
+                         },
+                         {
+                             "resourceId":  "llama:8083",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  418267136,
+                             "processStartedAt":  1791515445128,
+                             "duty":  "REVIEW_BRAIN",
+                             "utilizationPct":  0,
+                             "port":  8083,
+                             "measureStatus":  "MEASURED",
+                             "pid":  14020,
+                             "dedicatedBytes":  17348378624
+                         },
+                         {
+                             "resourceId":  "llama:8084",
+                             "luid":  [
+                                          "0x00000000_0x0000edc6",
+                                          "0x00000000_0x0000f452",
+                                          "0x00000000_0x000122ec"
+                                      ],
+                             "physicalDeviceId":  null,
+                             "physicalDeviceIdVerified":  false,
+                             "sharedBytes":  955138048,
+                             "processStartedAt":  1791515847749,
+                             "duty":  "PRIMARY_BRAIN",
+                             "utilizationPct":  99.886,
+                             "port":  8084,
+                             "measureStatus":  "MEASURED",
+                             "pid":  22336,
+                             "dedicatedBytes":  17358815232
+                         }
+                     ]
+    }
+]

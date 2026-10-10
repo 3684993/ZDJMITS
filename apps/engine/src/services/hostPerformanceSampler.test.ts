@@ -32,4 +32,10 @@ describe('hostPerformanceSampler',()=>{
     const f=fixture();f.invalidMem();const result=createHostPerformanceSampler(f.deps).read();
     expect(result.memory).toMatchObject({status:'UNKNOWN',totalBytes:null,freeBytes:null,usedBytes:null});
   });
+  it('OS sampling failures do not throw or manufacture metrics, callers cannot mutate cache',()=>{
+    const f=fixture(),sampler=createHostPerformanceSampler(f.deps);const sample=sampler.read();sample.memory.usedBytes=999;sample.history[0]!.engine.rssBytes=999;
+    expect(sampler.read().memory.usedBytes).toBe(750);expect(sampler.read().engine.rssBytes).toBe(400);
+    f.advance(10000,500,100);f.deps.cpus=()=>{throw new Error('unavailable')};f.deps.memoryUsage=()=>{throw new Error('unavailable')};
+    expect(sampler.read()).toMatchObject({cpu:{usagePct:null,status:'UNKNOWN'},engine:{rssBytes:null}});
+  });
 });

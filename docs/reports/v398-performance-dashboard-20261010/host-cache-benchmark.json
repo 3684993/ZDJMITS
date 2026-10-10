@@ -1,0 +1,10 @@
+{
+  "scope": "OFFLINE in-process bounded history cache microbenchmark; not Engine event-loop or live gain",
+  "reads": 1000,
+  "historyCapacity": 361,
+  "nativeCpuCallsDuringCacheReads": 0,
+  "p50Ms": 1.6027999999998883,
+  "p95Ms": 2.6277999999999793,
+  "maxMs": 3.271099999999933,
+  "zeroExchangeOrModelRequests": true
+}

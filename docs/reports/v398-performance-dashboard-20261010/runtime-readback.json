@@ -1,0 +1,10 @@
+{
+  "observedAt": 1791598986901,
+  "runtime": {
+    "pid": 23688,
+    "instanceId": "07230a28-51ac-4dda-9c95-20a789b382b4",
+    "buildId": "3.9.8-bb45c11acbe9819a3456",
+    "lastRestartAt": 1791590909697,
+    "lastRestartReason": "MANUAL_START"
+  }
+}

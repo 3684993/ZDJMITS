@@ -20,7 +20,9 @@ export function exchangeLamp(snapshot:any,incidents:any[]=[],now=Date.now()):Lam
   const active=Array.isArray(incidents)?incidents.filter((row:any)=>row?.active===true):[];
   const error=active.find((row:any)=>['EXCHANGE','NETWORK'].includes(row.category)&&row.httpStatus===451);
   if(error)return{tone:'bad',text:'HTTP 451',detail:'已记录活跃的交易所HTTP拒绝；无法凭此断定SOCKS故障，不得切换出口绕过'};
-  const limited=active.find((row:any)=>[418,429,502,503].includes(row.httpStatus));
+  const failed=active.find((row:any)=>[502,503].includes(row.httpStatus));
+  if(failed)return{tone:'bad',text:'HTTP '+failed.httpStatus,detail:'已记录明确HTTP失败；订单响应UNKNOWN不能自动重发'};
+  const limited=active.find((row:any)=>[418,429].includes(row.httpStatus));
   if(limited)return{tone:'warn',text:'交易所HTTP告警',detail:'活跃HTTP '+limited.httpStatus+'，应与SOCKS/SSH超时分层排查'};
   const service=Array.isArray(snapshot?.health)?snapshot.health.find((r:any)=>r.id==='trading-network'):null;
   if(!service||stale(service.updatedAt,now,60_000))
@@ -42,7 +44,7 @@ export function privateLamp(snapshot:any,now=Date.now()):LampFact{
   const a=snapshot?.account;
   if(!a||!a.status)return{tone:'unknown',text:'未确认',detail:'没有私有账户快照'};
   if(a.status==='UNAVAILABLE')return{tone:'bad',text:'不可用',detail:String(a.reason??'私有事实不可用')};
-  if(a.status==='STALE'||stale(a.asOf,now,60_000))return{tone:'warn',text:'过期 / 待确认',detail:'私有数据采样超过60秒或缺失'};
+  if(a.status==='STALE'||stale(a.asOf,now,60_000))return{tone:'unknown',text:'过期 / 待确认',detail:'私有数据采样超过60秒或缺失'};
   if(a.status==='READY')return{tone:'good',text:'同步正常',detail:'账户快照新鲜；不等同于独立签名TP已全部核对'};
   return{tone:'warn',text:String(a.status),detail:'私有同步尚未就绪'};
 }
@@ -59,4 +61,9 @@ export function uniqueAiRunStats(runs:any[]){
       queuedP95Ms:p95(timed.map(r=>r.timing.queueMs)),timingSamples:timed.length};
   });
   return{byRole,rows:list.length};
+}
+export function withSampleGaps(points:Array<{ts:number;value:number|null}>,ttlMs:number){
+  const sorted=points.filter(p=>Number.isFinite(p.ts)).sort((a,b)=>a.ts-b.ts),out:Array<{ts:number;value:number|null}>=[];
+  for(const p of sorted){const last=out.at(-1);if(last&&p.ts-last.ts>ttlMs)out.push({ts:last.ts+1,value:null});out.push(p);}
+  return out;
 }

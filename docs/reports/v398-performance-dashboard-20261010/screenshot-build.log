@@ -1,0 +1,46 @@
+(node:24056) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23332) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/dashboard@3.9.8 build
+> vue-tsc -b && vite build
+
+(node:24648) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+vite v7.3.6 building client environment for production...
+transforming...
+✓ 2233 modules transformed.
+rendering chunks...
+computing gzip size...
+dist/index.html                                                                0.42 kB │ gzip:   0.30 kB
+dist/assets/BrainView-C19KGV8J.css                                             0.41 kB │ gzip:   0.25 kB
+dist/assets/SettingsView-DpBJNmpc.css                                          4.20 kB │ gzip:   1.10 kB
+dist/assets/PerformanceView-CfZSD_2D.css                                       6.60 kB │ gzip:   1.52 kB
+dist/assets/index-2bhk4SYA.css                                                42.87 kB │ gzip:   9.82 kB
+dist/assets/positionModel-UU3TmqIC.js                                          0.28 kB │ gzip:   0.20 kB
+dist/assets/EmptyState.vue_vue_type_script_setup_true_lang-CCkYnYuK.js         0.30 kB │ gzip:   0.24 kB
+dist/assets/format-BTnsUY7D.js                                                 0.37 kB │ gzip:   0.28 kB
+dist/assets/Panel.vue_vue_type_script_setup_true_lang-_27bf9dH.js              0.56 kB │ gzip:   0.34 kB
+dist/assets/StatusBadge.vue_vue_type_script_setup_true_lang-DrGcJ2Uh.js        0.58 kB │ gzip:   0.40 kB
+dist/assets/MemoryView-C7Bfgbp-.js                                             2.35 kB │ gzip:   1.18 kB
+dist/assets/UniverseView-o5XADyoL.js                                           4.95 kB │ gzip:   2.14 kB
+dist/assets/HumanManagedView-CXnnrl6s.js                                       6.89 kB │ gzip:   3.10 kB
+dist/assets/PositionsView-BnCdL4KO.js                                          7.30 kB │ gzip:   3.15 kB
+dist/assets/OrdersView-MB2cr7ed.js                                             7.42 kB │ gzip:   2.74 kB
+dist/assets/IntelligenceView-CwpX5VnX.js                                       7.89 kB │ gzip:   2.85 kB
+dist/assets/OperationsView-DHw9sXvV.js                                         8.24 kB │ gzip:   3.42 kB
+dist/assets/TemporalIntelligenceView-DtPl4YJV.js                               8.25 kB │ gzip:   3.03 kB
+dist/assets/PositionConsole.vue_vue_type_script_setup_true_lang-CyARIjtA.js   13.21 kB │ gzip:   5.62 kB
+dist/assets/BrainView-DQS6D5xv.js                                             15.17 kB │ gzip:   6.03 kB
+dist/assets/TradeRecordsView-ClfBH80f.js                                      19.18 kB │ gzip:   7.08 kB
+dist/assets/OverviewView-Br3zNmm1.js                                          48.52 kB │ gzip:  16.20 kB
+dist/assets/SettingsView-tTo0izm2.js                                          75.65 kB │ gzip:  22.09 kB
+dist/assets/index-BjrRaSyc.js                                                283.88 kB │ gzip:  86.88 kB
+dist/assets/PerformanceView-B2zHvzxW.js                                      544.10 kB │ gzip: 183.55 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 7.12s

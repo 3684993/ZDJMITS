@@ -92,3 +92,8 @@ Windows 已识别的周期弹窗源是两个 Interactive 5min Node task。8个 Z
 ## 2026-10-10 original24h acceptance terminal state
 
 ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED (local14/15). All19 historical checkpoints/state/cursor now synchronized; old9-record prefix preserved. No24h PASS or clock continuation; derived elapsed17m10.585s differs from retained lagging elapsed field16.17665min. Post-abort09:34 read-only originalidentity/private17.380s/localTP24/24/Production0 is not signed full-position proof or new acceptance. Hidden task last run0 and terminal checkpoint stop are expected. No lifecycle/live/task/observer modifications. See docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md and acceptance JSON validation. All future repair/release/new24h need applicable authorization and gates; networkPR25/27/29 remain offline/unmerged.
+
+
+## 2026-10-10 性能驾驶舱 D0-D2 实码交接
+
+PR31 已在独立 worktree 验证并修复真实源码；GPU/PID/PCI 映射、typed只读sidecar、资金红黄绿灰与分币种收益趋势已实现。详见 docs/reports/v398-performance-dashboard-20261010/ 下 D0/METRIC_CONTRACT/D1_D2/SCREENSHOT_REVIEW 与日志。两27B GGUF/模板/ctx相同但 reasoning/output limit 不同，不能开启借用。G1统一容量租约、GPU2 TP SHADOW各独立PR，未部署。旧24h仍08:34 ABORTED_SAFETY_FAILURE；02:10Z签名25/25 TP通过只是一时只读样本，全套发布门禁UNKNOWN，未重启、未开启新24h。原工作目录及dirty D:/MITS保留，网络PR25/27/29独立未纳入。后续以最终PR HEAD精确CI回读为准；不得将离线模拟/fixture截图当线上收益或GPU改善。

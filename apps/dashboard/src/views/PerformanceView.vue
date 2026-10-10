@@ -5,22 +5,19 @@ import {api,brainRuns} from '../api/client';
 import {useSystemStore} from '../stores/system';
 import Panel from '../components/Panel.vue';
 import PerformanceTrend from '../components/PerformanceTrend.vue';
-import {aiLamp,proxyLamp,privateLamp,exchangeLamp,uniqueAiRunStats,numberOrNull,type LampFact} from '../utils/performanceFacts';
+import FinancePerformance from '../components/FinancePerformance.vue';
+import {aiLamp,proxyLamp,privateLamp,exchangeLamp,uniqueAiRunStats,numberOrNull,stale,withSampleGaps,type LampFact} from '../utils/performanceFacts';
+import type {HostPerformanceRead,GpuPerformanceRead} from '@zdj/contracts';
 
-type HostSample={
-  asOf:number;instanceId:string;source:string;
-  cpu:{usagePct:number|null;status:string;logicalProcessors:number|null;intervalMs:number|null};
-  memory:{totalBytes:number|null;freeBytes:number|null;usedBytes:number|null;status:string};
-  engine:{pid:number;rssBytes:number|null;heapUsedBytes:number|null;heapTotalBytes:number|null};
-};
-type HostRead=HostSample&{history:HostSample[]};
 const store=useSystemStore();
-const host=ref<HostRead|null>(null),resources=ref<any[]>([]),governance=ref<any>(null);
+const hostRead=ref<HostPerformanceRead|null>(null),gpuRead=ref<GpuPerformanceRead|null>(null),resources=ref<any[]>([]),governance=ref<any>(null);
 const privateSync=ref<any>(null),stream=ref<any>(null),runs=ref<any[]>([]);
 const checkedAt=ref<number|null>(null),error=ref<string|null>(null),windowKey=ref('1h');
 const options=[{value:'15m',label:'15 分钟',ms:900_000},{value:'1h',label:'1 小时',ms:3_600_000},{value:'6h',label:'6 小时',ms:21_600_000},{value:'24h',label:'24 小时',ms:86_400_000},{value:'7d',label:'7 天',ms:604_800_000}];
 const rangeMs=computed(()=>options.find(x=>x.value===windowKey.value)?.ms??3_600_000);
 const now=ref(Date.now());
+const host=computed(()=>hostRead.value&&!stale(hostRead.value.asOf,now.value,hostRead.value.ttlMs??30000)?hostRead.value:null);
+const gpu=computed(()=>gpuRead.value?.measureStatus==='MEASURED'&&!stale(gpuRead.value.asOf,now.value,45000)?gpuRead.value:null);
 const stamp=(n:unknown)=>numberOrNull(n)===null?'UNKNOWN':new Date(Number(n)).toLocaleString('zh-CN',{hour12:false});
 const val=(n:unknown,digits=1)=>numberOrNull(n)===null?'UNKNOWN':Number(n).toFixed(digits);
 const mib=(n:unknown)=>numberOrNull(n)===null?'UNKNOWN':val(Number(n)/1048576,0)+' MiB';
@@ -37,11 +34,11 @@ const statusRows=computed(()=>[
 const runFacts=computed(()=>uniqueAiRunStats(runs.value));
 const cutOff=computed(()=>now.value-rangeMs.value);
 const history=computed(()=>{
-  const items=host.value?.history??[];
-  return items.filter(p=>p.instanceId===host.value?.instanceId&&p.asOf>=cutOff.value).sort((a,b)=>a.asOf-b.asOf);
+  const items=hostRead.value?.history??[];
+  return items.filter(p=>p.instanceId===hostRead.value?.instanceId&&p.asOf>=cutOff.value).sort((a,b)=>a.asOf-b.asOf);
 });
-const cpuPoints=computed(()=>history.value.map(p=>({ts:p.asOf,value:p.cpu.usagePct})));
-const ramPoints=computed(()=>history.value.map(p=>({ts:p.asOf,value:p.memory.usedBytes===null?null:p.memory.usedBytes/1048576})));
+const cpuPoints=computed(()=>withSampleGaps(history.value.map(p=>({ts:p.asOf,value:p.cpu.usagePct})),30000));
+const ramPoints=computed(()=>withSampleGaps(history.value.map(p=>({ts:p.asOf,value:p.memory.usedBytes===null?null:p.memory.usedBytes/1048576})),30000));
 const memoryPct=computed(()=>{
   const m=host.value?.memory;
   return m&&m.usedBytes!==null&&m.totalBytes!==null&&m.totalBytes>0?Math.round(m.usedBytes/m.totalBytes*1000)/10:null;
@@ -50,42 +47,45 @@ const protectedPositions=computed(()=>store.snapshot?.positions?.filter(p=>p.tpS
 const activePositions=computed(()=>store.snapshot?.positions?.length??null);
 const finance=computed(()=>store.snapshot?.localAccounting??null);
 const names:Record<string,string>={SCOUT:'Scout',PRIMARY_BRAIN:'Primary / 建仓',REVIEW_BRAIN:'Review / 复核'};
-const gpuExpected=[
-  {title:'GPU 0 · Intel Arc B580',detail:'Scout 8081（历史配置）'},
-  {title:'GPU 1 · RX 7900 XTX',detail:'物理 PCI Bus 19（待本机核对）'},
-  {title:'GPU 2 · RX 7900 XTX',detail:'物理 PCI Bus 22（待本机核对）'},
-];
+const gpuExpected=[{title:'Scout · 8081',port:8081},{title:'Review · 8083',port:8083},{title:'Primary · 8084',port:8084}];
+const gpuServices=computed(()=>gpuExpected.map(service=>({...service,sample:gpu.value?.services.find(s=>s.port===service.port)})));
+function gpuPoints(port:number){const current=gpu.value?.services.find(s=>s.port===port);return withSampleGaps((gpuRead.value?.history??[]).filter(s=>s.instanceId===gpuRead.value?.instanceId&&s.asOf>=cutOff.value).map(s=>{const p=s.services.find(p=>p.port===port);return{ts:s.asOf,value:p?.pid===current?.pid&&p?.processStartedAt===current?.processStartedAt&&p?.measureStatus==='MEASURED'?p.utilizationPct:null};}),45000);}
 let timer:ReturnType<typeof setInterval>|null=null,inFlight=false,alive=true,sequence=0;
+let controller:AbortController|null=null,deadline:ReturnType<typeof setTimeout>|null=null;
 async function load(){
   if(inFlight||typeof document!=='undefined'&&document.visibilityState!=='visible')return;
   inFlight=true;const id=++sequence;now.value=Date.now();
+  controller=new AbortController();const signal=controller.signal;deadline=setTimeout(()=>controller?.abort(),8000);
   const from=now.value-rangeMs.value;
   const q=new URLSearchParams({page:'1',limit:'100',from:String(from)});
   const results=await Promise.allSettled([
-    api.performanceHost(),api.brainResources(),api.binanceGovernance(),
-    api.privateSync(),api.marketStreamTraffic(),brainRuns(q.toString()),
+    api.performanceHost(signal),api.brainResources(signal),api.binanceGovernance(signal),
+    api.privateSync(signal),api.marketStreamTraffic(signal),brainRuns(q.toString(),signal),api.performanceGpu(signal),
   ]);
+  if(deadline)clearTimeout(deadline);deadline=null;
   if(!alive||id!==sequence){inFlight=false;return;}
+  now.value=Date.now();
   let failures=0;
-  function take<T>(index:number,update:(v:T)=>void){
+  function take<T>(index:number,update:(v:T)=>void,clear:()=>void){
     const r=results[index];
     if(r?.status==='fulfilled')update(r.value as T);
-    else failures++;
+    else {failures++;clear();}
   }
-  take<HostRead>(0,v=>host.value=v);
-  take<any[]>(1,v=>resources.value=Array.isArray(v)?v:[]);
-  take<any>(2,v=>governance.value=v);
-  take<any>(3,v=>privateSync.value=v);
-  take<any>(4,v=>stream.value=v);
-  take<any>(5,v=>runs.value=Array.isArray(v?.items)?v.items:[]);
-  error.value=failures?failures+' 个只读数据源请求失败，保留历史数据但不视为当前健康':null;
+  take<HostPerformanceRead>(0,v=>hostRead.value=v,()=>hostRead.value=null);
+  take<any[]>(1,v=>resources.value=Array.isArray(v)?v:[],()=>resources.value=[]);
+  take<any>(2,v=>governance.value=v,()=>governance.value=null);
+  take<any>(3,v=>privateSync.value=v,()=>privateSync.value=null);
+  take<any>(4,v=>stream.value=v,()=>stream.value=null);
+  take<any>(5,v=>runs.value=Array.isArray(v?.items)?v.items:[],()=>runs.value=[]);
+  take<GpuPerformanceRead>(6,v=>gpuRead.value=v,()=>gpuRead.value=null);
+  error.value=failures?failures+' 个只读数据源请求失败，当前指标 UNKNOWN':null;
   checkedAt.value=now.value;
   inFlight=false;
 }
 function changeWindow(value:string){windowKey.value=value;void load();}
-function visibility(){if(document.visibilityState==='visible')void load();}
-onMounted(()=>{alive=true;void load();timer=setInterval(()=>void load(),15_000);document.addEventListener('visibilitychange',visibility);});
-onUnmounted(()=>{alive=false;sequence++;if(timer)clearInterval(timer);document.removeEventListener('visibilitychange',visibility);});
+function visibility(){if(document.visibilityState==='visible')void load();else controller?.abort();}
+onMounted(()=>{alive=true;void load();timer=setInterval(()=>{now.value=Date.now();void load();},15_000);document.addEventListener('visibilitychange',visibility);});
+onUnmounted(()=>{alive=false;sequence++;controller?.abort();if(deadline)clearTimeout(deadline);if(timer)clearInterval(timer);document.removeEventListener('visibilitychange',visibility);});
 </script>
 
 <template>
@@ -117,14 +117,16 @@ onUnmounted(()=>{alive=false;sequence++;if(timer)clearInterval(timer);document.r
       <div class="perf-kpi"><span>Engine RSS / Heap</span><strong class="perf-kpi-compact">{{mib(host?.engine.rssBytes)}}</strong><small>Heap Used {{mib(host?.engine.heapUsedBytes)}}</small></div>
       <div class="perf-kpi"><span>受保护的当前持仓</span><strong>{{protectedPositions===null?'UNKNOWN':protectedPositions}} / {{activePositions===null?'UNKNOWN':activePositions}}</strong><small>来源 DashboardSnapshot；不替代最新交易所签名TP核验</small></div>
     </div>
+    <FinancePerformance :snapshot="store.snapshot" :now="now" :range-ms="rangeMs" :instance-id="hostRead?.instanceId??null"/>
     <div class="perf-columns">
       <Panel title="主机 CPU 趋势" subtitle="Windows 原生 CPU time 差分；只有实际采样点"><PerformanceTrend :points="cpuPoints" unit="%" label="CPU使用率"/><p class="perf-small">数据点 {{cpuPoints.length}} · 当前实例 {{host?.instanceId??'UNKNOWN'}}</p></Panel>
       <Panel title="主机内存趋势" subtitle="已用物理内存 · MiB"><PerformanceTrend :points="ramPoints" unit="MiB" label="物理内存"/><p class="perf-small">可用 {{mib(host?.memory.freeBytes)}} · 来源 {{host?.source??'UNKNOWN'}}</p></Panel>
     </div>
-    <Panel title="三张 GPU · 物理归属等待核验" subtitle="当前未接入可靠的 Windows GPU 性能计数器和 LUID/PCI↔PID 映射。历史显存占用不是实时数值。">
+    <Panel title="模型进程 GPU · Windows 实测" subtitle="WDDM进程最忙引擎占用（不相加）；显存是该PID各适配器之和。物理PCI归属须独立核验，不能以卡序号推断。">
       <div class="perf-gpu-grid">
-        <div v-for="gpu in gpuExpected" :key="gpu.title" class="perf-gpu"><strong>{{gpu.title}}</strong><small>{{gpu.detail}}</small>
-          <dl><div><dt>计算使用率</dt><dd>UNKNOWN</dd></div><div><dt>专用 / 共享显存</dt><dd>UNKNOWN / UNKNOWN</dd></div><div><dt>服务 PID · PCI绑定</dt><dd>UNVERIFIED</dd></div></dl>
+        <div v-for="service in gpuServices" :key="service.port" class="perf-gpu"><strong>{{service.title}}</strong><small>来源 {{gpu?.sampleSource??'UNKNOWN'}} · {{stamp(gpu?.asOf)}}</small>
+          <dl><div><dt>进程最忙GPU引擎</dt><dd>{{val(service.sample?.utilizationPct)}} %</dd></div><div><dt>专用 / 共享显存</dt><dd>{{mib(service.sample?.dedicatedBytes)}} / {{mib(service.sample?.sharedBytes)}}</dd></div><div><dt>服务 PID · PCI绑定</dt><dd>{{service.sample?.pid??'UNKNOWN'}} · UNVERIFIED</dd></div></dl>
+          <PerformanceTrend :points="gpuPoints(service.port)" unit="%" :label="service.title+'进程GPU'"/>
         </div>
       </div>
     </Panel>
@@ -154,8 +156,7 @@ onUnmounted(()=>{alive=false;sequence++;if(timer)clearInterval(timer);document.r
       <Panel title="SOCKS / Binance REST / WS" subtitle="不会因浏览器访问而重新请求交易所；仅展示 Engine 已收集的诊断。">
         <dl class="perf-facts">
           <div><dt>代理路由</dt><dd>{{proxyFact.text}}</dd></div>
-          <div><dt>HTTP 429 / 418</dt><dd>{{governance?.routes?.[0]?.requestBudget?.http429??'UNKNOWN'}} / {{governance?.routes?.[0]?.requestBudget?.http418??'UNKNOWN'}}</dd></div>
-          <div><dt>治理器</dt><dd>{{governance?.routes?.[0]?.requestBudget?.status??'UNKNOWN'}}</dd></div>
+          <div><dt>REST预算来源</dt><dd>{{governance?.budgets?'Engine request budgets':'UNKNOWN'}}</dd></div>
           <div><dt>私有同步</dt><dd>{{privateSync?.sync?.status??store.snapshot?.account.status??'UNKNOWN'}}</dd></div>
           <div><dt>WS 市场状态</dt><dd>{{stream?.state??'UNKNOWN'}}</dd></div>
           <div><dt>WS 解码计量</dt><dd>{{stream?.unit??'UNKNOWN'}}</dd></div>
@@ -169,9 +170,9 @@ onUnmounted(()=>{alive=false;sequence++;if(timer)clearInterval(timer);document.r
           <div><dt>挂单（本地投影）</dt><dd>{{store.snapshot?.entryOrders?.length??'UNKNOWN'}}</dd></div>
           <div><dt>当前仓位 / TP Protected</dt><dd>{{activePositions??'UNKNOWN'}} / {{protectedPositions??'UNKNOWN'}}</dd></div>
           <div><dt>账户未实现盈亏 (USD)</dt><dd>{{store.snapshot?.account.unrealizedPnlUsd==null?'UNKNOWN':val(store.snapshot.account.unrealizedPnlUsd,2)}}</dd></div>
-          <div><dt>本地确认净收益，不含资金费</dt><dd>{{finance?.exFundingNet==null?'UNKNOWN':val(finance.exFundingNet,2)}}</dd></div>
+          <div><dt>本地确认净收益，不含资金费</dt><dd>UNKNOWN（币种归因待核验）</dd></div>
           <div><dt>资金费归因 UNKNOWN cycles</dt><dd>{{finance?.fundingUnknownCycles??'UNKNOWN'}}</dd></div>
-          <div><dt>全口径确认净收益</dt><dd>{{finance?.confirmedAllInNet==null?'UNKNOWN':val(finance.confirmedAllInNet,2)}}</dd></div>
+          <div><dt>全口径确认净收益</dt><dd>UNKNOWN（币种归因待核验）</dd></div>
           <div><dt>同一 origin 漏斗转化率 / 回撤</dt><dd>UNKNOWN / UNKNOWN</dd></div>
         </dl>
         <p class="perf-small">上述本地交易收益为累计范围，并非筛选时间窗；不可与钱包变化相加。USDT/USDC未独立确认换汇或资金费不完整时，不构造假净收益。</p>

@@ -1,0 +1,6 @@
+# Offline screenshot review
+Built Vue/ECharts code served on localhost8786; Playwright intercepts API and WebSocket with explicitly synthetic fixtures. No Engine/model launched, no localhost8080/private account accessed for screenshots.
+Installed Edge headless; desktop1440x1050 and mobile390x844; final screenshots offline-fixture-desktop.png / offline-fixture-mobile.png inspected. Browser QA records0 pageErrors/no horizontal overflow/11 canvas per viewport. Synthetic funds450 USDT red,1400 USDC green; threshold yellow edges covered unit tests. CPU42%, Primary72% GPU are marked fixture, not measured runtime.
+Initial screenshot incorrectly gray due stale page clock before API completion; fixed load clock and regenerated. Initial browser attempt failed because bundled Chromium not installed; screenshot.log records failure, screenshot-green.log uses existing msedge successfully. No package/browser installed to alter runtime.
+Fullpage screenshots may show sticky navigation at capture position; responsive cards remain readable, chart resize/dispose covered source and unmount tests. First finance snapshot has one sample, no fabricated preceding trend. renderMs includes600ms settling; not real live performance improvement.
+

@@ -1,0 +1,46 @@
+{
+  "listeners": [
+    {
+      "pid": 23688,
+      "port": 8080
+    },
+    {
+      "pid": 3400,
+      "port": 8081
+    },
+    {
+      "pid": 14020,
+      "port": 8083
+    },
+    {
+      "pid": 22336,
+      "port": 8084
+    },
+    {
+      "pid": 18300,
+      "port": 20091
+    }
+  ],
+  "physicalPresentCount": 3,
+  "asOf": 1791599479708,
+  "devices": [
+    {
+      "status": "OK",
+      "name": "AMD Radeon RX 7900 XTX",
+      "instanceSha256": "8df5edd2b46f6a4b989aad8561820b0942e914d8a8ff8f1f7a9bf570415e1eba",
+      "location": "PCI 总线 22、设备 0、功能 0"
+    },
+    {
+      "status": "OK",
+      "name": "Intel(R) Arc(TM) B580 Graphics",
+      "instanceSha256": "67a6d8f8f0833dbdd43542a93dbfdb8eb3ef33c9aad316a29797c60bf9f2ed67",
+      "location": "PCI 总线 5、设备 0、功能 0"
+    },
+    {
+      "status": "OK",
+      "name": "AMD Radeon RX 7900 XTX",
+      "instanceSha256": "43c5cfe59c9045c41d4ef69ce69b65c1206f47aeac466173ef55aeae32f1b202",
+      "location": "PCI 总线 19、设备 0、功能 0"
+    }
+  ]
+}

@@ -2,7 +2,7 @@
   "inventoryVersion": "S00-T01-entry-review-2",
   "capturedAt": "2026-09-21",
   "derivation": "mechanical over-approximating static scan by scripts/v396-s00-isolation-rules.mjs; a match can only tighten a status, never relax it",
-  "entryCount": 194,
+  "entryCount": 204,
   "statusLegend": {
     "ALLOWED_STATIC": "executed by the S00 verification command",
     "CONDITIONAL_NOT_RUN": "not executed; a later stage may run it only after the required boundary is proven",
@@ -928,6 +928,108 @@
       "derivedFrom": "file-content-and-one-hop-target",
       "status": "FORBIDDEN_OR_NOT_RUN",
       "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; manual lifecycle entrypoint; excluded from automated verification"
+    },
+    {
+      "path": "scripts/performance/.gitignore",
+      "kind": "script",
+      "sideEffects": [],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/performance/collect-model-identity.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/performance/collect-windows-gpu.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/performance/gpu-baseline.json",
+      "kind": "script",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/performance/gpu-luid-pci.json",
+      "kind": "script",
+      "sideEffects": [],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir; unique loopback port; mock/no-network/no-exchange-write assertion; explicit user authorization where lifecycle is involved"
+    },
+    {
+      "path": "scripts/performance/gpu-snapshot.json",
+      "kind": "script",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/performance/map-gpu-luid.ps1",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store"
+    },
+    {
+      "path": "scripts/performance/model-identities.json",
+      "kind": "script",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/performance/model-identity.log",
+      "kind": "script",
+      "sideEffects": [
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "CONDITIONAL_NOT_RUN",
+      "requiredBoundary": "unique temp data dir plus unique loopback port; no credential read"
+    },
+    {
+      "path": "scripts/performance/screenshot-offline.mjs",
+      "kind": "script",
+      "sideEffects": [
+        "host-or-data-mutation",
+        "network-or-exchange",
+        "runtime-data-or-credential-boundary"
+      ],
+      "derivedFrom": "file-content-and-one-hop-target",
+      "status": "FORBIDDEN_OR_NOT_RUN",
+      "requiredBoundary": "unique temp data dir outside the repository; no live database or Settings store; mock/no-network/no-exchange-write assertion with a write counter that throws; unique temp data dir plus unique loopback port; no credential read"
     },
     {
       "path": "scripts/prune-zdj-backups.mjs",

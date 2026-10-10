@@ -1,3 +1,5 @@
+> **GitHub main 更新（提交 b55f427eeda1，2026-10-10 09:36+08）：** `main` 已将原24h验收终止原始证据同步到 `docs/reports/v398-engine-cutover-20261010/acceptance/state.json`（现为 `ABORTED_SAFETY_FAILURE`）及 [ACCEPTANCE_ABORT_RECEIPT_20261010.md](https://github.com/3684993/ZDJMITS/blob/main/docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md)。本功能分支始于更早main 662d7f3，若本分支文件仍有旧08:24 `RUNNING`，是尚未同步main的历史遗留，不能据此推翻最新权威已中止状态。Codex必须先核对最新main的验收事实和PR #31合并基线，避免旧文档覆盖新证据。该更新是文档证据同步，不是重启或新24h开始。
+
 # 2026-10-10 09:35+08 之后的新实施进度 — 性能仪表盘首批实码已在GitHub分支
 
 **最新优先交接**：本轮 ChatGPT 已核对原始验收ABORTED证据并提交了真正可接入真实OS/Engine只读数据的首批性能驾驶舱到 GitHub branch [`chatgpt/v398-performance-real-metrics-d0-d2-20261010`](https://github.com/3684993/ZDJMITS/tree/chatgpt/v398-performance-real-metrics-d0-d2-20261010)。**还未合并main、未本机npm测试、未部署、也未开启模型负载借用。**

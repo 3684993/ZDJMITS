@@ -1,0 +1,733 @@
+{
+  "scope": "OFFLINE SYNTHETIC IDENTICAL JOBS; NOT LIVE GPU OR AUTHORIZATION REPLAY",
+  "jobsHashInput": [
+    {
+      "id": 0,
+      "at": 0,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6000
+    },
+    {
+      "id": 1,
+      "at": 20,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6020
+    },
+    {
+      "id": 2,
+      "at": 40,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6040
+    },
+    {
+      "id": 3,
+      "at": 60,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6060
+    },
+    {
+      "id": 4,
+      "at": 80,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6080
+    },
+    {
+      "id": 5,
+      "at": 100,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6100
+    },
+    {
+      "id": 6,
+      "at": 120,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6120
+    },
+    {
+      "id": 7,
+      "at": 140,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6140
+    },
+    {
+      "id": 8,
+      "at": 160,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6160
+    },
+    {
+      "id": 9,
+      "at": 180,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6180
+    },
+    {
+      "id": 10,
+      "at": 200,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6200
+    },
+    {
+      "id": 11,
+      "at": 220,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6220
+    },
+    {
+      "id": 12,
+      "at": 240,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6240
+    },
+    {
+      "id": 13,
+      "at": 260,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6260
+    },
+    {
+      "id": 14,
+      "at": 280,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6280
+    },
+    {
+      "id": 15,
+      "at": 300,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6300
+    },
+    {
+      "id": 16,
+      "at": 320,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6320
+    },
+    {
+      "id": 17,
+      "at": 340,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6340
+    },
+    {
+      "id": 18,
+      "at": 360,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6360
+    },
+    {
+      "id": 19,
+      "at": 380,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6380
+    },
+    {
+      "id": 20,
+      "at": 400,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6400
+    },
+    {
+      "id": 21,
+      "at": 420,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6420
+    },
+    {
+      "id": 22,
+      "at": 440,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6440
+    },
+    {
+      "id": 23,
+      "at": 460,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6460
+    },
+    {
+      "id": 24,
+      "at": 480,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6480
+    },
+    {
+      "id": 25,
+      "at": 500,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6500
+    },
+    {
+      "id": 26,
+      "at": 520,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6520
+    },
+    {
+      "id": 27,
+      "at": 540,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6540
+    },
+    {
+      "id": 28,
+      "at": 560,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6560
+    },
+    {
+      "id": 29,
+      "at": 580,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6580
+    },
+    {
+      "id": 30,
+      "at": 600,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6600
+    },
+    {
+      "id": 31,
+      "at": 620,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6620
+    },
+    {
+      "id": 32,
+      "at": 640,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6640
+    },
+    {
+      "id": 33,
+      "at": 660,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6660
+    },
+    {
+      "id": 34,
+      "at": 680,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6680
+    },
+    {
+      "id": 35,
+      "at": 700,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6700
+    },
+    {
+      "id": 36,
+      "at": 720,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6720
+    },
+    {
+      "id": 37,
+      "at": 740,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6740
+    },
+    {
+      "id": 38,
+      "at": 760,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6760
+    },
+    {
+      "id": 39,
+      "at": 780,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6780
+    },
+    {
+      "id": 40,
+      "at": 800,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6800
+    },
+    {
+      "id": 41,
+      "at": 820,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6820
+    },
+    {
+      "id": 42,
+      "at": 840,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6840
+    },
+    {
+      "id": 43,
+      "at": 860,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6860
+    },
+    {
+      "id": 44,
+      "at": 880,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6880
+    },
+    {
+      "id": 45,
+      "at": 900,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6900
+    },
+    {
+      "id": 46,
+      "at": 920,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6920
+    },
+    {
+      "id": 47,
+      "at": 940,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6940
+    },
+    {
+      "id": 48,
+      "at": 960,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 6960
+    },
+    {
+      "id": 49,
+      "at": 980,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 6980
+    },
+    {
+      "id": 50,
+      "at": 1000,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7000
+    },
+    {
+      "id": 51,
+      "at": 1020,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7020
+    },
+    {
+      "id": 52,
+      "at": 1040,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7040
+    },
+    {
+      "id": 53,
+      "at": 1060,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7060
+    },
+    {
+      "id": 54,
+      "at": 1080,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7080
+    },
+    {
+      "id": 55,
+      "at": 1100,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7100
+    },
+    {
+      "id": 56,
+      "at": 1120,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7120
+    },
+    {
+      "id": 57,
+      "at": 1140,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7140
+    },
+    {
+      "id": 58,
+      "at": 1160,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7160
+    },
+    {
+      "id": 59,
+      "at": 1180,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7180
+    },
+    {
+      "id": 60,
+      "at": 1200,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7200
+    },
+    {
+      "id": 61,
+      "at": 1220,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7220
+    },
+    {
+      "id": 62,
+      "at": 1240,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7240
+    },
+    {
+      "id": 63,
+      "at": 1260,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7260
+    },
+    {
+      "id": 64,
+      "at": 1280,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7280
+    },
+    {
+      "id": 65,
+      "at": 1300,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7300
+    },
+    {
+      "id": 66,
+      "at": 1320,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7320
+    },
+    {
+      "id": 67,
+      "at": 1340,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7340
+    },
+    {
+      "id": 68,
+      "at": 1360,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7360
+    },
+    {
+      "id": 69,
+      "at": 1380,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7380
+    },
+    {
+      "id": 70,
+      "at": 1400,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7400
+    },
+    {
+      "id": 71,
+      "at": 1420,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7420
+    },
+    {
+      "id": 72,
+      "at": 1440,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7440
+    },
+    {
+      "id": 73,
+      "at": 1460,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7460
+    },
+    {
+      "id": 74,
+      "at": 1480,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7480
+    },
+    {
+      "id": 75,
+      "at": 1500,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7500
+    },
+    {
+      "id": 76,
+      "at": 1520,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7520
+    },
+    {
+      "id": 77,
+      "at": 1540,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7540
+    },
+    {
+      "id": 78,
+      "at": 1560,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7560
+    },
+    {
+      "id": 79,
+      "at": 1580,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7580
+    },
+    {
+      "id": 80,
+      "at": 1600,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7600
+    },
+    {
+      "id": 81,
+      "at": 1620,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7620
+    },
+    {
+      "id": 82,
+      "at": 1640,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7640
+    },
+    {
+      "id": 83,
+      "at": 1660,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7660
+    },
+    {
+      "id": 84,
+      "at": 1680,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7680
+    },
+    {
+      "id": 85,
+      "at": 1700,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7700
+    },
+    {
+      "id": 86,
+      "at": 1720,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7720
+    },
+    {
+      "id": 87,
+      "at": 1740,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7740
+    },
+    {
+      "id": 88,
+      "at": 1760,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7760
+    },
+    {
+      "id": 89,
+      "at": 1780,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7780
+    },
+    {
+      "id": 90,
+      "at": 1800,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7800
+    },
+    {
+      "id": 91,
+      "at": 1820,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7820
+    },
+    {
+      "id": 92,
+      "at": 1840,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7840
+    },
+    {
+      "id": 93,
+      "at": 1860,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7860
+    },
+    {
+      "id": 94,
+      "at": 1880,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7880
+    },
+    {
+      "id": 95,
+      "at": 1900,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7900
+    },
+    {
+      "id": 96,
+      "at": 1920,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7920
+    },
+    {
+      "id": 97,
+      "at": 1940,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7940
+    },
+    {
+      "id": 98,
+      "at": 1960,
+      "role": "PRIMARY_BRAIN",
+      "duration": 80,
+      "deadline": 7960
+    },
+    {
+      "id": 99,
+      "at": 1980,
+      "role": "REVIEW_BRAIN",
+      "duration": 40,
+      "deadline": 7980
+    }
+  ],
+  "baseline": {
+    "mode": "FIXED_HOME",
+    "jobCount": 100,
+    "completed": 100,
+    "primaryCount": 80,
+    "reviewCount": 20,
+    "primaryQueueP95Ms": 4140,
+    "reviewQueueP95Ms": 0,
+    "reviewOverdue": 0,
+    "failure": 0,
+    "exchangeWrites": 0,
+    "entryAuthorizations": 0,
+    "borrowed": 0
+  },
+  "candidate": {
+    "mode": "PROVEN_EQUIVALENT_IDLE_BORROW",
+    "jobCount": 100,
+    "completed": 100,
+    "primaryCount": 80,
+    "reviewCount": 20,
+    "primaryQueueP95Ms": 1520,
+    "reviewQueueP95Ms": 0,
+    "reviewOverdue": 0,
+    "failure": 0,
+    "exchangeWrites": 0,
+    "entryAuthorizations": 0,
+    "borrowed": 50
+  }
+}

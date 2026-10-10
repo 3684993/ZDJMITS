@@ -909,3 +909,8 @@ No strategy/model/TP/Entry parameter changes are authorized in that review.
 ## 2026-10-10 original24h acceptance terminal state
 
 ABORTED_SAFETY_FAILURE at08:34:00.270+08, LOCAL_TP_GATE_NOT_CLOSED (local14/15). All19 historical checkpoints/state/cursor now synchronized; old9-record prefix preserved. No24h PASS or clock continuation; derived elapsed17m10.585s differs from retained lagging elapsed field16.17665min. Post-abort09:34 read-only originalidentity/private17.380s/localTP24/24/Production0 is not signed full-position proof or new acceptance. Hidden task last run0 and terminal checkpoint stop are expected. No lifecycle/live/task/observer modifications. See docs/reports/v398-engine-cutover-20261010/ACCEPTANCE_ABORT_RECEIPT_20261010.md and acceptance JSON validation. All future repair/release/new24h need applicable authorization and gates; networkPR25/27/29 remain offline/unmerged.
+
+
+## 2026-10-10 G1统一容量租约 独立交接
+
+本分支仅实现G1统一容量租约，实际源码/测试/日志见 docs/reports/v398-performance-dashboard-20261010/G1_GPU_LEASE_VALIDATION.md。不混仪表盘/网络PR，不部署/不重启/不修改Settings。借用默认关闭，当前27B generation不等价；TP SHADOW不获真实改价或交易能力。旧24h仍08:34 ABORTED_SAFETY_FAILURE，正式门禁UNKNOWN，不开启或续算24h。以最终PR HEAD精确CI为准，缺少线上性能/授权效果回放与生产policy/provider接线均不可冒充通过。

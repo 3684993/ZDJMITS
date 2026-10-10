@@ -1,5 +1,6 @@
 import {filterTradeRecordCategory} from '../services/tradeRecordDiagnostics.js';
 import { projectEconomicEvidence } from '../services/economicEvidence.js';
+import { projectTrade24hReadModel } from '../services/trade24hReadModel.js';
 import { filterFormalOutcome, projectTradeRecordRow, projectTradeRecordSummary } from '../services/tradeRecordReadModel.js';
 import { projectExitProvenance } from '../services/exitProvenance.js';
 export function tradeCloseProvenance(record:any,runtime:EngineRuntime){return projectExitProvenance(record,runtime.state).closeProvenance;}
@@ -1059,6 +1060,15 @@ export function createApiRouter(runtime: EngineRuntime) {
       ),
     }),
   );
+  // Rolling 24h realized PnL; closed physical cycles only, native quote assets kept separate.
+  // All read-side, no exchange requests/backfill or auto-sync side effects.
+  r.get('/trade-records/24h',(_req,res)=>{
+    const asOf=Date.now();
+    const autoSync=runtime.tradeRecordAutoSyncStatus();
+    res.json(projectTrade24hReadModel({records:[...runtime.state.tradeRecords.values()],
+      ...runtime.qualityObserver?.readContext(),learningContext:runtime.state,asOf,
+      autoSync:{status:autoSync.status,lastSuccessAt:autoSync.lastSuccessAt}}));
+  });
   r.get('/trade-records',(req,res)=>{
     const q=req.query as Record<string,string|undefined>,page=Math.max(1,Number(q.page??1)),limit=Math.min(100,Math.max(1,Number(q.limit??20)));
     const records=[...runtime.state.tradeRecords.values()],summary=projectTradeRecordSummary({records,...{...runtime.qualityObserver?.readContext(),learningContext:runtime.state}}),integrity=new TradeRecordIntegrityService(runtime.state).summary();

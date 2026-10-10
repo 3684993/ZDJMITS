@@ -63,3 +63,7 @@ Windows 已识别的周期弹窗源是两个 Interactive 5min Node task。8个 Z
 现场 Engine 仍旧 build/PID18100；私有事实过期、SOCKS deadline失败。TP本地13/13不是当前exchange signed证明。代理账户 `MaxSessions=0` 禁止 shell；不能据此改ssh配置或冒充本轮Linux样本。451资格UNKNOWN必须官方确认。未部署、未重启、90min新版验收NOT_STARTED；旧观察器的build白名单必须在正规发布后更新。禁止绕policy、地区限制、独立补仓、Production、风险/TP/freshness减弱。
 
 主机根目录 `D:\MITS` dirty且保留；本轮用隔离 worktree。原PR20资源说明断言失败已修复，PUBLIC/MARKET计数使用一次快照时间；decoded bytes不是SSH wire，也不含PRIVATE/REST。所有可发布回执/日志/任务备份在GitHub，钥匙、DB、账户原始事件及dumps留本机。
+
+## 2026-10-10 N2 offline retained mark scope
+
+Independent branch codex/v398-network-n2-mark-scope scopes one-second markPrice to the existing protected retention union; global discovery ticker and BBO remain. MARKET 5*N+1 <=1024 uses scoped marks, otherwise existing global mark fallback; >255 retention still requires protected sharding. Red2fail/2pass -> focused5files/48tests PASS. Full verification and exact-head CI receipts: docs/reports/v398-network-mark-scope-20261010/MARK_SCOPE_REPORT.md and VALIDATION.json, PR conversation. Related N1 PR25 and N3 PR27 are independent. No deployment/restart/live proxy/authorization/TP change. Real savings/SSH bytes and authenticated PRIVATE Demo remain pending; original24h aborted08:34 LOCAL_TP_GATE_NOT_CLOSED and later local recovery cannot resume it.

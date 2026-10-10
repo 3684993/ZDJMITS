@@ -132,3 +132,7 @@ Binance USDⓈ-M 官方文档（核查时间2026-10-10）：
 - REST接口分类与权重（需在实施时重新比对单端点）：https://developers.binance.com/en/docs/catalog/core-trading-derivatives-trading-usd-s-m-futures/api/rest-api/market-data
 
 **审计最终结论：当前的最优先事项不是把SOCKS超时调得更大，而是：验证Demo WS主机与私有路由 → 用实时解码流量证实/删除无关全市场广播 → 用保留现有PRIVATE/TP与REST预算的方式降低SSH积压。** 尚未获得对当前实例的60秒真实流量、SSH wire bytes及所有成交/账户WS事件独立采样，不得虚报节省指标或已修复451。
+
+## 2026-10-10 N2 offline retained mark scope
+
+Independent branch codex/v398-network-n2-mark-scope scopes one-second markPrice to the existing protected retention union; global discovery ticker and BBO remain. MARKET 5*N+1 <=1024 uses scoped marks, otherwise existing global mark fallback; >255 retention still requires protected sharding. Red2fail/2pass -> focused5files/48tests PASS. Full verification and exact-head CI receipts: docs/reports/v398-network-mark-scope-20261010/MARK_SCOPE_REPORT.md and VALIDATION.json, PR conversation. Related N1 PR25 and N3 PR27 are independent. No deployment/restart/live proxy/authorization/TP change. Real savings/SSH bytes and authenticated PRIVATE Demo remain pending; original24h aborted08:34 LOCAL_TP_GATE_NOT_CLOSED and later local recovery cannot resume it.

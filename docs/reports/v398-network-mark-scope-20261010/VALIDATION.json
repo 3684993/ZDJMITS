@@ -1,0 +1,38 @@
+{
+  "phase": "N2",
+  "base": "f933b20a676f3dc0b37557c9bb13f5910798f785",
+  "branch": "codex/v398-network-n2-mark-scope",
+  "npmCi": "PASS",
+  "npmVerify": "PASS",
+  "testFiles": 252,
+  "tests": 2161,
+  "engineFiles": 217,
+  "engineTests": 1970,
+  "focusedFiles": 5,
+  "focusedTests": 48,
+  "redBeforeFix": {
+    "failed": 2,
+    "passed": 2
+  },
+  "s00": "PASS",
+  "vpnLoopback": "PASS",
+  "ci": "PENDING_AT_COMMIT_SEE_PR_RECEIPT",
+  "deploy": false,
+  "restart": false,
+  "liveChanges": false,
+  "liveSavings": "UNKNOWN",
+  "privateDemoAuthenticatedEvents": "UNKNOWN",
+  "acceptance24h": "ABORTED_SAFETY_FAILURE_2026-10-10T08:34:00.270+08:00",
+  "unchangedDependencyAdvisories": {
+    "moderate": 2,
+    "critical": 2
+  },
+  "remaining": [
+    "ACK/NAK accounting",
+    "partial-vs-diff depth/recovery storms",
+    "private authenticated lifecycle and duplicates",
+    "protected sharding above 255 retention",
+    "post-authorized-release same-route load A/B",
+    "Issue23 origin attribution"
+  ]
+}

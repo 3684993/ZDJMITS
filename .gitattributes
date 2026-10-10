@@ -3,3 +3,5 @@
 docs/reports/v398-proxy-network-p0-20261009/local-20261009/*.log binary
 docs/reports/v398-controlled-release-24h-20261010/*.log binary
 docs/reports/v398-restart-execution-20261010/issue22-preparation/*.log binary
+
+docs/reports/v398-network-mark-scope-20261010/*.log binary

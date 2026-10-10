@@ -6,7 +6,7 @@ param(
   [ValidateRange(1,60)][int]$ProbeTimeoutSeconds = 8,
   [ValidateRange(5,300)][int]$HealthIntervalSeconds = 30,
   [ValidateRange(1,10)][int]$FailureThreshold = 3,
-  [ValidateRange(0,10)][int]$MaxRestarts = 3,
+  [ValidateRange(0,2)][int]$MaxRestarts = 2,
   [ValidateRange(0,86400)][int]$RunForSeconds = 0
 )
 # Existing deployment: same user, host, SSH port, SOCKS bind and secure local key.
@@ -178,6 +178,26 @@ function Stop-Guardian {
     Remove-Item -LiteralPath $guardianPath -Force
   }
 }
+function Start-Guardian {
+  if(Test-Path -LiteralPath $guardianPath){
+    $record=Get-Content -LiteralPath $guardianPath -Raw|ConvertFrom-Json
+    $existing=Get-CimInstance Win32_Process -Filter "ProcessId=$($record.pid)" -ErrorAction SilentlyContinue
+    if($existing){
+      $invocation=[string]$existing.CommandLine
+      if($invocation -match '(?i)-EncodedCommand\s+([A-Za-z0-9+/=]+)'){$invocation=[Text.Encoding]::Unicode.GetString([Convert]::FromBase64String($Matches[1]))}
+      if($existing.Name -notin @('powershell.exe','pwsh.exe') -or $invocation -notlike ('*'+$PSCommandPath+'*') -or $invocation -notmatch '(?:^|\s)-Watch(?:\s|$)' -or ([datetime]$existing.CreationDate).ToUniversalTime() -ne ([datetime]$record.createdAt).ToUniversalTime()){throw 'GUARDIAN_OWNER_NOT_PROVEN'}
+      return
+    }
+  }
+  $powershell=(Get-Command powershell.exe -ErrorAction Stop).Source
+  $args='-NoProfile -NonInteractive -File "'+$PSCommandPath+'" -Watch -BaseDir "'+$BaseDir+'" -LocalPort '+$LocalPort+' -ProbeTimeoutSeconds '+$ProbeTimeoutSeconds+' -HealthIntervalSeconds '+$HealthIntervalSeconds+' -FailureThreshold '+$FailureThreshold+' -MaxRestarts '+$MaxRestarts
+  $startup=New-CimInstance -ClassName Win32_ProcessStartup -ClientOnly -Property @{ShowWindow=[uint16]0}
+  $launch=Invoke-CimMethod -ClassName Win32_Process -MethodName Create -Arguments @{CommandLine=('"'+$powershell+'" '+$args);CurrentDirectory=$BaseDir;ProcessStartupInformation=$startup}
+  if($launch.ReturnValue -ne 0){throw 'DETACHED_GUARDIAN_CREATE_FAILED'}
+  $created=Get-CimInstance Win32_Process -Filter "ProcessId=$($launch.ProcessId)"
+  Save-Json $guardianPath @{pid=$launch.ProcessId;createdAt=([datetime]$created.CreationDate).ToUniversalTime().ToString('o');script=$PSCommandPath}
+  Write-TunnelEvent 'GUARDIAN_RESTORED' @{pid=$launch.ProcessId}
+}
 function Main {
   New-Item -ItemType Directory -Path $BaseDir -Force|Out-Null
   if(@($Stop,$Status,$Watch)|Where-Object{$_}|Measure-Object|Select-Object -ExpandProperty Count){
@@ -205,7 +225,7 @@ function Main {
     }
     $health=Test-Tunnel;$health|ConvertTo-Json -Depth 8
     Write-TunnelEvent 'INITIAL_HEALTH' $health
-    if(-not $Watch){if(-not $health.healthy){throw 'TUNNEL_UNHEALTHY: listener alone is not READY'};Write-Output "READY SOCKS5H=socks5h://127.0.0.1:$LocalPort";return}
+    if(-not $Watch){Invoke-Locked {Start-Guardian};if(-not $health.healthy){throw 'TUNNEL_UNHEALTHY: listener alone is not READY'};Write-Output "READY SOCKS5H=socks5h://127.0.0.1:$LocalPort";return}
     $self=Get-CimInstance Win32_Process -Filter "ProcessId=$PID"
     Save-Json $guardianPath @{pid=$PID;createdAt=([datetime]$self.CreationDate).ToUniversalTime().ToString('o');script=$PSCommandPath}
     $started=[Diagnostics.Stopwatch]::StartNew();$failures=0;$restarts=@()
@@ -213,7 +233,8 @@ function Main {
       if($health.healthy){$failures=0}else{$failures++}
       $logTooLarge=(Test-Path -LiteralPath $stderrPath) -and (Get-Item -LiteralPath $stderrPath).Length -gt 8MB
       if($failures -ge $FailureThreshold -or $logTooLarge){
-        $now=Get-Date;$restarts=@($restarts|Where-Object{$_ -gt $now.AddMinutes(-15)})
+        # Lifetime budget for this guardian: an unchanged fault cannot regain
+        # permission to restart merely because fifteen minutes have elapsed.
         if($restarts.Count -ge $MaxRestarts){Write-TunnelEvent 'RESTART_BUDGET_EXHAUSTED' $health;throw 'RESTART_BUDGET_EXHAUSTED: no tight/infinite restart loop'}
         Write-TunnelEvent 'RESTART_REQUESTED' @{health=$health;failures=$failures;logTooLarge=$logTooLarge}
         Start-Sleep -Seconds ([math]::Min(30,2*[math]::Pow(2,$restarts.Count)))

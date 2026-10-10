@@ -1,0 +1,34 @@
+(node:1808) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12328) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run src/services/proxyLifecycle.test.ts src/api/runtimeSettingsResources.test.ts
+
+(node:5200) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-proxy-recovery-field-20261010/apps/engine
+
+(node:13656) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21708) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19080) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6288) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/proxyLifecycle.test.ts (5 tests) 90ms
+(node:23796) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/api/runtimeSettingsResources.test.ts (20 tests) 406ms
+
+ Test Files  2 passed (2)
+      Tests  25 passed (25)
+   Start at  22:32:36
+   Duration  2.05s (transform 228ms, setup 0ms, collect 1.22s, tests 496ms, environment 0ms, prepare 701ms)
+
+(node:23612) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)

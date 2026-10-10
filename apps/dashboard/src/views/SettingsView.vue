@@ -216,7 +216,7 @@ async function saveResource(kind: string, item: any) {
       if(kind==="exchange"){const x:any=draft.value.connections.exchange;if(confirmed.environment==="TESTNET"){x.environment="TESTNET";x.testnetBaseUrl=confirmed.restBaseUrl;x.testnetRestBaseUrl=confirmed.restBaseUrl;x.testnetWsBaseUrl=confirmed.wsBaseUrl;}else{x.environment="PRODUCTION";x.productionBaseUrl=confirmed.restBaseUrl;x.productionRestBaseUrl=confirmed.restBaseUrl;x.productionWsBaseUrl=confirmed.wsBaseUrl;}x.credentialRef=confirmed.credentialRef??x.credentialRef;draft.value.connections.executionMode=confirmed.executionMode??draft.value.connections.executionMode;}
     }
     resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=confirmed.id;
-    notice.value = "资源已保存并已回读";
+    notice.value = "资源已保存并已回读"+(kind==="proxy"?" · "+proxyValidationLabel(confirmed.validation?.status??"NOT_VERIFIED"):"");
   } catch (e) {
     error.value = String(e);
   }
@@ -241,7 +241,7 @@ async function activateResource(kind:"proxy",id:string){
     await api.activateResource(kind,id,expected);
     const loaded=await api.resources(kind);resources.value[kind]=loaded.items??[];resourceSettingsVersion.value=Number(loaded.settingsVersion??expected+1);resourceBaseline.value[kind]=Object.fromEntries(resources.value[kind].map((x:any)=>[x.id,JSON.stringify(x)]));selectedResourceId.value[kind]=id;
     if(draft.value){const active=resources.value.proxy.find((x:any)=>x.active);if(active){draft.value.settingsVersion=resourceSettingsVersion.value;draft.value.connections.proxy={...draft.value.connections.proxy,url:active.url,enabled:active.enabled!==false,activeResourceId:active.id,resources:resources.value.proxy.map((x:any)=>({id:x.id,name:x.name,type:"SOCKS5H",url:x.url,enabled:x.enabled!==false}))};}}
-    notice.value="代理已激活并 hot-apply";
+    notice.value="代理已激活 · "+proxyValidationLabel(resources.value.proxy.find((x:any)=>x.id===id)?.validation?.status??"NOT_VERIFIED");
   }catch(e){error.value=String(e);}
 }
 async function removeResource(kind: string, id: string) {
@@ -271,7 +271,24 @@ function passiveProxyLabel(value:string){return({
   HTTP_451_ELIGIBILITY:'币安返回451：需独立核实账户及地区使用资格',HTTP_502_UPSTREAM_UNKNOWN:'币安或上游返回502：不能归类为SOCKS超时',
   MONITOR_UNAVAILABLE:'只读监测暂不可用',DISABLED:'已停用'
 } as Record<string,string>)[value]??'状态尚未确定';}
-async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=await api.testResource(kind,item.id);resourceProbeResults.value={...resourceProbeResults.value,[item.id]:result};if(kind==="ai"){aiProbeResults.value={...aiProbeResults.value,[item.id]:result};notice.value=`连接 ${result.status} · ${result.latencyMs}ms · 实际 model id: ${(result.models??[]).join(", ")||"未返回"}`;}else notice.value=`连接测试：${result.status??result.state??"PASS"}${result.latencyMs!=null?` · ${result.latencyMs}ms`:""}`;}catch(e){error.value=String(e);}}
+const proxyToken=ref(''),proxyBusy=ref(false),proxyResult=ref('');
+function proxyValidation(item:any){
+  const rows=[passiveProxyHealth.value[item.id]?.validation,resourceProbeResults.value[item.id],item.validation].filter(Boolean);
+  const result=rows.sort((a,b)=>Number(b.asOf??0)-Number(a.asOf??0))[0]??{status:(!item.url?'NOT_CONFIGURED':item.enabled===false?'DISABLED':'NOT_VERIFIED')};
+  return result.status==='VERIFIED'&&Date.now()-Number(result.asOf??0)>120000?{...result,status:'STALE'}:result;
+}
+function proxyValidationLabel(value:string){return({NOT_CONFIGURED:'未配置',DISABLED:'已停用',VERIFYING:'验证中',VERIFIED:'验证通过',VALIDATION_FAILED:'验证未通过',STALE:'验证已过期',NOT_VERIFIED:'尚未验证'} as Record<string,string>)[value]??'验证未通过';}
+async function proxyAction(id:string,action:'start'|'restart'){
+  proxyBusy.value=true;error.value='';proxyResult.value='代理操作中，正在验证连接';
+  try{
+    const response=await fetch(`/api/v3/settings/resources/proxy/${encodeURIComponent(id)}/lifecycle`,{method:'POST',headers:{'content-type':'application/json','x-model-operation-token':proxyToken.value},body:JSON.stringify({action}),signal:AbortSignal.timeout(70_000)});
+    const result=await response.json();if(!response.ok)throw Error(result.error?.code??'PROXY_OPERATION_FAILED');
+    resourceProbeResults.value={...resourceProbeResults.value,[id]:result};
+    proxyResult.value=`${proxyValidationLabel(result.status)} · PID ${result.pid??'未知'}${result.reason?' · '+result.reason:''}`;
+    await refreshPassiveProxyHealth();
+  }catch(e){proxyResult.value='代理操作或验证未通过：'+String(e);error.value=String(e);}finally{proxyBusy.value=false;}
+}
+async function testResource(kind:"exchange"|"proxy"|"ai",item:any){try{if(isResourceDirty(kind,item))throw new Error("请先保存当前资源修改，再执行真实连接测试");const result=await api.testResource(kind,item.id);resourceProbeResults.value={...resourceProbeResults.value,[item.id]:result};if(kind==="ai"){aiProbeResults.value={...aiProbeResults.value,[item.id]:result};notice.value=`连接 ${result.status} · ${result.latencyMs}ms · 实际 model id: ${(result.models??[]).join(", ")||"未返回"}`;}else notice.value=`连接测试：${kind==="proxy"?proxyValidationLabel(result.status):(result.status??result.state??"验证未通过")}${result.latencyMs!=null?` · ${result.latencyMs}ms`:""}`;}catch(e){error.value=String(e);}}
 const aiDutyLabels:Record<string,string>={SCOUT_RESEARCH:"Scout / Research",ENTRY_PRIMARY:"Entry Primary",PENDING_ENTRY_REVIEW:"Pending Entry Review",POSITION_REVIEW:"Position Review"};
 function updateAiRoute(duty:string,resourceId:string){const routes=structuredClone(aiRouteDraft.value),found=routes.find((row:any)=>row.duty===duty);if(found){found.resourceId=resourceId;found.enabled=Boolean(resourceId);}else if(resourceId)routes.push({duty,resourceId,enabled:true,priority:duty==="ENTRY_PRIMARY"?100:duty==="POSITION_REVIEW"?90:duty==="PENDING_ENTRY_REVIEW"?20:10});aiRouteDraft.value=routes;}
 function routeResourceId(duty:string){return aiRouteDraft.value.find((row:any)=>row.duty===duty&&row.enabled)?.resourceId??"";}
@@ -893,6 +910,8 @@ onUnmounted(()=>{if(proxyMonitorTimer!==null)window.clearInterval(proxyMonitorTi
         <section class="settings-subsection"><h3>API 凭证</h3><div class="form-grid two"><label><span>凭证状态</span><input :value="credentialStatus?.configured ? 'READY' : 'NOT_CONFIGURED'" disabled /></label><span></span><label><span>API Key</span><input v-model="apiKey" type="password" autocomplete="off" /></label><label><span>API Secret</span><input v-model="apiSecret" type="password" autocomplete="off" /></label></div><div class="resource-actions"><span class="muted">凭证不会显示回页面；测试不保存，验证并保存才写入安全存储。</span><div><button class="button secondary" @click="testCredentials">仅验证凭证</button><button class="button primary" @click="saveCredentials">验证并保存凭证</button></div></div></section>
       </Panel>
       <Panel v-else-if="tab === 'proxy'" title="网络代理资源">
+        <label>代理运维授权密钥 <input v-model="proxyToken" type="password" autocomplete="off" placeholder="仅本次页面使用，不保存" /></label>
+        <p v-if="proxyResult" role="status">{{proxyResult}}</p>
         <div class="resource-manager-heading">
           <div><strong>代理资源与活动路由分开管理</strong><p>可保存多个 SOCKS5H 代理；只有标记为“活动”的资源承载 Binance REST / WS。保存资源不会自动替换当前活动代理。</p></div>
           <button class="button primary" @click="addResource('proxy')">新增代理</button>
@@ -922,19 +941,23 @@ onUnmounted(()=>{if(proxyMonitorTimer!==null)window.clearInterval(proxyMonitorTi
               <div class="resource-health-grid">
                 <div><small>状态</small><strong>{{item.active?'ACTIVE':(item.status??'READY')}}</strong></div>
                 <div><small>最近测试延迟</small><strong>{{resourceProbeResults[item.id]?.latencyMs==null?'—':resourceProbeResults[item.id].latencyMs+' ms'}}</strong></div>
-                <div><small>测试结果</small><strong>{{resourceProbeResults[item.id]?.status??'尚未测试'}}</strong></div>
+                <div><small>独立连接验证</small><strong>{{proxyValidationLabel(proxyValidation(item).status)}}</strong></div>
+                <div><small>代理 PID</small><strong>{{proxyValidation(item).pid??'未知'}}</strong></div>
+                <div v-if="proxyValidation(item).reason"><small>验证详情</small><strong>{{proxyValidation(item).failurePhase??''}} {{proxyValidation(item).reason}}</strong></div>
                 <div v-if="item.active"><small>运行中代理观察</small><strong>{{passiveProxyLabel(passiveProxyHealth[item.id]?.status??'NO_OBSERVATION')}}</strong></div>
                 <div v-if="item.active"><small>内部请求排队数</small><strong>{{passiveProxyHealth[item.id]?.queueDepth??'—'}}</strong></div>
                 <div v-if="item.active"><small>最近币安成功通信</small><strong>{{passiveProxyHealth[item.id]?.lastSuccessAt?new Date(passiveProxyHealth[item.id].lastSuccessAt).toLocaleTimeString():'无近期成功证据'}}</strong></div>
                 <div v-if="item.active"><small>最近排队超时</small><strong>{{passiveProxyHealth[item.id]?.lastQueueTimeoutAt?new Date(passiveProxyHealth[item.id].lastQueueTimeoutAt).toLocaleTimeString():'未观察到'}}</strong></div>
               </div>
               <div class="resource-actions">
-                <span class="muted">编辑 → 保存 → 测试 → 激活。当前代理页打开时，只读状态每30秒更新，利用现有通信记录，不额外请求币安；“测试连接”才会发起一次真实请求。排队超时不等于代理断线，实时故障以最后一次网络阶段和交易所返回为准。</span>
+                <span class="muted">编辑 → 保存 → 测试 → 激活。当前代理页打开时，只读状态每30秒更新，利用现有通信记录，不额外请求币安；保存配置、系统启动及“测试连接”会独立验证交易所公共连接；验证失败不代表配置未保存。排队超时不等于代理断线，实时故障以最后一次网络阶段和交易所返回为准。</span>
                 <div>
                   <button class="button primary" :disabled="!isResourceDirty('proxy',item)" @click="saveResource('proxy',item)">保存资源</button>
                   <button class="button secondary" :disabled="!isResourceDirty('proxy',item)" @click="cancelResourceEdits('proxy')">取消修改</button>
                   <button class="button secondary" :disabled="!item.active" @click="refreshPassiveProxyHealth()">刷新运行状态</button>
                   <button class="button secondary" :disabled="isResourceDirty('proxy',item)" @click="testResource('proxy',item)">测试连接</button>
+                  <button class="button secondary" :disabled="proxyBusy||proxyToken.length<32||isResourceDirty('proxy',item)||!item.active||!item.enabled||!proxyValidation(item).manageable||draft?.connections.exchange.environment!=='TESTNET'" @click="proxyAction(item.id,'start')">启动代理</button>
+                  <button class="button secondary" :disabled="proxyBusy||proxyToken.length<32||isResourceDirty('proxy',item)||!item.active||!item.enabled||!proxyValidation(item).manageable||draft?.connections.exchange.environment!=='TESTNET'" @click="proxyAction(item.id,'restart')">重启代理</button>
                   <button class="button secondary" :disabled="isResourceDirty('proxy',item)||item.active||!item.enabled" @click="activateResource('proxy',item.id)">设为活动</button>
                   <button class="button danger" :disabled="item.active" @click="removeResource('proxy',item.id)">删除</button>
                 </div>

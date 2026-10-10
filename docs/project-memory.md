@@ -1,5 +1,7 @@
 > **网络P0接续（2026-10-10 22:00+08）：** 新ChatGPT提示词 `docs/prompts/CHATGPT_V398_NETWORK_CONGESTION_NEXT_CHAT_20261010.md`，Codex执行书 `docs/prompts/CODEX_V398_NETWORK_CONGESTION_EXECUTE_20261010.md`，主计划 `docs/plans/V398_NETWORK_CONGESTION_ENGINE_ISOLATION_RECOVERY_20261010.md`。Engine OFF、SSH同PID12212后公众访问4/4成功/sshd Send-Q基本0；Engine ON曾0/8失败且2.7MB积压。PR41双CI成功未merge，PR42减全市场WS draft/CI进行，下一步CI后受控发布、必要服务重启和30m+90m稳定验收；当前签名TP及私有事实UNKNOWN。历史描述以新计划为准。
 >
+> 2026-10-10 代理恢复与管理更新：原固定脚本恢复SSH10588→18988，独立公共时间验证曾PASS7078ms，但后续SOCKS_CONNECT_REPLY复验超时8030ms，不能声称稳定连通或私有同步恢复。队列超时与真实连接失败分别取证。隔离分支实现保存/激活/启动自动验证、未配置/失败/过期提示，以及系统设置的授权启动/重启代理；固定脚本、同源令牌、进程身份、互斥、超时和审计，保留全部交易保护。npm ci/verify:ci PASS，最终类型检查及48项后端/6项界面测试PASS。精确CI和部署状态随后补齐。见 docs/reports/v398-proxy-recovery-20261010/IMPLEMENTATION.md。模型未重启；新24h仍NOT_STARTED。
+
 > 2026-10-10 20:18 北京时间已实际部署（覆盖下方 NO_GO 历史）：用户重新明确授权强制停止 Engine，并撤销 Engine 启动/重启前的新鲜签名 TP/私有同步发布门禁，要求保持建仓授权。执行一次 Stop-Process -Force，仅停止旧 Engine12140；新 host25736 / Engine13476 / instance d78966bf-820d-4cad-8ab0-b993774b2a21 已监听0.0.0.0:8080。源码 e3dc48b6832f48569b76a1240bb8040f5f6f3dfd，build `3.9.8-a790207862ad258b41a0`，sourceHash/artifactHash与封存包一致。npm ci/build PASS，精确源码两次 GitHub CI SUCCESS。
 >
 > 本次及后续 Engine 生命周期不再以新鲜签名 TP/私有同步作为用户要求的发布前置拦截；这些事实仍如实显示 UNKNOWN/不可用，不伪造PASS。本次更新了精确构建的 ONE_TESTNET_ENGINE_SWITCH 审批绑定，保留原审批文件与原到期时间；启动参数 TESTNET_ENTRY_ENABLED / admissionDisabled=0，浏览器显示 AUTO_RUNNING、TESTNET自动建仓已启用。Primary唯一建仓、禁止补仓、HUMAN_MANAGED、交易TP保护及Production隔离代码未删除。
@@ -216,3 +218,6 @@ Exact hosted GREEN source/evidence HEAD 57874460e4ef743d4f9b1eb65dd5bd4fa037192c
 GitHub PR #32: https://github.com/3684993/ZDJMITS/pull/32
 Exact hosted GREEN source/evidence HEAD 1d4005bc2b1f0b900ad5ac5435a16d9c8734df0d: https://github.com/3684993/ZDJMITS/actions/runs/38017460613 (completed/success). Archived job log and exact-head JSON included. Subsequent archival commit changes documentation/evidence only; its final HEAD CI must also be read back, never inferred from this result.
 Related independent PR31 dashboard, PR33 lease, PR32 TP SHADOW; no merge/deploy. Local full verification counts in verification-local.json.
+
+## 2026-10-10 network field execution — PR41
+PR42 merged as33c70b7 after exact HEAD30b9cb7 CI38059896597 SUCCESS. PR41 conflicts resolved preserving both histories; probe cooldown and bounded guardian restore implemented, complete integrated local verify:ci/S00 PASS. Final PR41 HEAD requires its own CI and deployment. Runtime remains offline at this checkpoint; earlier signed UNKNOWN is preserved and a later GET-only V3+accountConfig snapshot passed26/26 TP. Fresh pre-start proof is still required. Evidence: docs/reports/v398-network-congestion-recovery-20261010/.

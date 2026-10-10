@@ -2,6 +2,9 @@ import { Router, type NextFunction, type Request, type Response } from 'express'
 import { SystemSettingsSchema, type SystemSettings } from '@zdj/contracts';
 import { loadAiResources } from '../config/aiResourceLoader.js';
 import { BinanceTransport, reconfigureBinanceTransports } from '../adapters/binance/BinanceTransport.js';
+import path from 'node:path';
+import { ProxyLifecycleService } from '../services/proxyLifecycle.js';
+import { modelOperationPermission } from '../services/modelLifecycle.js';
 import { createHash } from 'node:crypto';
 import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.js';
 import type { EngineRuntime } from '../runtime/appRuntime.js';
@@ -10,6 +13,15 @@ import { applyGovernancePatch, changedGovernancePaths, governanceFieldOf, govern
 type RuntimeResourceKind='exchange'|'proxy'|'ai';
 const aiLoadDefault=()=>({active:0,totalRuns:0,failures:0,lastLatencyMs:null,currentSymbol:null,currentRunId:null,currentStartedAt:null,lastCompletedAt:null,lastDirection:null,lastDecision:null,idleReason:'WAITING_CANDIDATE',nextStep:'等待动态交易池候选',queueDepth:0});
 
+const proxyServices=new WeakMap<EngineRuntime,ProxyLifecycleService>();
+function proxyService(runtime:EngineRuntime){
+  let service=proxyServices.get(runtime);
+  if(!service){service=new ProxyLifecycleService({directory:path.join(runtime.settingsStore.dataDirectory(),'runtime','proxy-operations'),audit:row=>runtime.events.publish('PROXY_LIFECYCLE',row)});proxyServices.set(runtime,service);}
+  return service;
+}
+function probeHost(settings:SystemSettings){return settings.connections.exchange.environment==='TESTNET'?'demo-fapi.binance.com':'fapi.binance.com';}
+function activeProxy(settings:SystemSettings){return proxyResources(settings).find(r=>r.id===String((settings.connections.proxy as any).activeResourceId??'binance-proxy'));}
+async function validateActiveProxy(runtime:EngineRuntime){const r=activeProxy(runtime.state.settings);if(r)await proxyService(runtime).verify(r,probeHost(runtime.state.settings));}
 function proxyResources(settings:SystemSettings){
   const proxy:any=settings.connections.proxy,rows=Array.isArray(proxy.resources)?proxy.resources:[];
   if(rows.length)return rows.map((row:any)=>({id:String(row.id),name:String(row.name??row.id),type:'SOCKS5H' as const,url:String(row.url),enabled:row.enabled!==false}));
@@ -89,7 +101,7 @@ function aiResource(item:any){
 function rejectSecretFields(item:any){if(item&&['apiKey','apiSecret','secret','password','token'].some(key=>Object.prototype.hasOwnProperty.call(item,key)))throw new Error('RESOURCE_SECRET_FIELD_FORBIDDEN');}
 function resourceView(settings:SystemSettings,kind:RuntimeResourceKind,runtime?:EngineRuntime){
   if(kind==='exchange'){const x=settings.connections.exchange as any;return[{id:'binance-usdm',name:'Binance USD-M',type:'BINANCE_USDM',environment:x.environment,executionMode:settings.connections.executionMode,restBaseUrl:x.environment==='TESTNET'?(x.testnetRestBaseUrl??x.testnetBaseUrl):(x.productionRestBaseUrl??x.productionBaseUrl),wsBaseUrl:x.environment==='TESTNET'?(x.testnetWsBaseUrl??'wss://stream.binancefuture.com/ws'):(x.productionWsBaseUrl??'wss://fstream.binance.com/ws'),credentialRef:x.credentialRef,enabled:true,active:true,status:'READY'}];}
-  if(kind==='proxy'){const activeId=(settings.connections.proxy as any).activeResourceId??'binance-proxy';return proxyResources(settings).map((row:any)=>({...row,active:row.id===activeId,status:row.enabled?(row.id===activeId?'ACTIVE':'READY'):'DISABLED'}));}
+  if(kind==='proxy'){const activeId=(settings.connections.proxy as any).activeResourceId??'binance-proxy';return proxyResources(settings).map((row:any)=>({...row,active:row.id===activeId,status:row.enabled?(row.id===activeId?'ACTIVE':'READY'):'DISABLED',validation:runtime?proxyService(runtime).status(row,probeHost(settings)):undefined}));}
   const metrics=new Map((runtime?.ai?.resourceMetrics?.()??[]).map((row:any)=>[row.id,row]));
   return settings.aiResources.map(item=>{const metric:any=metrics.get(item.id);return{...item,name:item.name??item.id,
     duties:(settings.aiDutyRoutes??[]).filter(route=>route.enabled&&route.resourceId===item.id).map(route=>route.duty),
@@ -111,12 +123,15 @@ function hotApply(runtime:EngineRuntime,before:SystemSettings,after:SystemSettin
 export async function saveRuntimeSettings(runtime:EngineRuntime,input:unknown){
   const before=runtime.state.settings,expected=Number((input as any)?.settingsVersion);
   if(!Number.isInteger(expected)||expected<1)throw new Error('SETTINGS_VERSION_REQUIRED');
-  const saved=await runtime.updateSettingsIfVersion(input,expected);hotApply(runtime,before,saved);return saved;
+  const saved=await runtime.updateSettingsIfVersion(input,expected);hotApply(runtime,before,saved);if(JSON.stringify(before.connections.proxy)!==JSON.stringify(saved.connections.proxy)||before.connections.exchange.environment!==saved.connections.exchange.environment)await validateActiveProxy(runtime);return saved;
 }
 function expectedVersion(req:Request){const raw=req.body?.expectedSettingsVersion??req.header('if-match')??req.query.expectedSettingsVersion,n=Number(raw);if(!Number.isInteger(n)||n<1)throw new Error('SETTINGS_VERSION_REQUIRED');return n;}
 function conflict(res:Response,error:unknown,currentVersion:number){if(String(error).includes('SETTINGS_VERSION_CONFLICT')){res.status(409).json({error:{message:'SETTINGS_VERSION_CONFLICT'},currentSettingsVersion:currentVersion});return true;}return false;}
 
-export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
+export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime,options:{proxyLifecycle?:ProxyLifecycleService}={}){
+  if(options.proxyLifecycle)proxyServices.set(runtime,options.proxyLifecycle);
+  const lifecycle=proxyService(runtime);
+  void validateActiveProxy(runtime).catch(()=>runtime.events.publish("PROXY_STARTUP_VALIDATION_FAILED",{status:"VALIDATION_FAILED"}));
   const router=Router(),kindOf=(req:Request):RuntimeResourceKind=>{const kind=String(req.params.kind??'');if(!['exchange','proxy','ai'].includes(kind))throw new Error('RESOURCE_KIND_UNSUPPORTED');return kind as RuntimeResourceKind;};
   const legacy=canonicalProxy(runtime.state.settings),current=runtime.state.settings.connections.proxy,canonical=legacy.connections.proxy;
   if(current.forceBinanceRest!==canonical.forceBinanceRest||current.forceBinanceWs!==canonical.forceBinanceWs||current.proxyDns!==canonical.proxyDns||current.binanceRestRoute!==canonical.binanceRestRoute||current.failClosed!==canonical.failClosed)void saveRuntimeSettings(runtime,legacy).catch(error=>runtime.events.publish('SETTINGS_PROXY_MIGRATION_FAILED',{message:error instanceof Error?error.message:String(error)}));
@@ -217,8 +232,17 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
   router.get('/settings/resources/proxy/:id/health',(req,res,next)=>{try{
     const resource=proxyResources(runtime.state.settings).find(item=>item.id===String(req.params.id));
     if(!resource)return res.status(404).json({error:{code:'PROXY_RESOURCE_NOT_FOUND'}});
-    return res.json(proxyPassiveHealth(runtime.state.settings,resource));
+    return res.json({...proxyPassiveHealth(runtime.state.settings,resource),validation:lifecycle.status(resource,probeHost(runtime.state.settings))});
   }catch(error){next(error);}});
+  router.post('/settings/resources/proxy/:id/lifecycle',async(req,res,next)=>{try{
+    const id=String(req.params.id);
+    if(!modelOperationPermission(req.header('x-model-operation-token'),process.env.ZDJ_MODEL_OPERATION_TOKEN,req.header('origin'),req.header('host'))){await lifecycle.audit({resourceId:id,action:'REJECTED',reason:'PROXY_OPERATION_PERMISSION_DENIED'});return res.status(403).json({error:{code:'PROXY_OPERATION_PERMISSION_DENIED'}});}
+    if(Object.keys(req.body??{}).some(k=>k!=='action')){await lifecycle.audit({resourceId:id,action:'REJECTED',reason:'PROXY_ACTION_FIELDS_INVALID'});return res.status(400).json({error:{code:'PROXY_ACTION_FIELDS_INVALID'}});}
+    const resource=proxyResources(runtime.state.settings).find(r=>r.id===id);
+    if(!resource)return res.status(404).json({error:{code:'PROXY_RESOURCE_NOT_FOUND'}});
+    if(!resource.enabled||resource.id!==activeProxy(runtime.state.settings)?.id||runtime.state.settings.connections.exchange.environment!=='TESTNET'){await lifecycle.audit({resourceId:id,action:'REJECTED',reason:'PROXY_OPERATION_SCOPE_INVALID'});return res.status(409).json({error:{code:'PROXY_OPERATION_SCOPE_INVALID'}});}
+    return res.json(await lifecycle.operate(resource,req.body?.action));
+  }catch(error){const code=(error as Error).message;if(code.startsWith('PROXY_')||(error as any).code==='EEXIST'){const reason=(error as any).code==='EEXIST'?'PROXY_OPERATION_BUSY':code;await lifecycle.audit({resourceId:String(req.params.id),action:'REJECTED',reason});return res.status(409).json({error:{code:reason}});}next(error);}});
   router.get('/settings/ai-duty-routes',(_req,res)=>res.json({settingsVersion:runtime.state.settings.settingsVersion,routes:runtime.state.settings.aiDutyRoutes??[],resources:runtime.state.settings.aiResources.map(({id,name,enabled,model})=>({id,name:name??id,enabled,model}))}));
   router.put('/settings/ai-duty-routes',async(req,res,next)=>{try{
     const expected=expectedVersion(req),routes=Array.isArray(req.body?.routes)?req.body.routes:[],before=runtime.state.settings,candidate=structuredClone(before);
@@ -238,6 +262,8 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     else if(kind==='exchange'){item={id,name:req.body?.name??'Binance USD-M',type:'BINANCE_USDM',environment:req.body?.environment??before.connections.exchange.environment,executionMode:req.body?.executionMode??before.connections.executionMode,restBaseUrl:req.body?.restBaseUrl,wsBaseUrl:req.body?.wsBaseUrl,credentialRef:req.body?.credentialRef??before.connections.exchange.credentialRef,enabled:true};nextSettings=canonicalExchange(before,item);}
     else{item=aiResource({...req.body,id});nextSettings=structuredClone(before);nextSettings.aiResources=[...nextSettings.aiResources.filter(existing=>existing.id!==item.id),item];}
     const saved=await runtime.updateResourceSettings(nextSettings,expected,{kind,operation:'SAVE',id,value:item});hotApply(runtime,before,saved);
+    if(kind==='proxy')await lifecycle.verify(item,probeHost(saved));
+    if(kind==='exchange')await validateActiveProxy(runtime);
     res.json({...resourceView(saved,kind,runtime).find(row=>row.id===id)??item,settingsVersion:saved.settingsVersion});
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}};
   router.post('/settings/resources/:kind',save);router.put('/settings/resources/:kind/:id',save);
@@ -245,7 +271,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     const expected=expectedVersion(req),before=runtime.state.settings,id=String(req.params.id),resource=proxyResources(before).find((row:any)=>row.id===id);
     if(!resource)return res.status(404).json({error:{message:'PROXY_RESOURCE_NOT_FOUND'}});
     const nextSettings=canonicalProxy(before,resource,true),saved=await runtime.updateResourceSettings(nextSettings,expected,{kind:'proxy',operation:'SAVE',id,value:resource});
-    hotApply(runtime,before,saved);res.json({...resource,active:true,status:resource.enabled?'ACTIVE':'DISABLED',settingsVersion:saved.settingsVersion});
+    hotApply(runtime,before,saved);const validation=await lifecycle.verify(resource,probeHost(saved));res.json({...resource,validation,active:true,status:resource.enabled?'ACTIVE':'DISABLED',settingsVersion:saved.settingsVersion});
   }catch(error){if(conflict(res,error,runtime.state.settings.settingsVersion))return;next(error);}});
   router.post('/settings/resources/:kind/:id/test',async(req,res,next)=>{try{
     const kind=kindOf(req),id=String(req.params.id);
@@ -257,9 +283,7 @@ export function createRuntimeSettingsResourcesRouter(runtime:EngineRuntime){
     }
     if(kind==='proxy'){
       const resource=proxyResources(runtime.state.settings).find((row:any)=>row.id===id);if(!resource)return res.status(404).json({error:{message:'PROXY_RESOURCE_NOT_FOUND'}});
-      const candidate=canonicalProxy(runtime.state.settings,resource,true),transport=new BinanceTransport(candidate.connections),startedAt=Date.now();
-      try{const health=await transport.health();return res.json({id,status:health.status,latencyMs:Date.now()-startedAt,active:id===(runtime.state.settings.connections.proxy as any).activeResourceId,transport:health});}
-      finally{transport.dispose();}
+      return res.json({id,...await lifecycle.verify(resource,probeHost(runtime.state.settings)),active:id===activeProxy(runtime.state.settings)?.id});
     }
     const transport=new BinanceTransport(runtime.state.settings.connections),health=await transport.health();
     const ref=runtime.state.settings.connections.exchange.credentialRef,[key,secret]=await Promise.all([runtime.settingsStore.secretStatus(`${ref}:apiKey`),runtime.settingsStore.secretStatus(`${ref}:apiSecret`)]);

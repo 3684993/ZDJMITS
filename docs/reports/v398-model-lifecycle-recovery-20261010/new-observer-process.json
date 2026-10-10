@@ -1,0 +1,4 @@
+{
+  "ProcessId": 6376,
+  "CommandLine": "\"C:\\Windows\\System32\\WindowsPowerShell\\v1.0\\powershell.exe\"  -NoProfile -File \"C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\scripts\\observe-zdj-engine-readonly.ps1\" -FollowCurrentReceipt -HostReceiptPath \"D:\\MITS-OPERATIONS\\immediate-model-recovery-20261010\\new-engine-2c9-receipt.json\" -HostLifecyclePath \"D:\\MITS-OPERATIONS\\immediate-model-recovery-20261010\\new-engine-2c9-lifecycle.jsonl\" -RepositoryRoot \"D:\\MITS-RELEASES\\ZDJMITS-v398-models-2c9fec5\" -SourceCommit \"2c9fec513bd5ba0406015c33b2c7cf9ce420ebaf\" -IntervalSeconds 45 -MaxBytes 25165824"
+}

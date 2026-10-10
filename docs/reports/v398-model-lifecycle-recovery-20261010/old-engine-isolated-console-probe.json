@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-10T18:09:17.7847972+08:00",
+  "targetPid": 23936,
+  "helperPid": 9932,
+  "consolePids": [
+    9932,
+    23936
+  ],
+  "probeOnly": true,
+  "signal": "NONE",
+  "forceTermination": false
+}

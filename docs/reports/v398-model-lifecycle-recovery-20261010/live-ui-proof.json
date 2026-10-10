@@ -1,0 +1,28 @@
+{
+  "at": "2026-10-10T10:22:37.944Z",
+  "facts": [
+    {
+      "resource": 0,
+      "runtime": "运行状态 READY · PID 25912 · GPU 配置 Intel(R) Arc(TM) B580 Graphics (12190 MiB, 11421 MiB free) / Vulkan0 · 显存 UNKNOWN",
+      "startEnabled": true,
+      "restartEnabled": true,
+      "stopPresent": true
+    },
+    {
+      "resource": 1,
+      "runtime": "运行状态 READY · PID 16772 · GPU 配置 AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free) / Vulkan2 · 显存 UNKNOWN",
+      "startEnabled": true,
+      "restartEnabled": true,
+      "stopPresent": true
+    },
+    {
+      "resource": 2,
+      "runtime": "运行状态 READY · PID 22880 · GPU 配置 AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free) / Vulkan1 · 显存 UNKNOWN",
+      "startEnabled": true,
+      "restartEnabled": true,
+      "stopPresent": true
+    }
+  ],
+  "modelLifecycleClicks": 0,
+  "tokenPersisted": false
+}

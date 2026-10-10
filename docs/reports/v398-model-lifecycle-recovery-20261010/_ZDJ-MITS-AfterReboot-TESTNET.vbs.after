@@ -1,0 +1,14 @@
+Option Explicit
+Dim shell, result
+Set shell = CreateObject("WScript.Shell")
+shell.CurrentDirectory = "D:\MITS-RELEASES\ZDJMITS-v398-models-2c9fec5"
+Dim fso, childEnv, modelToken
+Set fso = CreateObject("Scripting.FileSystemObject")
+Set childEnv = shell.Environment("PROCESS")
+childEnv("ZDJ_MODEL_MANIFEST") = "D:\MITS-OPERATIONS\immediate-model-recovery-20261010\model-manifest-user-specified-1755.json"
+childEnv("ZDJ_MODEL_OPERATIONS_DIR") = "D:\MITS-OPERATIONS\immediate-model-recovery-20261010\model-operations"
+modelToken = fso.OpenTextFile("D:\MITS-OPERATIONS\immediate-model-recovery-20261010\model-operation-token.private.txt", 1).ReadAll
+childEnv("ZDJ_MODEL_OPERATION_TOKEN") = Replace(Replace(modelToken, vbCr, ""), vbLf, "")
+childEnv("PATH") = "C:\Users\5700x\.cache\codex-runtimes\codex-primary-runtime\dependencies\native\powershell;" & childEnv("PATH")
+result = shell.Run("""C:\Windows\System32\WindowsPowerShell\v1.0\powershell.exe"" -NoProfile -File ""D:\MITS-RELEASES\ZDJMITS-v398-models-2c9fec5\scripts\start-zdj-stack-after-reboot.ps1"" -ProjectRoot ""D:\MITS-RELEASES\ZDJMITS-v398-models-2c9fec5"" -ModelScriptsRoot ""D:\MITS\scripts\1"" -DataRoot ""D:\MITS\data"" -ProxyPort 20091 -EntryMode TESTNET_ENTRY_ENABLED -EntryApprovalFile ""C:\Users\5700x\AppData\Local\ZDJMITS\entry-authorization\v398-testnet-entry-models-2c9fec5-20261010.json""", 0, True)
+WScript.Quit result

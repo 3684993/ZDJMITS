@@ -1,0 +1,13 @@
+[
+  {
+    "ts": 1791627360681,
+    "event": "CHILD_EXITED",
+    "launchId": "v398-trade24h-6533e4d-20261010-one",
+    "hostPid": 12440,
+    "payload": {
+      "exitCode": 0,
+      "pid": 23936,
+      "exitedAt": 1791627360680
+    }
+  }
+]

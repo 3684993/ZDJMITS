@@ -1,0 +1,29 @@
+[
+  {
+    "id": "scout-b580",
+    "http": 200,
+    "beforePid": 25912,
+    "afterPid": 25912,
+    "status": "READY",
+    "error": null,
+    "pidUnchanged": true
+  },
+  {
+    "id": "review-7900-gpu2",
+    "http": 200,
+    "beforePid": 22880,
+    "afterPid": 22880,
+    "status": "READY",
+    "error": null,
+    "pidUnchanged": true
+  },
+  {
+    "id": "brain-7900-primary",
+    "http": 200,
+    "beforePid": 16772,
+    "afterPid": 16772,
+    "status": "READY",
+    "error": null,
+    "pidUnchanged": true
+  }
+]

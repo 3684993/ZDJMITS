@@ -1,3 +1,7 @@
+> 最新最终状态（2026-10-10 18:27 北京时间）：已实际部署源码2c9fec513bd5ba0406015c33b2c7cf9ce420ebaf，构建3.9.8-a6b1702cf52af4257f04，Engine12140/host1216/instance2c07d7d9-7f73-4730-903f-20d26674aa2a，运行身份6/6，health READY。旧Engine23936收到隔离CTRL_C/SIGINT后退出0，只有一次Engine切换。重启前、稳定后签名全仓TP均28/28，canTrade=true，Production0；先前网络超时、29/27及28/27失败证据保留。三模型25912/22880/16772均READY。线上浏览器三资源启动/停止/重启按钮显示，填本机密钥后启动/重启可用；三次授权启动200且PID不变，无密钥403。源码CI38043800329 SUCCESS，264文件/2211例。新24h未启动/T0=null。额外GPU侧车采样启动被平台执行前拒绝，未执行，实时显存UNKNOWN，不虚报新鲜采样。旧观察器PID1920独占锁已按身份切换，新观察器6376绑定新receipt并Running。
+
+> 18:11部署门禁更新：独立签名复核29仓位，仅27仓位TP精确身份PASS；随后在线Engine28/27，missing=1/retryQueue=1/DEGRADED。新鲜签名全仓TP门禁不通过，Engine未退出/未部署；这是实际交易保护失败，不是平台权限拒绝。三模型继续健康，Primary唯一Entry与Production0保持。新构建2c9fec5/a6b1702c已编译封存且私有审批仍revoked=true；新验收T0=null。
+
 > 最新覆盖状态（2026-10-10 18:06 北京时间）：Review 原脚本已实际启动，PID22880/8083/Vulkan1；Scout25912/8081/Vulkan0、Primary16772/8084/Vulkan2均健康。三模型进程身份与原脚本SHA已只读验证。三卡同时实测专用显存约5.92/17.28/17.28GiB；Review两次启动推理各生成38tokens。当前Engine仍23936/6533，按钮源码与权限/互斥/超时/审计已存在，新增重复启动READY模型的幂等修复；此刻尚未部署。旧验收ABORTED，新T0=null。历史拒绝记录不代表本次执行结果。
 
 ## 2026-10-10 17:42 实际部分恢复：Scout/Primary成功，Review未执行

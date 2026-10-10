@@ -1,0 +1,85 @@
+{
+  "readOnly": true,
+  "exchangeRequests": 0,
+  "databaseWrites": 0,
+  "cases": [
+    {
+      "symbol": "GRASSUSDT",
+      "recordHash": "2d2861c052d94af504e0205fccf96f820aceb955cecd09ce5d657a89fe4af56d",
+      "cycleHash": "74900ab9a724835ea1f2dd7e73b004312edb58ddfe05b1bf87840ae9f3927820",
+      "before": "CONFLICT",
+      "after": "TP",
+      "identityConflict": false,
+      "quantityConflict": false,
+      "coverageComplete": true,
+      "terminalFinalizer": true,
+      "conflictReasons": [],
+      "replayMs": 5.674599999999998
+    },
+    {
+      "symbol": "BRUSDT",
+      "recordHash": "3ce70590b6f6794b9c3b0035dac0ffd05e538ec3fa57e3adc45f37f1720eeb1c",
+      "cycleHash": "54668cbcbc1a92f0a4a92f5083f8704429d0271e0cf925976593a1246f77c06c",
+      "before": "CONFLICT",
+      "after": "TP",
+      "identityConflict": false,
+      "quantityConflict": false,
+      "coverageComplete": true,
+      "terminalFinalizer": true,
+      "conflictReasons": [],
+      "replayMs": 171.56149999999997
+    },
+    {
+      "symbol": "WLDUSDT",
+      "recordHash": "48f83507d407946272131c36a80998158b2d1161cd263b358de1b064ad2f1dc5",
+      "cycleHash": "55e152c6c70531ca615d6c6c372a7915269b1db6242de3c45657fb0f600eb639",
+      "before": "CONFLICT",
+      "after": "TP",
+      "identityConflict": false,
+      "quantityConflict": false,
+      "coverageComplete": true,
+      "terminalFinalizer": true,
+      "conflictReasons": [],
+      "replayMs": 4.494100000000003
+    },
+    {
+      "symbol": "POLUSDT",
+      "recordHash": "a1b960e43b3be2fb9e2ea3cd5842d4908d11032d659000c96c7be48d79373bb6",
+      "cycleHash": "9949b05d7ef6a0fda932de345ab1bd2ddb04c0d37758cbe66910569697dee1c3",
+      "before": "CONFLICT",
+      "after": "TP",
+      "identityConflict": false,
+      "quantityConflict": false,
+      "coverageComplete": true,
+      "terminalFinalizer": true,
+      "conflictReasons": [],
+      "replayMs": 6.015199999999936
+    },
+    {
+      "symbol": "AVAXUSDC",
+      "recordHash": "eaa1b0b2a2f155972a7ce0e466ec648239292f355a8b5f4c3870d8377dafdd35",
+      "cycleHash": "386fa329dd8d6218b3d584a8bd70228a067a9fcbf3fc015426f4e81c571ab1d0",
+      "before": "CONFLICT",
+      "after": "TP",
+      "identityConflict": false,
+      "quantityConflict": false,
+      "coverageComplete": true,
+      "terminalFinalizer": true,
+      "conflictReasons": [],
+      "replayMs": 3.9815999999999576
+    },
+    {
+      "symbol": "USELESSUSDT",
+      "recordHash": "eee819d5024bdcc9d4cba8f42a85a553ef816cc8277876bfd8fb60f0322acd00",
+      "cycleHash": "19814233b63944eeb9baa6e4c4d48d9d5318ef6d77e611b761540ca2b20e4507",
+      "before": "CONFLICT",
+      "after": "TP",
+      "identityConflict": false,
+      "quantityConflict": false,
+      "coverageComplete": true,
+      "terminalFinalizer": true,
+      "conflictReasons": [],
+      "replayMs": 2.7486000000000104
+    }
+  ]
+}

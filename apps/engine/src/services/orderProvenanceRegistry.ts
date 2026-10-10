@@ -29,6 +29,22 @@ CREATE INDEX IF NOT EXISTS v396_order_provenance_cycle ON v396_order_provenance(
 `;
 
 const text=(value:unknown)=>{const s=String(value??'').trim();return s.length?s:null;};
+const mergeSources=(a:string,b:string)=>[...new Set([...a.split('+'),...b.split('+')])].join('+');
+// Historical generic observers accidentally claimed EXIT for a minted TP. This is a
+// read-only interpretation of retained evidence, never deletion/backfill of the conflict ledger.
+export function isGenericTpObservation(reason:string,payload:string,current:OrderProvenanceRow):boolean{
+  try{
+    const {prior,attempt}=JSON.parse(payload);
+    return reason==='PROVENANCE_ROLE_CONFLICT'&&prior.role==='TP'&&current.role==='TP'&&
+      prior.source.split('+').includes('TP_GUARDIAN')&&attempt.role==='EXIT'&&
+      ['OPEN_ORDERS','EXACT_ORDER','USER_DATA_WS','TP_SUBMIT_RESULT','CANCEL_RESULT'].includes(attempt.source)&&
+      !attempt.intentId&&!attempt.orderId&&!attempt.cycleId&&
+      Boolean(attempt.exchangeOrderId)&&attempt.exchangeOrderId===current.exchangeOrderId&&
+      [prior,attempt].every(row=>['environment','accountId','symbol','clientOrderId'].every(key=>row[key]===current[key]))&&
+      (!prior.exchangeOrderId||prior.exchangeOrderId===current.exchangeOrderId)&&
+      Boolean(prior.cycleId)&&prior.cycleId===current.cycleId;
+  }catch{return false;}
+}
 
 export class OrderProvenanceRegistry {
   private db:DatabaseSync;
@@ -65,7 +81,7 @@ export class OrderProvenanceRegistry {
         const conflict=prior.symbol!==symbol?`PROVENANCE_SYMBOL_CONFLICT:${prior.symbol}!=${symbol}`:prior.role!==row.role?'PROVENANCE_ROLE_CONFLICT':prior.cycleId&&row.cycleId&&prior.cycleId!==row.cycleId?'PROVENANCE_CYCLE_CONFLICT':prior.exchangeOrderId&&row.exchangeOrderId&&prior.exchangeOrderId!==row.exchangeOrderId?'PROVENANCE_IDENTITY_CONFLICT':null;
         if(conflict){this.db.prepare('INSERT INTO v397_order_provenance_conflicts VALUES(?,?,?,?,?,?,?,?)').run(environment,accountId,prior.symbol,clientOrderId,prior.exchangeOrderId,conflict,JSON.stringify({prior,attempt:row}),at);return{recorded:false,conflict};}
         const merged:OrderProvenanceRow={...prior,exchangeOrderId:prior.exchangeOrderId??row.exchangeOrderId,cycleId:prior.cycleId??row.cycleId,
-          intentId:prior.intentId??row.intentId,orderId:prior.orderId??row.orderId,source:`${prior.source}+${row.source}`,lastSeenAt:Math.max(prior.lastSeenAt,row.lastSeenAt)};
+          intentId:prior.intentId??row.intentId,orderId:prior.orderId??row.orderId,source:mergeSources(prior.source,row.source),lastSeenAt:Math.max(prior.lastSeenAt,row.lastSeenAt)};
         this.db.prepare('UPDATE v396_order_provenance SET exchange_order_id=?,cycle_id=?,intent_id=?,order_id=?,source=?,last_seen_at=?,payload=? WHERE environment=? AND account_id=? AND client_order_id=?')
           .run(merged.exchangeOrderId,merged.cycleId,merged.intentId,merged.orderId,merged.source,merged.lastSeenAt,JSON.stringify(merged),environment,accountId,clientOrderId);
         return{recorded:true,conflict:null};
@@ -74,6 +90,15 @@ export class OrderProvenanceRegistry {
         .run(environment,accountId,symbol,clientOrderId,row.exchangeOrderId,row.role,row.intentId,row.orderId,row.cycleId,row.source,row.firstSeenAt,row.lastSeenAt,JSON.stringify(row));
       return{recorded:true,conflict:null};
     });
+  }
+
+  /** Exchange observations bind an identity already minted here; they cannot assign a role. */
+  observe(input:{environment:string;accountId:string;symbol:string;clientOrderId:string;exchangeOrderId:string|null;source:string;observedAt:number}){
+    const existing=this.db.prepare('SELECT payload FROM v396_order_provenance WHERE environment=? AND account_id=? AND client_order_id=?')
+      .get(input.environment,input.accountId,input.clientOrderId) as {payload:string}|undefined;
+    if(!existing)return{recorded:false,conflict:'PROVENANCE_REGISTRY_HAS_NO_MATCH'};
+    const prior=JSON.parse(existing.payload) as OrderProvenanceRow;
+    return this.record({...input,role:prior.role});
   }
 
   /**
@@ -94,7 +119,18 @@ export class OrderProvenanceRegistry {
       .map(row=>JSON.parse(String(row.payload)) as OrderProvenanceRow);
     const matched=rows.filter(row=>(clientOrderId&&row.clientOrderId===clientOrderId)||(exchangeOrderId&&row.exchangeOrderId===exchangeOrderId));
     if(!matched.length)return{status:'UNRESOLVED',rows:[],proof:['PROVENANCE_REGISTRY_HAS_NO_MATCH']};
-    const rejected=this.db.prepare('SELECT reason FROM v397_order_provenance_conflicts WHERE environment=? AND account_id=? AND symbol=? AND (client_order_id=? OR exchange_order_id=?)').all(identity.environment,identity.accountId,symbol,clientOrderId??'',exchangeOrderId??'');
+    // Collapse repeated observations and omit the old unbounded source concatenation on the
+    // read side. Raw historical payloads remain immutable in SQLite.
+    const historical=this.db.prepare(`SELECT DISTINCT reason,
+      json_remove(json_set(payload,'$.prior.source',CASE WHEN instr('+'||json_extract(payload,'$.prior.source')||'+','+TP_GUARDIAN+')>0 THEN 'TP_GUARDIAN' ELSE '' END),
+        '$.prior.firstSeenAt','$.prior.lastSeenAt','$.attempt.firstSeenAt','$.attempt.lastSeenAt') AS payload
+      FROM v397_order_provenance_conflicts WHERE environment=? AND account_id=? AND symbol=? AND (client_order_id=? OR exchange_order_id=?)`).all(identity.environment,identity.accountId,symbol,clientOrderId??'',exchangeOrderId??'');
+    // The erroneous role writer could also prevent initial exchange-ID binding. Compare
+    // every retained observation to the fill's requested dual identity and the minted client
+    // identity; a different observed ID remains a conflict. Never persist this read-side binding.
+    const comparison=matched.length===1&&clientOrderId===matched[0]!.clientOrderId
+      ? {...matched[0]!,exchangeOrderId:matched[0]!.exchangeOrderId??exchangeOrderId} : matched[0];
+    const rejected=historical.filter(r=>!comparison||matched.length!==1||!isGenericTpObservation(String(r.reason),String(r.payload),comparison));
     if(rejected.length)return{status:'UNRESOLVED',rows:[],proof:[...new Set(rejected.map(r=>String(r.reason)))]};
     if(matched.some(r=>clientOrderId&&r.clientOrderId===clientOrderId&&exchangeOrderId&&r.exchangeOrderId&&r.exchangeOrderId!==exchangeOrderId))return{status:'UNRESOLVED',rows:[],proof:['PROVENANCE_IDENTITY_CONFLICT']};
     const scopes=new Set(matched.map(r=>`${r.environment}|${r.accountId}`));
@@ -103,7 +139,7 @@ export class OrderProvenanceRegistry {
     const distinctCycles=new Set(matched.map(row=>row.cycleId).filter(Boolean));
     if(distinctCycles.size>1)return{status:'UNRESOLVED',rows:[],proof:['PROVENANCE_CYCLE_CONFLICT']};
     if(distinctRoles.size>1)return{status:'UNRESOLVED',rows:[],proof:[`PROVENANCE_ROLE_CONFLICT:${[...distinctRoles].join('|')}`]};
-    return{status:'SYSTEM_PROVEN',rows:matched,proof:[`REGISTRY_ROLE_${[...distinctRoles][0]}`,clientOrderId?'CLIENT_ORDER_ID':'EXCHANGE_ORDER_ID']};
+    return{status:'SYSTEM_PROVEN',rows:matched,proof:[`REGISTRY_ROLE_${[...distinctRoles][0]}`,clientOrderId?'CLIENT_ORDER_ID':'EXCHANGE_ORDER_ID',...(historical.length?['HISTORICAL_GENERIC_OBSERVATION_RECLASSIFIED']:[])]};
   }
 
   list(input?:{environment?:string;accountId?:string;role?:OrderProvenanceRole;limit?:number}):OrderProvenanceRow[]{

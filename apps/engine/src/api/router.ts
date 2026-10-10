@@ -1069,12 +1069,15 @@ export function createApiRouter(runtime: EngineRuntime) {
   );
   // Rolling 24h realized PnL; closed physical cycles only, native quote assets kept separate.
   // All read-side, no exchange requests/backfill or auto-sync side effects.
+  let trade24hCache:ReturnType<typeof projectTrade24hReadModel>|null=null;
   r.get('/trade-records/24h',(_req,res)=>{
     const asOf=Date.now();
+    if(trade24hCache&&asOf>=trade24hCache.asOf&&asOf-trade24hCache.asOf<10_000){res.json(trade24hCache);return;}
     const autoSync=runtime.tradeRecordAutoSyncStatus();
-    res.json(projectTrade24hReadModel({records:[...runtime.state.tradeRecords.values()],
+    trade24hCache=projectTrade24hReadModel({records:[...runtime.state.tradeRecords.values()],
       ...runtime.qualityObserver?.readContext(),learningContext:runtime.state,asOf,
-      autoSync:{status:autoSync.status,lastSuccessAt:autoSync.lastSuccessAt}}));
+      autoSync:{status:autoSync.status,lastSuccessAt:autoSync.lastSuccessAt}});
+    res.json(trade24hCache);
   });
   r.get('/trade-records',(req,res)=>{
     const q=req.query as Record<string,string|undefined>,page=Math.max(1,Number(q.page??1)),limit=Math.min(100,Math.max(1,Number(q.limit??20)));

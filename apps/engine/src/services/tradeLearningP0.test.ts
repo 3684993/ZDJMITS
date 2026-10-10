@@ -86,3 +86,22 @@ it('a later add lot keeps its own Entry decision and execution stages',()=>{
  c.tradePlans.set('p3',{...c.tradePlans.get('p1')!,planId:'p3',planVersion:1,provenance:{modelRunId:'r3'}});c.aiRuns.push({...c.aiRuns[0]!,id:'r3',startedAt:3000,completedAt:3500,inputPreview:JSON.stringify({packet:{packetId:'packet3',createdAt:2900}})});
  expect(projectEntryLineage(rec,c)).toMatchObject({complete:true,originRunId:'r1',lots:[{runId:'r1',entryCost:100,fillStages:[{quantity:1,entryCost:100}]},{runId:'r3',entryCost:110,fillStages:[{quantity:1,entryCost:110}]}]});
 });
+
+it('reclassifies only a proven historical generic TP observer claim without deleting the audit',()=>{
+ const registry=new OrderProvenanceRegistry(':memory:',()=>({environment:'TESTNET',account:'acct'}));registries.push(registry);
+ const tp={symbol:'BTCUSDT',clientOrderId:'tp-c',exchangeOrderId:'tp-e',role:'TP' as const,cycleId:'cy',source:'TP_GUARDIAN'};registry.record(tp);
+ registry.record({...tp,role:'EXIT',cycleId:null,source:'OPEN_ORDERS'});
+ const proof=registry.resolve({symbol:tp.symbol,clientOrderId:tp.clientOrderId,exchangeOrderId:tp.exchangeOrderId});
+ expect(proof.status).toBe('SYSTEM_PROVEN');expect(proof.proof).toContain('HISTORICAL_GENERIC_OBSERVATION_RECLASSIFIED');
+ registry.record({...tp,role:'MANUAL',source:'MANUAL_PREPARED'});
+ expect(registry.resolve({symbol:tp.symbol,clientOrderId:tp.clientOrderId,exchangeOrderId:tp.exchangeOrderId}).status).toBe('UNRESOLVED');
+});
+
+it('compares a blocked initial TP identity binding only against the requested exact fill ID',()=>{
+ const registry=new OrderProvenanceRegistry(':memory:',()=>({environment:'TESTNET',account:'acct'}));registries.push(registry);
+ registry.record({symbol:'BTCUSDT',clientOrderId:'tp-c',role:'TP',cycleId:'cy',source:'TP_GUARDIAN'});
+ registry.record({symbol:'BTCUSDT',clientOrderId:'tp-c',exchangeOrderId:'tp-e',role:'EXIT',source:'TP_SUBMIT_RESULT'});
+ expect(registry.resolve({symbol:'BTCUSDT',clientOrderId:'tp-c',exchangeOrderId:'tp-e'}).status).toBe('SYSTEM_PROVEN');
+ expect(registry.resolve({symbol:'BTCUSDT',clientOrderId:'tp-c',exchangeOrderId:'wrong-e'}).status).toBe('UNRESOLVED');
+ expect(registry.list()[0]?.exchangeOrderId).toBeNull();
+});

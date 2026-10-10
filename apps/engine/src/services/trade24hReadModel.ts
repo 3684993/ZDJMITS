@@ -13,7 +13,7 @@ const provenLocal=(row:TradeRecord)=>
   ledgerClosedComplete(row).eligible&&finite(row.tradingNetPnlExFunding)&&
   ['SYSTEM','LOCAL_LIFECYCLE_REPAIR_FROM_EXCHANGE_FACT'].includes(row.source)&&
   Boolean(row.cycleId)&&row.entryOrderIds.length>0&&row.exitOrderIds.length>0&&
-  row.linkedFillIds.length>0&&!['UNCONSERVED','LEDGER_INCONSISTENT','UNKNOWN'].includes(row.ledgerConservation??'');
+  row.linkedFillIds.length>0&&row.ledgerConservation==='CONSERVED';
 type MoneyBreakdown={
   asset:AssetName;cycles:number;winningCycles:number;losingCycles:number;flatCycles:number;
   grossProfit:number|null;grossLoss:number|null;netExFunding:number|null;
@@ -57,7 +57,7 @@ export function projectTrade24hReadModel(input:{
   // Prune outside the 24h window before constructing expensive per-cycle proof projections.
   // Only lightweight ledger eligibility is needed to quarantine cross-window cycle collisions.
   const cycleCounts=new Map<string,number>();
-  for(const record of input.records)if(provenLocal(record))
+  for(const record of input.records)if(record.cycleId&&!record.duplicateOf&&record.canonical!==false)
     cycleCounts.set(record.cycleId!, (cycleCounts.get(record.cycleId!)??0)+1);
   const closed=input.records.filter(record=>settledIn(record as ProjectedRow,from,asOf))
     .map(record=>projectTradeRecordRow(record,input));
@@ -68,8 +68,8 @@ export function projectTrade24hReadModel(input:{
     USDC:breakdown(eligible.filter(row=>assetOf(row)==='USDC'),'USDC'),
   };
   const unknownAssetCycles=eligible.filter(row=>assetOf(row)==='UNKNOWN').length;
-  const windowStatus=!input.autoSync?.lastSuccessAt?'SYNC_COVERAGE_UNCONFIRMED':
-    input.autoSync.status==='ERROR'?'SYNC_ERROR':'RETAINED_LEDGER_ONLY';
+  const windowStatus=input.autoSync?.status==='ERROR'?'SYNC_ERROR':
+    !input.autoSync?.lastSuccessAt?'SYNC_COVERAGE_UNCONFIRMED':'RETAINED_LEDGER_ONLY';
   return{
     asOf,window:{from,to:asOf,durationMs:DAY_MS,basis:'CLOSED_AT_SETTLED_LEDGER_HALF_OPEN'},
     status:windowStatus,

@@ -153,7 +153,7 @@ describe('P1 exit convergence fairness',()=>{
     expect(result.converged.find(row=>row.clientOrderId===target.clientOrderId)?.outcome).toBe('EXCHANGE_FACT_FILLED');
     const proof=runtime.provenanceFor({symbol:target.symbol,clientOrderId:target.clientOrderId});
     expect(proof.status).toBe('SYSTEM_PROVEN');
-    expect(proof.rows.filter(row=>row.role==='EXIT').length).toBeGreaterThan(0);
+    expect(proof.rows.filter(row=>row.role==='TP').length).toBeGreaterThan(0);
     expect(proof.rows.every(row=>row.environment==='TESTNET'&&row.accountId==='binance-primary')).toBe(true);
     // An identity this ledger never proved stays unresolved instead of being claimed as system work.
     expect(runtime.provenanceFor({symbol:target.symbol,clientOrderId:'ml_foreign'}).status).toBe('UNRESOLVED');

@@ -1,0 +1,65 @@
+(node:22916) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:16096) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run src/services/tpTerminalProjection.test.ts
+
+(node:7236) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade24h/apps/engine
+
+(node:12632) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:1952) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24728) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22184) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:12632) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ❯ src/services/tpTerminalProjection.test.ts (6 tests | 1 failed) 29ms
+   ✓ propagates FILLED to local orphan and replays it after a stale checkpoint restore 10ms
+   ✓ propagates CANCELED to local orphan and replays it after a stale checkpoint restore 3ms
+   ✓ propagates EXPIRED to local orphan and replays it after a stale checkpoint restore 3ms
+   ✓ propagates REJECTED to local orphan and replays it after a stale checkpoint restore 3ms
+   ✓ does not close a different exchange identity or cycle from retained terminal evidence 3ms
+   × binds a verified TP report without relabeling TP as EXIT 7ms
+     → expected 'EXIT' to be 'TP' // Object.is equality
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/tpTerminalProjection.test.ts > binds a verified TP report without relabeling TP as EXIT
+AssertionError: expected 'EXIT' to be 'TP' // Object.is equality
+
+Expected: "TP"
+Received: "EXIT"
+
+ ❯ src/services/tpTerminalProjection.test.ts:39:73
+     37|  const x=await fixture();x.runtime.recordExitOrderReport('EXACT_ORDER'…
+     38|  const proof=x.runtime.provenance.resolve({symbol:x.order.symbol,clien…
+     39|  expect(proof.status).toBe('SYSTEM_PROVEN');expect(proof.rows[0]?.role…
+       |                                                                         ^
+     40| });
+     41|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 5 passed (6)
+   Start at  12:42:09
+   Duration  797ms (transform 295ms, setup 0ms, collect 499ms, tests 29ms, environment 0ms, prepare 84ms)
+
+(node:23664) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v398-trade24h\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location D:\MITS-WORKTREES\v398-trade24h\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/services/tpTerminalProjection.test.ts

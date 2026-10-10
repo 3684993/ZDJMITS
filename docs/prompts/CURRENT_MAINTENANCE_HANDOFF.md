@@ -1,3 +1,7 @@
+# 2026-10-10 Trade24h integration update
+
+PR34+31+33+32 isolated integration and source repairs: docs/reports/v398-trade24h-release-20261010/. Local verify:ci 2200 PASS; exact combined hosted CI pending. Six requested cycles read-only replay 6/6 TP after strict writer/read-side fix; genuine identity conflicts retained. USDC eligible alternate rank fixed; real assets moved to homepage top; duplicate funds-admission removed. AutoSync ERROR includes oversized512MiB baseline, queue timeout and socket errors; no live ledger rewrite or guard widening. First signed29/28, subsequent signed30/30; action-time gates and candidate release identity still required. No deployment/restart/new acceptance yet. Old08:34 ABORTED preserved. Latest user: long24h only after their inspection and explicit later instruction; T0=null.
+
 # 2026-10-10 12:18+08 · 交易记录24小时盈亏与退出来源冲突修复（新增任务）
 
 ChatGPT 本轮已从GitHub核对 Draft PR31/33/32 的精确HEAD与CI SUCCESS，当前main仍为 `b55f427eeda150c7cdc7b8beaaaddfd39aa9e6e1`，三个PR均**尚未合并/部署**。按用户新授权已提交隔离分支 `chatgpt/v398-trade24h-provenance-and-release-20261010` 的真实代码：

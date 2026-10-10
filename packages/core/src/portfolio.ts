@@ -608,6 +608,10 @@ export function decorateUniverse(
       });
     out.push({
       ...chosen,
+      // A funded alternate may sit outside the initial symbol shortlist (rank=0).
+      // Preserve the already-qualified underlying's place before freezing Primary candidates.
+      rank: Math.min(...rows.filter(row => row.rank > 0).map(row => row.rank), Infinity) === Infinity
+        ? 0 : Math.min(...rows.filter(row => row.rank > 0).map(row => row.rank)),
       underlyingAsset: underlying,
       quoteAsset: resolveQuoteAsset(chosen.symbol),
       selectedContract: chosen.symbol,

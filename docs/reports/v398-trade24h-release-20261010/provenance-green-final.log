@@ -1,0 +1,85 @@
+(node:3032) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26448) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run src/services/tradeLearningP0.test.ts src/services/exitProvenanceConflictReasons.test.ts src/services/tpTerminalProjection.test.ts src/services/exitConvergenceFairness.test.ts
+
+(node:19132) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade24h/apps/engine
+
+(node:25280) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26296) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15396) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:21404) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26296) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/exitProvenanceConflictReasons.test.ts (4 tests) 5ms
+(node:25280) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:15000) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15396) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/tradeLearningP0.test.ts (26 tests) 38ms
+ ✓ src/services/tpTerminalProjection.test.ts (6 tests) 25ms
+(node:11932) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:8424) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/services/exitConvergenceFairness.test.ts (15 tests | 1 failed) 3602ms
+   ✓ recovers only bound pre-wire non-sends, never a generic timeout or a known working order 141ms
+   ✓ P1 exit convergence fairness > a terminal order at the tail is serviced even while the head stays WORKING  1449ms
+   ✓ P1 exit convergence fairness > a failed query backs off only the order that failed 299ms
+   ✓ P1 exit convergence fairness > readback reports queue length, oldest unpolled age and terminal-unreleased claims  342ms
+   ✓ P1 exit convergence fairness > reports a never-polled waiting age from the durable creation time, not from the epoch 122ms
+   × P1 exit convergence fairness > a converged order also becomes durable provenance, not only a state change 132ms
+     → expected 'UNRESOLVED' to be 'SYSTEM_PROVEN' // Object.is equality
+   ✓ P1 exit convergence fairness > one hung exact-order read cannot park the walk for the rest of the process 200ms
+   ✓ P1 exit terminal propagation > a late WORKING report cannot roll a FILLED order back or re-occupy its claim 126ms
+   ✓ P1 exit terminal propagation > a partial fill updates the remaining claim instead of releasing it 99ms
+   ✓ P1 exit terminal propagation > duplicate and out-of-order WS reports are idempotent 99ms
+   ✓ P1 exit terminal propagation > an ABSENT answer keeps an unacked order UNKNOWN and its claim occupied 133ms
+   ✓ P1 exit terminal propagation > a claim is never released by a local label without exchange evidence 94ms
+   ✓ P1 exit terminal propagation > an order from a cycle that no longer has a live position still converges 114ms
+   ✓ P1 exit terminal propagation > a WS report for an entry order does not acquire an exit role in the registry 92ms
+   ✓ P1 replay of the audited BR/NEAR/WLD shape > a filled take-profit releases the old claim and lets the new cycle protect itself 158ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/exitConvergenceFairness.test.ts > P1 exit convergence fairness > a converged order also becomes durable provenance, not only a state change
+AssertionError: expected 'UNRESOLVED' to be 'SYSTEM_PROVEN' // Object.is equality
+
+Expected: "SYSTEM_PROVEN"
+Received: "UNRESOLVED"
+
+ ❯ src/services/exitConvergenceFairness.test.ts:155:26
+    153|     expect(result.converged.find(row=>row.clientOrderId===target.clien…
+    154|     const proof=runtime.provenanceFor({symbol:target.symbol,clientOrde…
+    155|     expect(proof.status).toBe('SYSTEM_PROVEN');
+       |                          ^
+    156|     expect(proof.rows.filter(row=>row.role==='EXIT').length).toBeGreat…
+    157|     expect(proof.rows.every(row=>row.environment==='TESTNET'&&row.acco…
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 3 passed (4)
+      Tests  1 failed | 50 passed (51)
+   Start at  12:45:33
+   Duration  4.18s (transform 655ms, setup 0ms, collect 1.32s, tests 3.67s, environment 1ms, prepare 449ms)
+
+(node:7448) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v398-trade24h\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location D:\MITS-WORKTREES\v398-trade24h\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/services/tradeLearningP0.test.ts src/services/exitProvenanceConflictReasons.test.ts src/services/tpTerminalProjection.test.ts src/services/exitConvergenceFairness.test.ts

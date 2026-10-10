@@ -32,3 +32,10 @@ it('does not close a different exchange identity or cycle from retained terminal
  }
  x.runtime.close();
 });
+
+it('binds a verified TP report without relabeling TP as EXIT',async()=>{
+ const x=await fixture();x.runtime.registerExitProvenance({subject:{symbol:x.order.symbol,side:'SHORT',cycleId:'cycle-1'},clientOrderId:x.order.clientOrderId,role:'TP',source:'TP_GUARDIAN'});
+ x.runtime.recordExitOrderReport('EXACT_ORDER',x.report('FILLED',10),x.now+1);
+ const proof=x.runtime.provenance.resolve({symbol:x.order.symbol,clientOrderId:x.order.clientOrderId,exchangeOrderId:'123'});
+ expect(proof.status).toBe('SYSTEM_PROVEN');expect(proof.rows[0]?.role).toBe('TP');x.runtime.close();
+});

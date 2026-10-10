@@ -1,0 +1,138 @@
+{
+  "observedAt": "2026-10-10T04:57:54.515449+00:00",
+  "status": "ERROR",
+  "lastSuccessAt": null,
+  "events": [
+    {
+      "ts": 1791608028890,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791607634676,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791607097818,
+      "failureClass": "socket hang up"
+    },
+    {
+      "ts": 1791606772524,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791606612885,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791606229368,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791605968562,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791605667931,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791605263859,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791604996300,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791604884145,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791604377437,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791604111091,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791603692250,
+      "failureClass": "BINANCE_REQUEST_QUEUE_TIMEOUT"
+    },
+    {
+      "ts": 1791603490343,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791603299279,
+      "failureClass": "BINANCE_REQUEST_QUEUE_TIMEOUT"
+    },
+    {
+      "ts": 1791602905614,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791602566798,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791602295961,
+      "failureClass": "BINANCE_REQUEST_QUEUE_TIMEOUT"
+    },
+    {
+      "ts": 1791601970850,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791601751077,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791601432565,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791600991151,
+      "failureClass": "BINANCE_REQUEST_QUEUE_TIMEOUT"
+    },
+    {
+      "ts": 1791600906472,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791600371090,
+      "failureClass": "BINANCE_REQUEST_QUEUE_TIMEOUT"
+    },
+    {
+      "ts": 1791600086991,
+      "failureClass": "BINANCE_REQUEST_QUEUE_TIMEOUT"
+    },
+    {
+      "ts": 1791599889209,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791599581467,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    },
+    {
+      "ts": 1791599295955,
+      "failureClass": "BINANCE_REQUEST_QUEUE_TIMEOUT"
+    },
+    {
+      "ts": 1791599046288,
+      "failureClass": "TRADE_SYNC_BASELINE_TOO_LARGE"
+    }
+  ],
+  "readOnly": true,
+  "databaseWrites": 0,
+  "exchangeRequests": 0,
+  "underlyingNetworkCause": "UNKNOWN",
+  "atomicApplyNotReachedOnAuditFailure": true,
+  "failureCounts": {
+    "TRADE_SYNC_BASELINE_TOO_LARGE": 22,
+    "socket hang up": 1,
+    "BINANCE_REQUEST_QUEUE_TIMEOUT": 7
+  },
+  "logicalDatabaseBytes": 1187479552
+}

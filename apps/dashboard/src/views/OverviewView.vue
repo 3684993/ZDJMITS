@@ -310,6 +310,28 @@ onUnmounted(() => {
 <template>
   <div class="page-stack">
     <div v-if="refreshError" class="policy-card danger-lite">{{ refreshError }}</div>
+    <Panel title="真实资产"
+      ><div class="table-scroll"><table class="data-table">
+        <thead>
+          <tr>
+            <th>资产</th>
+            <th>钱包余额</th>
+            <th>可用</th>
+            <th>USD 估值</th>
+            <th>交易所保证金资产</th>
+            <th>可用于新建仓（Entry）</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr v-for="a in assets" :key="a.asset">
+            <td class="symbol">{{ a.asset }}</td>
+            <td>{{ a.walletBalance }}</td>
+            <td>{{ a.availableBalance }}</td>
+            <td>{{ a.usdValue == null ? "—" : money(a.usdValue) }}</td>
+            <td><StatusBadge :value="a.marginEligible ? 'YES' : 'NO'" /></td>
+            <td data-entry-funding-eligible><StatusBadge :value="entryFundingAssets.has(String(a.asset).toUpperCase()) ? 'YES' : 'NO'" /></td>
+          </tr>
+        </tbody></table></div></Panel>
     <div class="kpi-grid five">
       <div class="kpi">
         <span>USDT + USDC 总资产</span
@@ -686,42 +708,7 @@ onUnmounted(() => {
       <div class="permission-note">上次未建仓：{{pipeline?.work?.recentDecision?.decision??'—'}}；下一步：{{pipeline?.work?.next??'—'}}。</div>
     </Panel>
     <div class="grid-2">
-      <Panel title="资金准入明细"
-        ><div class="facts">
-          <div>
-            <dt>USDT 可用</dt>
-            <dd>{{ money(control()?.capital?.usdtAvailable ?? 0) }}</dd>
-          </div>
-          <div>
-            <dt>USDT 可执行保证金</dt>
-            <dd>
-              {{
-                money(
-                  (control()?.capital?.usdtAvailable ?? 0) > 0
-                    ? (control()?.capital?.usdtAvailable ?? 0)
-                    : 0,
-                )
-              }}
-            </dd>
-          </div>
-          <div>
-            <dt>USDC 可用</dt>
-            <dd>{{ money(control()?.capital?.usdcAvailable ?? 0) }}</dd>
-          </div>
-          <div>
-            <dt>USDC 可执行保证金</dt>
-            <dd>
-              {{
-                money(
-                  (control()?.capital?.usdcAvailable ?? 0) > 0
-                    ? (control()?.capital?.usdcAvailable ?? 0)
-                    : 0,
-                )
-              }}
-            </dd>
-          </div>
-        </div></Panel
-      ><Panel title="建仓转化漏斗"
+      <Panel title="建仓转化漏斗"
         ><div class="compact-summary">30 分钟：已授权 PLACE {{pipeline?.entryConversion?.thirtyMinutes?.authorizedPlace??0}} · 提交 {{pipeline?.entryConversion?.thirtyMinutes?.orderSubmitted??0}} · 成交 {{pipeline?.entryConversion?.thirtyMinutes?.entryFilled??0}}</div><details class="compact-details"><summary>查看转化与首因</summary><div class="toolbar">
           <button
             class="button"
@@ -785,28 +772,6 @@ onUnmounted(() => {
         </template></details>
       </Panel>
     </div>
-    <Panel title="真实资产"
-      ><table class="data-table">
-        <thead>
-          <tr>
-            <th>资产</th>
-            <th>钱包余额</th>
-            <th>可用</th>
-            <th>USD 估值</th>
-            <th>交易所保证金资产</th>
-            <th>可用于新建仓（Entry）</th>
-          </tr>
-        </thead>
-        <tbody>
-          <tr v-for="a in assets" :key="a.asset">
-            <td class="symbol">{{ a.asset }}</td>
-            <td>{{ a.walletBalance }}</td>
-            <td>{{ a.availableBalance }}</td>
-            <td>{{ a.usdValue == null ? "—" : money(a.usdValue) }}</td>
-            <td><StatusBadge :value="a.marginEligible ? 'YES' : 'NO'" /></td>
-            <td data-entry-funding-eligible><StatusBadge :value="entryFundingAssets.has(String(a.asset).toUpperCase()) ? 'YES' : 'NO'" /></td>
-          </tr>
-        </tbody></table
-    ></Panel>
+
   </div>
 </template>

@@ -1,0 +1,11 @@
+(node:248) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+{
+  "written": "docs/reports/v398-trade-record-integrity-20261009/s00/entrypoint-review.json",
+  "entryCount": 200,
+  "counts": {
+    "FORBIDDEN_OR_NOT_RUN": 178,
+    "CONDITIONAL_NOT_RUN": 21,
+    "ALLOWED_STATIC": 1
+  }
+}

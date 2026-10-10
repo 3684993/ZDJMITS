@@ -1,0 +1,100 @@
+(node:13304) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23904) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/core@3.9.8 test
+> vitest run src/portfolio.test.ts
+
+(node:16272) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade24h/packages/core
+
+(node:15844) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18400) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:2664) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18528) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19628) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:3820) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:17712) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23064) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22580) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26304) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18312) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:11340) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:18808) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:6828) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24956) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/portfolio.test.ts (17 tests | 1 failed) 25ms
+   ✓ Portfolio Intelligence > resolves underlyings and routes USDT=0 to a healthy USDC contract 2ms
+   ✓ Portfolio Intelligence > qualifies each contract before routing so a rejected USDC market cannot eliminate healthy USDT 3ms
+   ✓ Portfolio Intelligence > assigns objective risk tiers and direction policy overrides 0ms
+   ✓ Portfolio Intelligence > records overextended location in shadow without duplicating Primary timing as a veto 1ms
+   ✓ Portfolio Intelligence > fails closed when exposure room is below the executable minimum instead of forcing min margin 1ms
+   ✓ Portfolio Intelligence > hard blocks max positions including working and reserved capacity 0ms
+   ✓ Portfolio Intelligence > reports true zero-funded TESTNET rejection without aborting diagnostics or permitting zero admitted size 3ms
+   ✓ Portfolio Intelligence > CR-01 names the direction cap and its used/ceiling numbers when sizing a side comes out zero 0ms
+   ✓ Portfolio Intelligence > CR-02 attributes a quote-asset squeeze to the quote margin, not to exposure 1ms
+   ✓ Portfolio Intelligence > CR-03 reports the room that would bind first even when the plan is allowed 1ms
+   ✓ Portfolio Intelligence > CR-04 keeps a speculative cap visible when it is the tighter of the two exposure rooms 0ms
+   ✓ Portfolio Intelligence > G1-01 observes direction without letting the intelligence tier veto the same ratio a second time 0ms
+   ✓ Portfolio Intelligence > G1-02 still refuses on the authoritative direction cap when the gate keeps its veto 0ms
+   ✓ Portfolio Intelligence > G1-03 the tighter legacy tier cap no longer binds once the authoritative cap allows it 0ms
+   ✓ Portfolio Intelligence > G1-04 OBSERVE on direction removes only the direction veto, never quote or tier capacity 1ms
+   ✓ Portfolio Intelligence > G1-05 the throttle follows the same authoritative ratio, so one ratio is read once 0ms
+   × preserves shortlist rank when AUTO chooses a funded USDC alternate 10ms
+     → expected { symbol: 'ETHUSDC', rank: +0, …(16) } to match object { symbol: 'ETHUSDC', rank: 1, …(1) }
+(15 matching properties omitted from actual)
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/portfolio.test.ts > preserves shortlist rank when AUTO chooses a funded USDC alternate
+AssertionError: expected { symbol: 'ETHUSDC', rank: +0, …(16) } to match object { symbol: 'ETHUSDC', rank: 1, …(1) }
+(15 matching properties omitted from actual)
+
+- Expected
++ Received
+
+  {
+-   "rank": 1,
++   "rank": 0,
+    "selectedContract": "ETHUSDC",
+    "symbol": "ETHUSDC",
+  }
+
+ ❯ src/portfolio.test.ts:115:35
+
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed (1)
+      Tests  1 failed | 16 passed (17)
+   Start at  12:42:07
+   Duration  787ms (transform 173ms, setup 0ms, collect 290ms, tests 25ms, environment 0ms, prepare 145ms)
+
+(node:9608) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v398-trade24h\packages\core
+npm error workspace @zdj/core@3.9.8
+npm error location D:\MITS-WORKTREES\v398-trade24h\packages\core
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/portfolio.test.ts

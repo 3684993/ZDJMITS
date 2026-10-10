@@ -1,0 +1,105 @@
+(node:21180) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:25280) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/engine@3.9.8 test
+> vitest run src/services/trade24hReadModel.test.ts src/services/exitProvenanceConflictReasons.test.ts src/services/tradeRecordReadModel.test.ts src/services/tradeLearningP0.test.ts src/services/tpTerminalProjection.test.ts
+
+(node:3132) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+VITEST_TEST_TIMEOUT=5000 CI=
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade24h/apps/engine
+
+(node:22860) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23656) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:23004) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26168) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:22860) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+ ✓ src/services/tradeRecordReadModel.test.ts (7 tests) 10ms
+ ❯ src/services/trade24hReadModel.test.ts (7 tests | 1 failed) 14ms
+   ✓ 24h closed-cycle native-asset PnL > reports wins, losses, fees and flat trades separately per asset without requiring funding 4ms
+   × 24h closed-cycle native-asset PnL > uses half-open [from,to) boundaries without double counting future timestamps 7ms
+     → expected +0 to be 1 // Object.is equality
+   ✓ 24h closed-cycle native-asset PnL > does not mix USDT with USDC or convert them to USD 0ms
+   ✓ 24h closed-cycle native-asset PnL > attributes full cycle once by settled close time and quarantines duplicate cycle identity 1ms
+   ✓ 24h closed-cycle native-asset PnL > does not mistake observed flat, incomplete fee, missing source or pending sync for completed gains 0ms
+   ✓ 24h closed-cycle native-asset PnL > retains UNKNOWN when no complete samples exist rather than manufacturing zero profitability 0ms
+   ✓ keeps absent conservation UNKNOWN and blocks an incomplete cross-window cycle collision 0ms
+(node:18420) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:19176) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/services/tradeLearningP0.test.ts (26 tests) 50ms
+(node:23656) ExperimentalWarning: SQLite is an experimental feature and might change at any time
+(node:25112) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ❯ src/services/tpTerminalProjection.test.ts (6 tests | 1 failed) 32ms
+   ✓ propagates FILLED to local orphan and replays it after a stale checkpoint restore 11ms
+   ✓ propagates CANCELED to local orphan and replays it after a stale checkpoint restore 3ms
+   ✓ propagates EXPIRED to local orphan and replays it after a stale checkpoint restore 3ms
+   ✓ propagates REJECTED to local orphan and replays it after a stale checkpoint restore 3ms
+   ✓ does not close a different exchange identity or cycle from retained terminal evidence 3ms
+   × binds a verified TP report without relabeling TP as EXIT 8ms
+     → expected 'UNRESOLVED' to be 'SYSTEM_PROVEN' // Object.is equality
+ ✓ src/services/exitProvenanceConflictReasons.test.ts (4 tests) 5ms
+
+⎯⎯⎯⎯⎯⎯⎯ Failed Tests 2 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/services/tpTerminalProjection.test.ts > binds a verified TP report without relabeling TP as EXIT
+AssertionError: expected 'UNRESOLVED' to be 'SYSTEM_PROVEN' // Object.is equality
+
+Expected: "SYSTEM_PROVEN"
+Received: "UNRESOLVED"
+
+ ❯ src/services/tpTerminalProjection.test.ts:39:23
+     37|  const x=await fixture();x.runtime.recordExitOrderReport('EXACT_ORDER'…
+     38|  const proof=x.runtime.provenance.resolve({symbol:x.order.symbol,clien…
+     39|  expect(proof.status).toBe('SYSTEM_PROVEN');expect(proof.rows[0]?.role…
+       |                       ^
+     40| });
+     41|
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/2]⎯
+
+ FAIL  src/services/trade24hReadModel.test.ts > 24h closed-cycle native-asset PnL > uses half-open [from,to) boundaries without double counting future timestamps
+AssertionError: expected +0 to be 1 // Object.is equality
+
+- Expected
++ Received
+
+- 1
++ 0
+
+ ❯ src/services/trade24hReadModel.test.ts:30:40
+     28|     const result=project([row('inclusive','USDT',1,{closedAt:end-86_40…
+     29|       row('exclusive','USDT',2,{closedAt:end})]);
+     30|     expect(result.byAsset.USDT.cycles).toBe(1);
+       |                                        ^
+     31|     expect(result.byAsset.USDT.netExFunding).toBe(1);
+     32|   });
+
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[2/2]⎯
+
+
+ Test Files  2 failed | 3 passed (5)
+      Tests  2 failed | 48 passed (50)
+   Start at  12:43:18
+   Duration  919ms (transform 599ms, setup 0ms, collect 1.66s, tests 110ms, environment 1ms, prepare 471ms)
+
+(node:18096) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:26216) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v398-trade24h\apps\engine
+npm error workspace @zdj/engine@3.9.8
+npm error location D:\MITS-WORKTREES\v398-trade24h\apps\engine
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/services/trade24hReadModel.test.ts src/services/exitProvenanceConflictReasons.test.ts src/services/tradeRecordReadModel.test.ts src/services/tradeLearningP0.test.ts src/services/tpTerminalProjection.test.ts

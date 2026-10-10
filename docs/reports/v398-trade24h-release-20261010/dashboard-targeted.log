@@ -1,0 +1,52 @@
+(node:18092) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24324) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+> @zdj/dashboard@3.9.8 test
+> vitest run src/views/tradeClosePresentation.test.ts src/views/OverviewView.test.ts
+
+(node:10456) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+ RUN  v3.2.7 D:/MITS-WORKTREES/v398-trade24h/apps/dashboard
+
+(node:23292) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:14232) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:24880) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+(node:15052) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+ ✓ src/views/tradeClosePresentation.test.ts (7 tests) 3ms
+(node:15356) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+
+⎯⎯⎯⎯⎯⎯ Failed Suites 1 ⎯⎯⎯⎯⎯⎯⎯
+
+ FAIL  src/views/OverviewView.test.ts [ src/views/OverviewView.test.ts ]
+SyntaxError: Element is missing end tag.
+312 |      <div v-if="refreshError" class="policy-card danger-lite">{{ refreshError }}</div>
+313 |      <Panel title="真实资产"
+314 |        ><div class="table-scroll"><table class="data-table">
+    |          ^
+315 |          <thead>
+316 |            <tr>
+⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯⎯[1/1]⎯
+
+
+ Test Files  1 failed | 1 passed (2)
+      Tests  7 passed (7)
+   Start at  12:43:23
+   Duration  5.77s (transform 65ms, setup 0ms, collect 37ms, tests 3ms, environment 5.24s, prepare 181ms)
+
+(node:26588) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+(Use `node --trace-warnings ...` to show where the warning was created)
+npm error Lifecycle script `test` failed with error:
+npm error code 1
+npm error path D:\MITS-WORKTREES\v398-trade24h\apps\dashboard
+npm error workspace @zdj/dashboard@3.9.8
+npm error location D:\MITS-WORKTREES\v398-trade24h\apps\dashboard
+npm error command failed
+npm error command C:\Windows\system32\cmd.exe /d /s /c vitest run src/views/tradeClosePresentation.test.ts src/views/OverviewView.test.ts

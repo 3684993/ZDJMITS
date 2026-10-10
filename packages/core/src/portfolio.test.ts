@@ -108,3 +108,10 @@ describe('Portfolio Intelligence',()=>{
     expect(enforced.capacityRoom).toMatchObject({source:'SHORT_EXPOSURE',limitPct:.5,enforced:true});
   });
 });
+
+it('preserves shortlist rank when AUTO chooses a funded USDC alternate',()=>{
+ const c=(symbol:string,rank:number)=>({symbol,rank,score:80,eligible:true,exclusionReasons:[],lifecycle:'AVAILABLE',components:{}} as any);
+ const rows=decorateUniverse([c('ETHUSDT',1),c('ETHUSDC',0)],[snap('ETHUSDT'),snap('ETHUSDC')],settings,[{asset:'USDT',availableBalance:1004.1,usdValue:1004.1},{asset:'USDC',availableBalance:3603.85,usdValue:3603.85}] as any,[]);
+ expect(rows.find(r=>r.eligible)).toMatchObject({symbol:'ETHUSDC',rank:1,selectedContract:'ETHUSDC'});
+ expect(rows.find(r=>r.symbol==='ETHUSDT')).toMatchObject({eligible:false,rank:0});
+});

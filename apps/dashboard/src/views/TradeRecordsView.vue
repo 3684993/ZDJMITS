@@ -16,9 +16,11 @@ const amount=(value:unknown,asset:string)=>{
   if(typeof value!=='number'||!Number.isFinite(value))return '—';
   return new Intl.NumberFormat('zh-CN',{minimumFractionDigits:2,maximumFractionDigits:4}).format(value)+' '+asset;
 };
-const dailyAssetRows=computed(()=>['USDT','USDC'].map(asset=>({asset,...daily.value?.byAsset?.[asset]})));
-const dailyStale=computed(()=>!daily.value?.asOf||dailyNow.value-daily.value.asOf>60_000||Boolean(dailyError.value));
-async function loadDaily(){dailyNow.value=Date.now();try{daily.value=await api.tradeRecords24h();dailyError.value='';dailyCheckedAt.value=Date.now();}catch(error){dailyError.value=error instanceof Error?error.message:String(error);}}
+const dailyAssetRows=computed(()=>['USDT','USDC'].map(asset=>({asset,...(dailyStale.value?{}:daily.value?.byAsset?.[asset])})));
+const dailyStale=computed(()=>!daily.value?.asOf||daily.value.asOf>dailyNow.value+1000||dailyNow.value-daily.value.asOf>60_000||Boolean(dailyError.value));
+let dailyFlight:Promise<void>|null=null,dailyController:AbortController|null=null,disposed=false;
+function loadDaily(){if(dailyFlight)return dailyFlight;dailyController=new AbortController();const controller=dailyController;const timeout=setTimeout(()=>controller.abort(),8000);
+ dailyFlight=(async()=>{try{const value=await api.tradeRecords24h(controller.signal);if(disposed)return;daily.value=value;dailyError.value='';dailyCheckedAt.value=Date.now();}catch(error){if(!disposed)dailyError.value=error instanceof Error?error.message:String(error);}finally{dailyNow.value=Date.now();clearTimeout(timeout);dailyController=null;dailyFlight=null;}})();return dailyFlight;}
 const count=(key:string)=>data.value.summary?.counts?.[key]??0;
 const fee=(value:number|null|undefined)=>value==null?'—':money(value);
 const closeKind=tradeClosePresentation;
@@ -36,8 +38,9 @@ async function applySync(){if(!preview.value)return;syncBusy.value=true;syncErro
 const autoSyncLabel=computed(()=>({NOT_STARTED:'尚未启动',WAITING_FOR_PRIVATE_DATA:'等待 Testnet 私有数据就绪',RUNNING:'同步中',BACKFILLING:'正在逐日回填最近交易事实',ACTIVE:'最近一周滚动自动同步运行中',ERROR:'上次自动同步失败，正在等待重试'} as Record<string,string>)[data.value.autoSync?.status]??'自动同步状态未知');
 const when=(value:number|null|undefined)=>value?new Date(value).toLocaleString():'—';
 let refreshTimer:ReturnType<typeof setInterval>|null=null;
-onMounted(()=>{void load();void loadDaily();refreshTimer=setInterval(()=>{void load();void loadDaily()},30_000)});
-onUnmounted(()=>{if(refreshTimer)clearInterval(refreshTimer)});
+function refreshVisible(){dailyNow.value=Date.now();if(!document.hidden){void load().catch(()=>{});void loadDaily();}}
+onMounted(()=>{refreshVisible();refreshTimer=setInterval(refreshVisible,30_000);document.addEventListener('visibilitychange',refreshVisible)});
+onUnmounted(()=>{disposed=true;dailyController?.abort();if(refreshTimer)clearInterval(refreshTimer);document.removeEventListener('visibilitychange',refreshVisible)});
 </script>
 <template>
   <div class="page-stack">

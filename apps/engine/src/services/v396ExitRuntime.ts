@@ -367,8 +367,8 @@ export class V396ExitRuntime {
     // report arrives through the same reader and must not be recorded with an exit role.
     for(const fact of usable){
       if(!this.recoveryCoordinator.findTaskByClientOrderId(fact.clientOrderId))continue;
-      this.provenance.record({environment:fact.environment,accountId:fact.accountId,symbol:fact.symbol,
-        clientOrderId:fact.clientOrderId,exchangeOrderId:fact.exchangeOrderId,role:'EXIT',source:fact.source,observedAt:fact.observedAt});
+      this.provenance.observe({environment:fact.environment,accountId:fact.accountId,symbol:fact.symbol,
+        clientOrderId:fact.clientOrderId,exchangeOrderId:fact.exchangeOrderId,source:fact.source,observedAt:fact.observedAt});
     }
     for(const fact of usable)if(this.terminalFactMatchesTask(fact))for(const listener of this.terminalListeners)listener(fact);
     return result;
@@ -453,7 +453,9 @@ export class V396ExitRuntime {
   }
   async prepareTakeProfit(input:V396PrepareExitInput){
     const mandate=this.ensureGuardianMandate(input.subject,input.limitPrice,input.now);
-    return this.prepare('TP',input,mandate);
+    const result=await this.prepare('TP',input,mandate);
+    if(result.clientOrderId)this.registerExitProvenance({subject:input.subject,clientOrderId:result.clientOrderId,role:'TP',source:'TP_PREPARED'});
+    return result;
   }
 
   /** Convert a live quantity into the integer units the claim budget is counted in. */

@@ -8,10 +8,10 @@ const row=(id:string,asset='USDT',net=3,overrides:Partial<TradeRecord>={}):Trade
   entryQty:1,exitQty:1,remainingQty:0,entryAveragePrice:100,exitAveragePrice:104,
   entryFee:.4,exitFee:.6,totalFee:1,funding:null,entryGrossNotional:100,exitGrossNotional:104,
   marginUsed:10,netRoiOnMargin:null,netReturnOnNotional:null,
-  entryFillCount:1,exitFillCount:1,feeBreakdown:[],grossRealizedPnl:4,tradingNetPnlExFunding:net,netPnl:null,
+  entryFillCount:1,exitFillCount:1,feeBreakdown:[],grossRealizedPnl:net+1,tradingNetPnlExFunding:net,netPnl:null,
   closeReason:'TP',status:'CLOSED',entryRunId:'r',entryIntentId:'i',entryOrderIds:['o'],exitOrderIds:['x'],
   source:'SYSTEM',regime:null,feeCompleteness:'COMPLETE',recordCompleteness:'COMPLETE',classification:'COMPLETE',
-  canonical:true,duplicateOf:null,cycleId:id,repairSource:null,linkedFillIds:['f1','f2'],
+  canonical:true,duplicateOf:null,cycleId:id,repairSource:null,linkedFillIds:['f1','f2'],ledgerConservation:'CONSERVED',
   missingFacts:[],integrityFlags:[],createdAt:end-60_000,updatedAt:end-1000,
   firstObservedAt:end-60_000,fundingAttributionStatus:'UNKNOWN',pnlBasis:'CANONICAL_NET_WITH_FUNDING_UNKNOWN',...overrides,
 });
@@ -25,7 +25,7 @@ describe('24h closed-cycle native-asset PnL',()=>{
     expect(result.coverage).toMatchObject({eligibleClosedCycles:3,excludedClosedRows:0});
   });
   it('uses half-open [from,to) boundaries without double counting future timestamps',()=>{
-    const result=project([row('inclusive','USDT',1,{closedAt:end-86_400_000}),
+    const result=project([row('inclusive','USDT',1,{openedAt:end-86_460_000,closedAt:end-86_400_000}),
       row('exclusive','USDT',2,{closedAt:end})]);
     expect(result.byAsset.USDT.cycles).toBe(1);
     expect(result.byAsset.USDT.netExFunding).toBe(1);
@@ -50,11 +50,16 @@ describe('24h closed-cycle native-asset PnL',()=>{
       row('source','USDT',4,{exitOrderIds:[]})],{status:'ERROR',lastSuccessAt:0});
     expect(result.coverage).toMatchObject({eligibleClosedCycles:0,closedObservedWithoutSettledAt:1,excludedClosedRows:2});
     expect(result.byAsset.USDT.netExFunding).toBeNull();
-    expect(result.status).toBe('SYNC_COVERAGE_UNCONFIRMED');
+    expect(result.status).toBe('SYNC_ERROR');
   });
   it('retains UNKNOWN when no complete samples exist rather than manufacturing zero profitability',()=>{
     const result=project([]);
     expect(result.byAsset.USDT).toMatchObject({cycles:0,netExFunding:null,grossProfit:null,grossLoss:null});
     expect(result.aggregate.netExFunding).toBeNull();
   });
+});
+
+it('keeps absent conservation UNKNOWN and blocks an incomplete cross-window cycle collision',()=>{
+ const r=project([row('a','USDT',3,{ledgerConservation:undefined}),row('b','USDC',2,{cycleId:'c'}),row('old','USDC',2,{cycleId:'c',closedAt:end-86400001,classification:'PARTIAL'})]);
+ expect(r.coverage.eligibleClosedCycles).toBe(0);expect(r.byAsset.USDC.netExFunding).toBeNull();
 });

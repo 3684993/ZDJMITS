@@ -1,0 +1,315 @@
+{
+  "observedAt": "2026-10-10T04:46:52.860392+00:00",
+  "readOnly": true,
+  "databaseWrites": 0,
+  "exchangeRequests": 0,
+  "cases": [
+    {
+      "symbol": "WLDUSDT",
+      "closedAt": 1791605020051,
+      "recordHash": "48f83507d407946272131c36a80998158b2d1161cd263b358de1b064ad2f1dc5",
+      "cycleHash": "55e152c6c70531ca615d6c6c372a7915269b1db6242de3c45657fb0f600eb639",
+      "identities": [
+        {
+          "clientHash": "63137465a3506f9866017417ea693fc494dfd6d8bb0c7ea014c73f67c54f0e1e",
+          "exchangeHash": "dbbb227e1de4ba71089c6a941d7409993dda364eba0589cb46bfb1af97ecd421",
+          "registryRoles": [
+            "TP"
+          ],
+          "cycleAllMatch": true
+        }
+      ],
+      "writers": [
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "TP_SUBMIT_RESULT",
+          "count": 1
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "USER_DATA_WS",
+          "count": 2
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "OPEN_ORDERS",
+          "count": 228
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "EXACT_ORDER",
+          "count": 11
+        }
+      ],
+      "quantityCoverage": {
+        "conserved": true,
+        "observedMatchesExpected": true
+      },
+      "oldProvenance": "CONFLICT"
+    },
+    {
+      "symbol": "USELESSUSDT",
+      "closedAt": 1791602902475,
+      "recordHash": "eee819d5024bdcc9d4cba8f42a85a553ef816cc8277876bfd8fb60f0322acd00",
+      "cycleHash": "19814233b63944eeb9baa6e4c4d48d9d5318ef6d77e611b761540ca2b20e4507",
+      "identities": [
+        {
+          "clientHash": "082a668b1dd8a6ad03d9f5ed7f12c2b4a01d41ce6277ba07f209b35582493387",
+          "exchangeHash": "18cbac72a86a0a6f6d6722f938a911431cdac052b37c80001c1f234e193411b0",
+          "registryRoles": [
+            "TP"
+          ],
+          "cycleAllMatch": true
+        }
+      ],
+      "writers": [
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "TP_SUBMIT_RESULT",
+          "count": 1
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "OPEN_ORDERS",
+          "count": 29
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "USER_DATA_WS",
+          "count": 2
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "EXACT_ORDER",
+          "count": 1
+        }
+      ],
+      "quantityCoverage": {
+        "conserved": true,
+        "observedMatchesExpected": true
+      },
+      "oldProvenance": "CONFLICT"
+    },
+    {
+      "symbol": "BRUSDT",
+      "closedAt": 1791602883503,
+      "recordHash": "3ce70590b6f6794b9c3b0035dac0ffd05e538ec3fa57e3adc45f37f1720eeb1c",
+      "cycleHash": "54668cbcbc1a92f0a4a92f5083f8704429d0271e0cf925976593a1246f77c06c",
+      "identities": [
+        {
+          "clientHash": "2cba46ff8931c346209b46c2ca074c640fc7e4f38db1922b326be5c77f53ba86",
+          "exchangeHash": "71644390b9a84c3022656af8699146737acc579114ae9ad99857862b2ea1f52b",
+          "registryRoles": [
+            "TP"
+          ],
+          "cycleAllMatch": true
+        },
+        {
+          "clientHash": "2cba46ff8931c346209b46c2ca074c640fc7e4f38db1922b326be5c77f53ba86",
+          "exchangeHash": "71644390b9a84c3022656af8699146737acc579114ae9ad99857862b2ea1f52b",
+          "registryRoles": [
+            "TP"
+          ],
+          "cycleAllMatch": true
+        }
+      ],
+      "writers": [
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "EXACT_ORDER",
+          "count": 640
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "OPEN_ORDERS",
+          "count": 9414
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "USER_DATA_WS",
+          "count": 4
+        }
+      ],
+      "quantityCoverage": {
+        "conserved": true,
+        "observedMatchesExpected": true
+      },
+      "oldProvenance": "CONFLICT"
+    },
+    {
+      "symbol": "POLUSDT",
+      "closedAt": 1791602306283,
+      "recordHash": "a1b960e43b3be2fb9e2ea3cd5842d4908d11032d659000c96c7be48d79373bb6",
+      "cycleHash": "9949b05d7ef6a0fda932de345ab1bd2ddb04c0d37758cbe66910569697dee1c3",
+      "identities": [
+        {
+          "clientHash": "e4f8743e621ea16817b7fd144ff0bc58cf6f0c5ff25f8919a41c55a5c44e587f",
+          "exchangeHash": "116da4ebd20e556080d66ef014dbf1eebe47ccaf8d030e6923bcbe303206bfa3",
+          "registryRoles": [
+            "TP"
+          ],
+          "cycleAllMatch": true
+        }
+      ],
+      "writers": [
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "TP_SUBMIT_RESULT",
+          "count": 1
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "OPEN_ORDERS",
+          "count": 300
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "USER_DATA_WS",
+          "count": 2
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "EXACT_ORDER",
+          "count": 17
+        }
+      ],
+      "quantityCoverage": {
+        "conserved": true,
+        "observedMatchesExpected": true
+      },
+      "oldProvenance": "CONFLICT"
+    },
+    {
+      "symbol": "GRASSUSDT",
+      "closedAt": 1791601509667,
+      "recordHash": "2d2861c052d94af504e0205fccf96f820aceb955cecd09ce5d657a89fe4af56d",
+      "cycleHash": "74900ab9a724835ea1f2dd7e73b004312edb58ddfe05b1bf87840ae9f3927820",
+      "identities": [
+        {
+          "clientHash": "c0cfa1e0aee9ad3fe7ceae2a23ad4ba40a43afeb65318f812baf47f3c4830160",
+          "exchangeHash": "e51ea895a6a420af66d8a484cae96972c12b6f9835531252aa9e3280be7ee148",
+          "registryRoles": [
+            "TP"
+          ],
+          "cycleAllMatch": true
+        }
+      ],
+      "writers": [
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "TP_SUBMIT_RESULT",
+          "count": 1
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "OPEN_ORDERS",
+          "count": 174
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "EXACT_ORDER",
+          "count": 8
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "USER_DATA_WS",
+          "count": 2
+        }
+      ],
+      "quantityCoverage": {
+        "conserved": true,
+        "observedMatchesExpected": true
+      },
+      "oldProvenance": "CONFLICT"
+    },
+    {
+      "symbol": "AVAXUSDC",
+      "closedAt": 1791599999759,
+      "recordHash": "eaa1b0b2a2f155972a7ce0e466ec648239292f355a8b5f4c3870d8377dafdd35",
+      "cycleHash": "386fa329dd8d6218b3d584a8bd70228a067a9fcbf3fc015426f4e81c571ab1d0",
+      "identities": [
+        {
+          "clientHash": "2661e944f18882d686a0dbcb77bd94b152c0c4f76098adec64a9b5017b380656",
+          "exchangeHash": "7025f88afe141fc9bdffaa6712e2fc3175a810c71721458375b79326e66c560c",
+          "registryRoles": [
+            "TP"
+          ],
+          "cycleAllMatch": true
+        }
+      ],
+      "writers": [
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "TP_SUBMIT_RESULT",
+          "count": 1
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "OPEN_ORDERS",
+          "count": 31
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "USER_DATA_WS",
+          "count": 2
+        },
+        {
+          "reason": "PROVENANCE_ROLE_CONFLICT",
+          "priorRole": "TP",
+          "attemptRole": "EXIT",
+          "source": "EXACT_ORDER",
+          "count": 2
+        }
+      ],
+      "quantityCoverage": {
+        "conserved": true,
+        "observedMatchesExpected": true
+      },
+      "oldProvenance": "CONFLICT"
+    }
+  ]
+}

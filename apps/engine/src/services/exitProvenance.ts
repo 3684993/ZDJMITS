@@ -27,8 +27,11 @@ export function projectExitProvenance(record: TradeRecord, context: ExitProvenan
   }
   const fills = [...rows.values()].sort((a,b) => a.executionTime-b.executionTime || a.fillId.localeCompare(b.fillId));
   const roleQuantities: Record<Role, number> = {TP:0, MANUAL:0, EXIT:0};
+  const proofs = new Map<string,ReturnType<NonNullable<ExitProvenanceContext['orderProvenance']>['resolve']>>();
   const identities = fills.map(fill => {
-    const proof = context.orderProvenance?.resolve({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});
+    const proofKey=JSON.stringify([fill.symbol,fill.clientOrderId,fill.orderId]);
+    let proof=proofs.get(proofKey);
+    if(!proof&&context.orderProvenance){proof=context.orderProvenance.resolve({symbol:fill.symbol,clientOrderId:fill.clientOrderId,exchangeOrderId:fill.orderId});proofs.set(proofKey,proof);}
     const roles = new Set<Role>();
     const proofConflictCodes=(proof?.proof ?? []).filter(x => x.includes('CONFLICT'));
     for(const reason of proofConflictCodes)conflictReasons.add(String(reason));

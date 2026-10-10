@@ -1,0 +1,38 @@
+{
+    "gpuSampler":  "DISPATCHED",
+    "engineGuardian":  "MANUAL_START_ONLY_DISABLED_BY_DESIGN",
+    "bindings":  [
+                     {
+                         "sourceCommit":  "b84c919ed38c35ece4b60ff4473db2e312f00636",
+                         "restartSettingsPreserved":  true,
+                         "hidden":  true,
+                         "name":  "ZDJ-MITS Manual Engine",
+                         "workingDirectory":  "D:\\MITS-RELEASES\\ZDJMITS-v398-network-8405233",
+                         "principalPreserved":  true,
+                         "path":  "\\",
+                         "engineAutoRestart":  false
+                     },
+                     {
+                         "sourceCommit":  "b84c919ed38c35ece4b60ff4473db2e312f00636",
+                         "restartSettingsPreserved":  true,
+                         "hidden":  true,
+                         "name":  "ZDJ-MITS-AfterReboot-TESTNET",
+                         "workingDirectory":  "D:\\MITS-RELEASES\\ZDJMITS-v398-network-8405233",
+                         "principalPreserved":  true,
+                         "path":  "\\",
+                         "engineAutoRestart":  false
+                     },
+                     {
+                         "sourceCommit":  "b84c919ed38c35ece4b60ff4473db2e312f00636",
+                         "restartSettingsPreserved":  true,
+                         "hidden":  true,
+                         "name":  "ZDJ-MITS-Engine-Crash-Observer",
+                         "workingDirectory":  "D:\\MITS-RELEASES\\ZDJMITS-v398-network-8405233",
+                         "principalPreserved":  true,
+                         "path":  "\\ZDJMITS\\",
+                         "engineAutoRestart":  false
+                     }
+                 ],
+    "futureTaskEntryMode":  "ANALYSIS_ONLY_FRESH_TP_REQUIRED",
+    "at":  "2026-10-10T15:22:04.4708439Z"
+}

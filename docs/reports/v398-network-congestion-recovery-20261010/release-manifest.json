@@ -1,0 +1,21 @@
+{
+  "observedAt": "2026-10-10T15:21:06.119Z",
+  "stage": "D:\\MITS-RELEASES\\ZDJMITS-v398-network-8405233",
+  "sourceCommit": "b84c919ed38c35ece4b60ff4473db2e312f00636",
+  "sourceHash": "cd08eca711169218f90c74ddb063c42833bab8891cb90378486675b9ed95a472",
+  "artifactHash": "e17fa644488bb74c70c70be79c5b075d1023f190a8ec75c31100346e36c1d0e5",
+  "entrypointSha256": "df014d7d4da78af092844fa646c3ac1409bff38ec27c35da5db3de0caf072376",
+  "buildId": "3.9.8-e17fa644488bb74c70c7",
+  "settingsVersion": 253,
+  "settingsPayloadSha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151",
+  "dataRoot": "D:/MITS/data",
+  "privateRoot": "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\diagnostics\\network-recovery-20261010\\release-b84c919ed38c-1791645662386",
+  "backup": {
+    "bytes": 938270720,
+    "quickCheck": "ok",
+    "settingsMatch": true
+  },
+  "settingsWrites": 0,
+  "productionWrites": 0,
+  "qualification": "OPERATOR_ATTESTED_USER_AUTHORIZED_TESTNET_RECOVERY"
+}

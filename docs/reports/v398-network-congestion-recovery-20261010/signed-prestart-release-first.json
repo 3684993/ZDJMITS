@@ -1,0 +1,591 @@
+{
+  "observedAt": "2026-10-10T15:22:37.919Z",
+  "settingsVersion": 253,
+  "settingsPayloadSha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "exchangeWrites": 0,
+  "productionWrites": 0,
+  "recvWindowMs": 5000,
+  "requests": [
+    {
+      "endpoint": "/fapi/v1/time",
+      "startedAt": 1791645757920,
+      "completedAt": 1791645761288,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791645757922,
+          "proxyConnectStartedAt": 1791645757927,
+          "proxyConnectedAt": 1791645759526,
+          "socketAssignedAt": 1791645759527,
+          "secureConnectedAt": 1791645760391,
+          "responseAt": 1791645761279,
+          "completedAt": 1791645761279,
+          "reusedSocket": false,
+          "responseStatus": 200,
+          "responseDecodedBytes": 28,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/positionSide/dual",
+      "startedAt": 1791645761288,
+      "completedAt": 1791645761768,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791645761289,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791645761290,
+          "secureConnectedAt": 1791645761290,
+          "responseAt": 1791645761767,
+          "completedAt": 1791645761768,
+          "reusedSocket": true,
+          "responseStatus": 200,
+          "responseDecodedBytes": 26,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v3/positionRisk",
+      "startedAt": 1791645761768,
+      "completedAt": 1791645763048,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791645761769,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791645761769,
+          "secureConnectedAt": 1791645761769,
+          "responseAt": 1791645763047,
+          "completedAt": 1791645763047,
+          "reusedSocket": true,
+          "responseStatus": 200,
+          "responseDecodedBytes": 13486,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/openOrders",
+      "startedAt": 1791645763048,
+      "completedAt": 1791645764324,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791645763049,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791645763049,
+          "secureConnectedAt": 1791645763049,
+          "responseAt": 1791645764323,
+          "completedAt": 1791645764323,
+          "reusedSocket": true,
+          "responseStatus": 200,
+          "responseDecodedBytes": 14161,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/openAlgoOrders",
+      "startedAt": 1791645764324,
+      "completedAt": 1791645764785,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791645764325,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791645764325,
+          "secureConnectedAt": 1791645764325,
+          "responseAt": 1791645764785,
+          "completedAt": 1791645764785,
+          "reusedSocket": true,
+          "responseStatus": 200,
+          "responseDecodedBytes": 2,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v3/account",
+      "startedAt": 1791645764786,
+      "completedAt": 1791645766149,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791645764786,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791645764787,
+          "secureConnectedAt": 1791645764787,
+          "responseAt": 1791645766148,
+          "completedAt": 1791645766148,
+          "reusedSocket": true,
+          "responseStatus": 200,
+          "responseDecodedBytes": 10174,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/accountConfig",
+      "startedAt": 1791645766149,
+      "completedAt": 1791645766626,
+      "dispatch": {
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791645766150,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791645766150,
+          "secureConnectedAt": 1791645766150,
+          "responseAt": 1791645766626,
+          "completedAt": 1791645766626,
+          "reusedSocket": true,
+          "responseStatus": 200,
+          "responseDecodedBytes": 161,
+          "failurePhase": null
+        }
+      }
+    }
+  ],
+  "gate": "SIGNED_ALL_POSITION_TP_PASS",
+  "accountShape": {
+    "assets": 8,
+    "positions": 26
+  },
+  "positions": 26,
+  "openOrders": 26,
+  "openAlgoOrders": 0,
+  "canTrade": true,
+  "hedgeMode": true,
+  "modeAgrees": true,
+  "stablecoinFactsComplete": true,
+  "riskIncreasingOrders": 0,
+  "protection": [
+    {
+      "index": 0,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 1,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 2,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 3,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 4,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 5,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 6,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 7,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 8,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 9,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 10,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 11,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 12,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 13,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 14,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 15,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 16,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 17,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 18,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 19,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 20,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 21,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 22,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 23,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 24,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "index": 25,
+      "checks": {
+        "uniqueOrder": true,
+        "dualId": true,
+        "closingSide": true,
+        "positionSide": true,
+        "reduceOnlyOrHedgeClose": true,
+        "working": true,
+        "remainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    }
+  ],
+  "signedFactMaxAgeMs": 4861
+}

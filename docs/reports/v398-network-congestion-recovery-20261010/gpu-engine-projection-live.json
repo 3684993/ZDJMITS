@@ -1,0 +1,3037 @@
+{
+  "asOf": 1791647278965,
+  "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+  "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+  "ttlMs": 45000,
+  "measureStatus": "MEASURED",
+  "reason": null,
+  "services": [
+    {
+      "resourceId": "llama:8081",
+      "port": 8081,
+      "pid": 25912,
+      "processStartedAt": 1791625204922,
+      "duty": "SCOUT",
+      "luid": [
+        "0x00000000_0x0000edc6",
+        "0x00000000_0x0000f452",
+        "0x00000000_0x000122ec"
+      ],
+      "measureStatus": "MEASURED",
+      "utilizationPct": 0,
+      "dedicatedBytes": 6370156544,
+      "sharedBytes": 38297600,
+      "physicalDeviceIdVerified": false,
+      "physicalDeviceId": null
+    },
+    {
+      "resourceId": "llama:8083",
+      "port": 8083,
+      "pid": 22880,
+      "processStartedAt": 1791626108230,
+      "duty": "REVIEW_BRAIN",
+      "luid": [
+        "0x00000000_0x0000edc6",
+        "0x00000000_0x0000f452",
+        "0x00000000_0x000122ec"
+      ],
+      "measureStatus": "MEASURED",
+      "utilizationPct": 0,
+      "dedicatedBytes": 18563121152,
+      "sharedBytes": 123846656,
+      "physicalDeviceIdVerified": false,
+      "physicalDeviceId": null
+    },
+    {
+      "resourceId": "llama:8084",
+      "port": 8084,
+      "pid": 16772,
+      "processStartedAt": 1791625276826,
+      "duty": "PRIMARY_BRAIN",
+      "luid": [
+        "0x00000000_0x0000edc6",
+        "0x00000000_0x0000f452",
+        "0x00000000_0x000122ec"
+      ],
+      "measureStatus": "MEASURED",
+      "utilizationPct": 0,
+      "dedicatedBytes": 18554019840,
+      "sharedBytes": 344039424,
+      "physicalDeviceIdVerified": false,
+      "physicalDeviceId": null
+    }
+  ],
+  "history": [
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646588493,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646603505,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646618518,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646633522,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646648522,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646663527,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646678538,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646693553,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646708561,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646723579,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646738591,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646753601,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646768609,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646783622,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646798628,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646813639,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646828642,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646843649,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646858658,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646873664,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646888682,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646903689,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646918697,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646933709,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646948721,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646963728,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646978743,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791646993750,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647008762,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647023781,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647038785,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647053787,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647068789,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647083799,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647098811,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647113827,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647128841,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647143856,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647158877,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647173890,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647188907,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647203917,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647218922,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647233943,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647248958,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647263958,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    },
+    {
+      "schemaVersion": 1,
+      "asOf": 1791647278965,
+      "instanceId": "30571dfb-91fe-4d2c-a7d2-174a3b1a0ab7",
+      "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+      "ttlMs": 45000,
+      "services": [
+        {
+          "resourceId": "llama:8081",
+          "port": 8081,
+          "pid": 25912,
+          "processStartedAt": 1791625204922,
+          "duty": "SCOUT",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 6370156544,
+          "sharedBytes": 38297600,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8083",
+          "port": 8083,
+          "pid": 22880,
+          "processStartedAt": 1791626108230,
+          "duty": "REVIEW_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18563121152,
+          "sharedBytes": 123846656,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        },
+        {
+          "resourceId": "llama:8084",
+          "port": 8084,
+          "pid": 16772,
+          "processStartedAt": 1791625276826,
+          "duty": "PRIMARY_BRAIN",
+          "luid": [
+            "0x00000000_0x0000edc6",
+            "0x00000000_0x0000f452",
+            "0x00000000_0x000122ec"
+          ],
+          "measureStatus": "MEASURED",
+          "utilizationPct": 0,
+          "dedicatedBytes": 18554019840,
+          "sharedBytes": 344039424,
+          "physicalDeviceIdVerified": false,
+          "physicalDeviceId": null
+        }
+      ]
+    }
+  ],
+  "window": {
+    "coveredFrom": 1791646588493,
+    "coveredTo": 1791647278965,
+    "sampleCount": 47,
+    "droppedSampleCount": 0
+  },
+  "unit": {
+    "utilization": "% busiest process engine",
+    "memory": "bytes"
+  }
+}

@@ -1,0 +1,60 @@
+{
+    "observedAt":  "2026-10-10T15:44:40.1064173Z",
+    "healthyModelsRestarted":  false,
+    "models":  [
+                   {
+                       "port":  8081,
+                       "pid":  25912,
+                       "createdAt":  "2026-10-10T09:40:04.9225530Z",
+                       "model":  "qwen3.5:9b",
+                       "context":  32768,
+                       "physicalIndex":  0,
+                       "gpu":  "Intel(R) Arc(TM) B580 Graphics (12190 MiB, 11421 MiB free)",
+                       "actualVisibleDevices":  "0",
+                       "gpuEnvironmentMatches":  true,
+                       "creationMatches":  true,
+                       "health":  "ok",
+                       "modelListed":  true,
+                       "inferenceMs":  221,
+                       "completion":  "OK",
+                       "completionTokens":  2,
+                       "restartAttempts":  0
+                   },
+                   {
+                       "port":  8083,
+                       "pid":  22880,
+                       "createdAt":  "2026-10-10T09:55:08.2309370Z",
+                       "model":  "qwen/qwen3.8-27b",
+                       "context":  65536,
+                       "physicalIndex":  1,
+                       "gpu":  "AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free)",
+                       "actualVisibleDevices":  "1",
+                       "gpuEnvironmentMatches":  true,
+                       "creationMatches":  true,
+                       "health":  "ok",
+                       "modelListed":  true,
+                       "inferenceMs":  240,
+                       "completion":  "OK",
+                       "completionTokens":  2,
+                       "restartAttempts":  0
+                   },
+                   {
+                       "port":  8084,
+                       "pid":  16772,
+                       "createdAt":  "2026-10-10T09:41:16.8267170Z",
+                       "model":  "qwen/qwen3.8-27b",
+                       "context":  65536,
+                       "physicalIndex":  2,
+                       "gpu":  "AMD Radeon RX 7900 XTX (24560 MiB, 23748 MiB free)",
+                       "actualVisibleDevices":  "2",
+                       "gpuEnvironmentMatches":  true,
+                       "creationMatches":  true,
+                       "health":  "ok",
+                       "modelListed":  true,
+                       "inferenceMs":  152,
+                       "completion":  "OK",
+                       "completionTokens":  2,
+                       "restartAttempts":  0
+                   }
+               ]
+}

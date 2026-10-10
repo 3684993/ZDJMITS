@@ -1,0 +1,29 @@
+{
+  "enginePid": 23828,
+  "latestHealth": {
+    "at": "2026-10-10T15:51:55.2764965Z",
+    "proxy": "127.0.0.1:20091",
+    "target": "demo-fapi.binance.com:443",
+    "stages": [
+      {
+        "phase": "LOCAL_TCP_CONNECT",
+        "elapsedMs": 415
+      },
+      {
+        "phase": "SOCKS_GREETING",
+        "elapsedMs": 467
+      }
+    ],
+    "healthy": false,
+    "pid": 12300,
+    "failurePhase": "SOCKS_CONNECT_REPLY",
+    "error": "PROBE_DEADLINE_EXHAUSTED",
+    "elapsedMs": 8013
+  },
+  "commandIdentityVerified": true,
+  "sshPid": 12300,
+  "at": "2026-10-10T15:52:30.7439249Z",
+  "guardianCreatedAt": "2026-10-10T15:51:54.174844Z",
+  "guardianPid": 22496,
+  "restartBudget": 0
+}

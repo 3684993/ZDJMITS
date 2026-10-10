@@ -1,0 +1,14 @@
+{
+  "engineSignals": 0,
+  "sshPidAfter": 12300,
+  "scriptSha256": "bd1d15ae6d748e6aa223143a42d2db47fbe79e5e23e2d73cfba2e97851f0027f",
+  "at": "2026-10-10T15:51:54.6201398Z",
+  "sshCreatedAt": "2026-10-10T15:33:47.9882420Z",
+  "sshPidBefore": 12300,
+  "sourceCommit": "2dc0bb4620e0d3026433875584d3dc1d06f463e5",
+  "maxRestarts": 0,
+  "tunnelLifecycleAttempts": 0,
+  "guardianPid": 22496,
+  "verifiedSourceHead": "f20cba7bb157aab689ccb8ce9813d179189997b6",
+  "ci": 38064711212
+}

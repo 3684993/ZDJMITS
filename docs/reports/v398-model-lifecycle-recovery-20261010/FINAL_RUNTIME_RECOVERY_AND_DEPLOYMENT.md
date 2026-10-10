@@ -1,3 +1,5 @@
+> 用户随后明确指定 `D:/MITS/scripts/1/` 三个原脚本。正常Scout启动请求也在CreateProcess前被平台拒绝，未启动任何模型；路径、实际不同hash/context及本机三条命令见 [USER_SPECIFIED_SCRIPTS_REQUEST](./USER_SPECIFIED_SCRIPTS_REQUEST.md)。前文P0封存和命令是此前授权目标，不冒充此次指定脚本来源。
+
 # 2026-10-10 立即恢复授权：实际执行与部署状态
 
 **尚未恢复模型，尚未部署或重启 Engine。** 本轮已重新请求正常本地执行，但 Scout 启动命令在 CreateProcess 前被平台拒绝：`blocked by policy`。原始模型启动器没有执行，未产生启动回执或新 PID。Review、Primary 和 Engine 生命周期未尝试；没有改名、包装、切换通道、权限降级或删除交易保护来绕过拒绝。当前终端 approval policy 为 never，不提供可用的交互升级入口；用户的业务授权已明确，不是待补的一般许可。

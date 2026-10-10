@@ -1,3 +1,7 @@
+## 2026-10-10 17:20 用户指定scripts/1立即启动补充
+
+用户新指定D:/MITS/scripts/1三原始启动器，已实读存在/hash/context：Scout32768、两27B65536，不同于已封存P0版本。正常Scout启动请求再次在CreateProcess前blocked by policy，脚本未运行，无新PID/回执；Review/Primary未尝试。没有删除保护或换通道绕过。原始三条主机运维命令及日志路径见 [USER_SPECIFIED_SCRIPTS_REQUEST](./reports/v398-model-lifecycle-recovery-20261010/USER_SPECIFIED_SCRIPTS_REQUEST.md)。私有manifest和正式Engine封存未改，旧Engine管理TP不变。新24h仍NOT_STARTED/T0=null。
+
 ## 2026-10-10 立即模型恢复授权的最新实际执行状态
 
 已拉取 main4c846312，源码/脚本/lock与PR38 d390等价。本轮重新 npm ci / verify:ci EXIT0，264文件2210例；独立发布包构建成功，1999文件封存与Settings253对照通过。候选build3.9.8-5b239d299d94d9ce70a8只STAGED，未上线；新精确授权仍inactive。

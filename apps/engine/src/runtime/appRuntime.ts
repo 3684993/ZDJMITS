@@ -2596,10 +2596,8 @@ export class EngineRuntime {
       {
         id: "ai",
         label: "AI Fabric",
-        status: this.state.aiResources.some((x) => x.status !== "OFFLINE")
-          ? "HEALTHY"
-          : "OFFLINE",
-        detail: `${this.state.aiResources.length} resources`,
+        status: this.ai.resourceMetrics().every(x=>x.connectionStatus==='ONLINE') ? 'HEALTHY' : this.ai.resourceMetrics().every(x=>x.connectionStatus==='OFFLINE') ? 'OFFLINE' : 'DEGRADED',
+        detail: this.ai.resourceMetrics().map(x=>`${x.role}: ${x.connectionStatus}`).join('; '),
         updatedAt: Date.now(),
       },
       {

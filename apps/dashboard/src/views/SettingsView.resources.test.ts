@@ -21,7 +21,7 @@ vi.mock('../api/client',()=>({
 }));
 
 const mounted:ReturnType<typeof mount>[]=[];
-afterEach(()=>{for(const wrapper of mounted.splice(0))wrapper.unmount();vi.useRealTimers();});
+afterEach(()=>{for(const wrapper of mounted.splice(0))wrapper.unmount();vi.useRealTimers();vi.unstubAllGlobals();});
 async function open(){
   const wrapper=mount(Settings,{global:{stubs:{Panel:{template:'<section><slot/></section>'},EmptyState:{props:['title','detail'],template:'<div>{{title}} {{detail}}</div>'}}}});
   mounted.push(wrapper);await flushPromises();return wrapper;
@@ -37,6 +37,18 @@ beforeEach(()=>{
   vi.mocked(api.governanceSettings).mockResolvedValue({settingsVersion:1,fields:[]} as never);
   vi.mocked(api.saveSettings).mockImplementation(async(x:any)=>x);
   vi.mocked(api.proxyPassiveHealth).mockResolvedValue({status:'RECENT_BINANCE_SUCCESS',queueDepth:0} as never);
+});
+
+it('displays managed runtime and sends only an authenticated model action',async()=>{
+  const transport=vi.fn(async(_url:string,options?:RequestInit)=>new Response(JSON.stringify(options?.method==='POST'?{status:'STOPPED',pid:null}:{status:'READY',pid:123,physicalDevice:'Vulkan2',gpu:'GPU',dedicatedBytes:1048576,startupLog:['listening']})));
+  vi.stubGlobal('fetch',transport);
+  const w=await open();await tabButton(w,'AI 模型管理').trigger('click');await flushPromises();
+  expect(w.text()).toContain('PID 123');expect(w.text()).toContain('1 MiB');
+  expect(tabButton(w,'停止').attributes('disabled')).toBeDefined();
+  await w.find('input[type="password"]').setValue('x'.repeat(32));await tabButton(w,'停止').trigger('click');await flushPromises();
+  const mutation=transport.mock.calls.find(([_url,options])=>options?.method==='POST')!;
+  expect(mutation[0]).toBe('/api/v3/settings/ai/primary/lifecycle');expect(JSON.parse(String(mutation[1]?.body))).toEqual({action:'stop'});
+  expect((mutation[1]?.headers as any)['x-model-operation-token']).toHaveLength(32);expect(w.text()).toContain('操作已完成');
 });
 
 it('polls existing evidence only while proxy tab is open and stops after unmount without a real probe',async()=>{
@@ -73,7 +85,7 @@ it('uses global save only on ordinary parameter tabs and independent actions on 
   expect(w.text()).not.toContain('保存当前参数');expect(w.text()).toContain('保存资源');expect(w.text()).toContain('测试连接');
   await tabButton(w,'网络代理').trigger('click');await flushPromises();
   expect(w.text()).toContain('设为活动');expect(w.text()).toContain('删除');
-  await tabButton(w,'AI 模型资源').trigger('click');await flushPromises();
+  await tabButton(w,'AI 模型管理').trigger('click');await flushPromises();
   expect(w.text()).toContain('新增空白资源');expect(w.text()).toContain('保存资源');expect(w.text()).toContain('取消修改');
   expect(w.text()).toContain('候选 Scout 异步观察');expect(w.text()).toContain('保存工作负载策略');
 });

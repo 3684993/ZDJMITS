@@ -8,6 +8,7 @@ import { binanceRequestBudgetsHealth } from '../adapters/binance/requestBudget.j
 import { Router } from "express";
 import { createHostPerformanceSampler } from '../services/hostPerformanceSampler.js';
 import { createGpuPerformanceReader } from '../services/gpuPerformanceReader.js';
+import {ModelLifecycleService,modelOperationPermission} from '../services/modelLifecycle.js';
 import { mkdir } from "node:fs/promises";
 import path from "node:path";
 import type { EngineRuntime } from "../runtime/appRuntime.js";
@@ -66,6 +67,40 @@ export function withExecutionOutcomes(runtime: EngineRuntime, items: any[]) {
 
 export function createApiRouter(runtime: EngineRuntime) {
   const r = Router();
+  const lifecycle=new ModelLifecycleService({
+    directory:process.env.ZDJ_MODEL_OPERATIONS_DIR??path.join(process.env.LOCALAPPDATA??process.cwd(),'ZDJMITS','model-operations'),
+    manifest:process.env.ZDJ_MODEL_MANIFEST,
+    guard:()=>{
+      if(stopping)throw Error('MODEL_ENGINE_STOPPING');
+      const c:any=runtime.pipelineStatus(),tp=c.takeProfit??c.pipeline?.takeProfit;
+      const a=runtime.state.account,settings=runtime.state.settings.connections;
+      const writes=runtime.writeBoundaryMetrics(),sync=runtime.privateSyncHealth(),age=Date.now()-a.asOf;
+      const privateHealthy='consecutiveFailures' in sync&&sync.consecutiveFailures===0&&'lastError' in sync&&!sync.lastError;
+      if(settings.exchange.environment!=='TESTNET'||settings.executionMode!=='TESTNET_ENABLED'||writes.lockedToTestnet!==true||writes.productionWrites!==0||!privateHealthy||a.status!=='READY'||!Number.isFinite(age)||age<0||age>30_000||!tp||tp.status!=='READY'||tp.unverifiedTp!==0||!Number.isInteger(tp.required)||tp.required<0||tp.required!==tp.protected)throw Error('MODEL_TRADE_PROTECTION_GATE_BLOCKED');
+    },
+    validate:(id,status)=>{
+      const resource=runtime.state.aiResources.find(r=>r.id===id),url=new URL(resource!.baseUrl);
+      if(url.protocol!=='http:'||url.hostname!=='127.0.0.1'||Number(url.port)!==status.port||resource!.model!==status.model)throw Error('MODEL_CONFIGURATION_IDENTITY_MISMATCH');
+    },
+    drain:id=>runtime.ai.beginModelMaintenance(id),
+    audit:row=>runtime.events.publish('MODEL_LIFECYCLE_OPERATION',row),
+  });
+  r.get('/settings/ai/:id/runtime',async(req,res)=>{
+    try{
+      if(!runtime.state.aiResources.some(r=>r.id===req.params.id))return void res.status(404).json({error:'MODEL_RESOURCE_UNKNOWN'});
+      const status=await lifecycle.status(req.params.id),gpu=await modelGpuRead();
+      const sample=gpu.services.find((s:any)=>s.pid===status.pid&&Date.parse(s.processStartedAt)===Date.parse(status.processStartedAt));
+      res.json({...status,dedicatedBytes:gpu.measureStatus==='MEASURED'?sample?.dedicatedBytes??null:null});
+    }catch{res.status(503).json({status:'UNKNOWN',error:'MODEL_MANAGEMENT_UNAVAILABLE'});}
+  });
+  let modelGpuRead:()=>Promise<any>=async()=>({services:[],measureStatus:'UNKNOWN'});
+  r.post('/settings/ai/:id/lifecycle',async(req,res)=>{
+    if(!modelOperationPermission(req.header('x-model-operation-token'),process.env.ZDJ_MODEL_OPERATION_TOKEN,req.header('origin'),req.header('host'))){await lifecycle.audit({resourceId:req.params.id,action:'REJECTED',result:'PERMISSION_DENIED'});return void res.status(403).json({error:'MODEL_OPERATION_PERMISSION_DENIED'});}
+    if(!runtime.state.aiResources.some(r=>r.id===req.params.id))return void res.status(404).json({error:'MODEL_RESOURCE_UNKNOWN'});
+    if(Object.keys(req.body??{}).some(k=>k!=='action'))return void res.status(400).json({error:'MODEL_ACTION_FIELDS_FORBIDDEN'});
+    try{res.json(await lifecycle.operate(req.params.id,req.body?.action));}
+    catch(error){res.status(409).json({error:((error as Error).message??'UNKNOWN').split('\n')[0]!.slice(0,180)});}
+  });
   const incidentTracker=new OperationalIncidentTracker();
   const updateIncidents=()=>{
     const before=new Set(incidentTracker.read().active.map(row=>row.incidentId));
@@ -145,6 +180,7 @@ export function createApiRouter(runtime: EngineRuntime) {
   const hostPerformance=createHostPerformanceSampler();
   r.get('/observability/performance/host',(_req,res)=>res.json(hostPerformance.read()));
   const gpuPerformance=createGpuPerformanceReader();
+  modelGpuRead=()=>gpuPerformance.read();
   r.get('/observability/performance/gpu',async(_req,res)=>res.json(await gpuPerformance.read()));
   r.get('/diagnostics/storage',(_req,res)=>res.json({...runtime.writes.health(),checkpoint:runtime.settingsStore.checkpointMetrics()}));
   r.get('/diagnostics/closeout',(_req,res)=>{const asOf=Date.now(),status=runtime.runtimeStatus();res.json({asOf,observationVersion:`${runtime.state.marketGeneration}:${runtime.state.runtimeControl.capital.generation}:${runtime.state.account.asOf}`,runtime:{pid:process.pid,...status},persistence:runtime.settingsStore.operationalMetrics(),pipeline:runtime.pipelineStatus(),hot:runtime.market.hotFreshnessDiagnostics(asOf),productionWriteBoundary:runtime.writeBoundaryMetrics()});});

@@ -1,0 +1,6 @@
+npm ci: observed actual tool exit code 0 in this turn.
+added 279 packages, and audited 284 packages in 7s
+69 packages are looking for funding
+4 vulnerabilities (2 moderate, 2 critical)
+This is a transcription of the original tool output, not a second npm ci execution.
+No npm audit fix --force was executed.

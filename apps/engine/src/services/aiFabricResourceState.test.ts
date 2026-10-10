@@ -20,6 +20,14 @@ async function harness(){
 }
 
 describe('dual-model runtime state',()=>{
+  it('drains one model without admitting fresh work and refuses an active inference',async()=>{
+    const {ai,state}=await harness(),primary=state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')!;
+    vi.spyOn((ai as any).openAi,'probe').mockResolvedValue({ok:true,reason:null});await ai.probeResources();
+    (ai as any).load.get(primary.id).queueDepth=1;
+    const release=ai.beginModelMaintenance(primary.id);expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(false);expect(ai.resourceMetrics().find(r=>r.id===primary.id)?.connectionStatus).toBe('MAINTENANCE');
+    release();await ai.probeResources();expect(ai.hasCapacity('PRIMARY_BRAIN')).toBe(true);
+    (ai as any).load.get(primary.id).active=1;expect(()=>ai.beginModelMaintenance(primary.id)).toThrow('INFERENCE_BUSY');
+  });
   it('probes enabled Scout and Primary resources',async()=>{
     const {ai,state}=await harness();const primary=state.aiResources.find(r=>r.role==='PRIMARY_BRAIN')!;const scout=state.aiResources.find(r=>r.role==='SCOUT')!;const review=state.aiResources.find(r=>r.role==='REVIEW_BRAIN')!;
     const probe=vi.spyOn((ai as any).openAi,'probe').mockImplementation(async(..._args:any[])=>({ok:true,reason:null}));

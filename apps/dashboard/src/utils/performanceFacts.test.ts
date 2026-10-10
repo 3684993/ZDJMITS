@@ -2,6 +2,15 @@ import {describe,it,expect} from 'vitest';
 import {aiLamp,proxyLamp,privateLamp,exchangeLamp,p95,uniqueAiRunStats,withSampleGaps} from './performanceFacts';
 describe('performance evidence and status lamps',()=>{
   const now=100_000;
+  it('shows timeout as warning and uses fresh route and sync evidence independently',()=>{
+    expect(aiLamp({connectionStatus:'DEGRADED',healthCheckedAt:99_000,healthReason:'AI_PROBE_TIMEOUT'},now).tone).toBe('warn');
+    const routes=[{rest:{throughProxy:true,failClosed:true,routeIdentity:'proxy-1'}}],evidence={budgets:{testnet:{recentDispatches:[{routeIdentity:'proxy-1',status:200,completedAt:99_000}]}}};
+    expect(proxyLamp(routes,evidence,now).tone).toBe('good');expect(proxyLamp(routes,evidence,now+60_000).tone).toBe('warn');
+    const healthy={health:[{id:'trading-network',status:'HEALTHY',updatedAt:99_000}]};
+    expect(exchangeLamp(healthy,[],now,evidence).tone).toBe('good');expect(exchangeLamp(healthy,[],now,null).tone).toBe('unknown');
+    expect(exchangeLamp(healthy,[{active:true,category:'NETWORK',publicCode:'NET-002'}],now,evidence).tone).toBe('warn');
+    expect(privateLamp({account:{status:'READY',asOf:99_000}},now,{sync:{consecutiveFailures:1}}).tone).toBe('warn');
+  });
   it('never turns stale or absent source into a green light',()=>{
     expect(aiLamp({connectionStatus:'ONLINE',healthCheckedAt:0},now).tone).toBe('unknown');
     expect(aiLamp({connectionStatus:'OFFLINE',healthCheckedAt:99_000},now).tone).toBe('bad');

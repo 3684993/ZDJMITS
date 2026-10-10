@@ -1,0 +1,12 @@
+{
+  "automationId": "zdjmits-v398-24",
+  "status": "ACTIVE",
+  "intervalMinutes": 30,
+  "targetThreadId": "01a120f5-b3fe-73f0-a098-c7193170da31",
+  "supersededAutomation": "zdjmits-pr19-90",
+  "supersededStatus": "PAUSED",
+  "task": "\\ZDJMITS\\ZDJ-V398-24h-20261010",
+  "taskIntervalSeconds": 60,
+  "githubSync": "hourly/milestone/failure/completion",
+  "quietWhenUnchanged": true
+}

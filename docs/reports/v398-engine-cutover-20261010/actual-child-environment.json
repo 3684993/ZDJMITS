@@ -1,0 +1,7 @@
+﻿{
+    "observedAt":  "2026-10-10T00:11:07.6977160Z",
+    "pid":  23688,
+    "buildId":  "3.9.8-bb45c11acbe9819a3456",
+    "actualChildEnvironment":  "ZDJ_CONFIG_DIR=D:\\MITS-RELEASES\\ZDJMITS-v398-main-6f228cd\\config\nZDJ_DATA_DIR=D:\\MITS\\data\nZDJ_ENTRY_ADMISSION_DISABLED=0\nZDJ_ENTRY_APPROVAL_FILE=C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\entry-authorization\\v398-testnet-entry-bb45c11-20261010.json\nZDJ_ENTRY_APPROVED_ARTIFACT_SHA256=bb45c11acbe9819a34566eb59f5eaaf0beff8912d92955bbdd882d035e06117e\nZDJ_ENTRY_EXECUTION_POLICY=TESTNET_ENTRY_ENABLED\nZDJ_PORT=8080",
+    "readOnly":  true
+}

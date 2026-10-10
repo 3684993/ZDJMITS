@@ -1,0 +1,19 @@
+﻿{
+    "observedAt":  "2026-10-10T00:08:12.2165970Z",
+    "approvalFile":  "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\entry-authorization\\v398-testnet-entry-bb45c11-20261010.json",
+    "approvalSha256":  "E58CA02E85CBDD8BC1EB50A3D6736118FECBEB89BD13117C342838F0B7E7B41A",
+    "sourceHash":  "9d9f1d0a3865cec28c759766d3fca820aa978c9f809740731f84819b4cb3d73f",
+    "artifactHash":  "bb45c11acbe9819a34566eb59f5eaaf0beff8912d92955bbdd882d035e06117e",
+    "settingsVersion":  253,
+    "qualificationBasis":  "OPERATOR_ATTESTED_EXISTING_SINGAPORE_ROUTE; NOT_INDEPENDENT_OFFICIAL_CONFIRMATION",
+    "oldPid":  18100,
+    "oldHostPid":  23056,
+    "oldBuild":  "3.9.8-6cd926abca3eec24392e",
+    "privateAgeMs":  10756,
+    "signedPositions":  12,
+    "signedProtected":  12,
+    "productionWrites":  0,
+    "oldApprovalUnmodified":  true,
+    "lifecycleAttempts":  0,
+    "exchangeWrites":  0
+}

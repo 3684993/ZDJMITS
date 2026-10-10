@@ -20,5 +20,7 @@
   "engineRestart": "NOT_PERFORMED",
   "acceptance24h": "NOT_STARTED",
   "t0": null,
-  "restartAfterAbortRule": "FULL_NEW_24H_AFTER_REPAIR_RELEASE_AND_ALL_GATES"
+  "restartAfterAbortRule": "FULL_NEW_24H_AFTER_REPAIR_RELEASE_AND_ALL_GATES",
+  "historicalSnapshot": true,
+  "supersededBy": "docs/reports/v398-engine-cutover-20261010/acceptance/state.json"
 }

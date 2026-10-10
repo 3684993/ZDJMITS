@@ -1,0 +1,8 @@
+{
+  "head": "362355e09f844ee8416a95693fef3735b8c47f3c",
+  "runId": 38003230433,
+  "status": "completed",
+  "conclusion": "success",
+  "url": "https://github.com/3684993/ZDJMITS/actions/runs/38003230433",
+  "scope": "exact fetched main before actual deployment; next evidence-only commit CI separate"
+}

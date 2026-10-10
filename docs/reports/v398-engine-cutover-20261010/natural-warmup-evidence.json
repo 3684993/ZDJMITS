@@ -1,0 +1,37 @@
+{
+  "observedAt": "2026-10-10T00:20:08.421Z",
+  "scope": "NEW_INSTANCE_WARMUP_BEFORE_ACCEPTANCE_T0_NOT_24H_ACCEPTANCE",
+  "pid": 23688,
+  "instanceId": "07230a28-51ac-4dda-9c95-20a789b382b4",
+  "from": 1791590909697,
+  "to": 1791591409685,
+  "runs": [
+    {
+      "role": "PRIMARY_BRAIN",
+      "status": "COMPLETED",
+      "count": 3
+    },
+    {
+      "role": "REVIEW_BRAIN",
+      "status": "COMPLETED",
+      "count": 1
+    },
+    {
+      "role": "SCOUT",
+      "status": "COMPLETED",
+      "count": 3
+    }
+  ],
+  "events": [
+    {
+      "type": "ENTRY_FILLED",
+      "count": 1
+    },
+    {
+      "type": "ENTRY_ORDER_CREATED",
+      "count": 2
+    }
+  ],
+  "manualModelCalls": 0,
+  "manualExchangeWrites": 0
+}

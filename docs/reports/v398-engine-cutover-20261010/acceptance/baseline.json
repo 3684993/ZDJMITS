@@ -1,0 +1,32 @@
+﻿{
+    "t0":  "2026-10-10T00:16:49.6852952+00:00",
+    "t0China":  "2026-10-10T08:16:49.6852952+08:00",
+    "t0Ms":  1791591409685,
+    "deadline":  "2026-10-11T00:16:49.6852952+00:00",
+    "deadlineChina":  "2026-10-11T08:16:49.6852952+08:00",
+    "deadlineMs":  1791677809685,
+    "pid":  23688,
+    "hostPid":  26576,
+    "instanceId":  "07230a28-51ac-4dda-9c95-20a789b382b4",
+    "buildId":  "3.9.8-bb45c11acbe9819a3456",
+    "sourceHash":  "9d9f1d0a3865cec28c759766d3fca820aa978c9f809740731f84819b4cb3d73f",
+    "artifactHash":  "bb45c11acbe9819a34566eb59f5eaaf0beff8912d92955bbdd882d035e06117e",
+    "frozenSourceCommit":  "6f228cd90f9146405761f3221b70096f7ca85ed5",
+    "mainAtStart":  "362355e09f844ee8416a95693fef3735b8c47f3c",
+    "settingsVersion":  253,
+    "settingsHash":  "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151",
+    "signedBaselinePositions":  12,
+    "signedBaselineProtected":  12,
+    "canTrade":  true,
+    "qualificationBasis":  "LATEST_DIRECT_USER_OPERATIONAL_ATTESTATION_EXISTING_SINGAPORE_PROXY; NOT_INDEPENDENT_OFFICIAL_ACCOUNT_CONFIRMATION",
+    "observerPid":  24540,
+    "auxiliaryPids":  {
+                          "8084":  22336,
+                          "8083":  14020,
+                          "8081":  3400,
+                          "20091":  18300
+                      },
+    "intervalSeconds":  60,
+    "noForcedAnalysisOrOrders":  true,
+    "restartRule":  "Any abort/fix/redeploy requires a complete new24h after all gates"
+}

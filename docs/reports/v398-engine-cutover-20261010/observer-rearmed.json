@@ -1,0 +1,13 @@
+﻿{
+    "at":  "2026-10-10T00:09:57.5486660Z",
+    "oldObserverEndedNaturallyWithOldEngine":  true,
+    "oldObserverKilledByTask":  false,
+    "task":  "ZDJ-MITS-Engine-Crash-Observer",
+    "hiddenWscript":  true,
+    "principalPreserved":  true,
+    "restartSettingsPreserved":  true,
+    "newReceipt":  "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\diagnostics\\issue22-cutover-20261010\\new-engine-receipt.json",
+    "newRepositoryRoot":  "D:\\MITS-RELEASES\\ZDJMITS-v398-main-6f228cd",
+    "newSourceCommit":  "6f228cd90f9146405761f3221b70096f7ca85ed5",
+    "state":  "Running"
+}

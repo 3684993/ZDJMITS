@@ -1,0 +1,8 @@
+{
+  "status": "RUNNING",
+  "t0": "2026-10-10T00:16:49.6852952+00:00",
+  "deadline": "2026-10-11T00:16:49.6852952+00:00",
+  "acceptanceVerdict": "IN_PROGRESS_NOT_PASS",
+  "lastCheckpoint": "2026-10-10T00:24:00.187Z",
+  "elapsedMinutes": 7.175033333333333
+}

@@ -1,0 +1,371 @@
+{
+  "observedAt": "2026-10-10T00:08:06.728Z",
+  "environment": "TESTNET",
+  "host": "demo-fapi.binance.com",
+  "accountScopeHash": "81bf573e577cdf58e76b1d26b9d71788cd7c74631c09658f228e9e19ec094ad2",
+  "methods": [
+    "GET"
+  ],
+  "exchangeWrites": 0,
+  "requests": [
+    {
+      "endpoint": "/fapi/v1/time",
+      "startedAt": "2026-10-10T00:08:06.729Z",
+      "completedAt": "2026-10-10T00:08:08.336Z",
+      "rows": null,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791590886732,
+          "proxyConnectStartedAt": 1791590886740,
+          "proxyConnectedAt": 1791590887251,
+          "socketAssignedAt": 1791590887252,
+          "secureConnectedAt": 1791590887826,
+          "responseAt": 1791590888325,
+          "completedAt": 1791590888326,
+          "reusedSocket": false,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/positionSide/dual",
+      "startedAt": "2026-10-10T00:08:08.337Z",
+      "completedAt": "2026-10-10T00:08:08.836Z",
+      "rows": null,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791590888339,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791590888340,
+          "secureConnectedAt": 1791590888340,
+          "responseAt": 1791590888826,
+          "completedAt": 1791590888826,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v3/positionRisk",
+      "startedAt": "2026-10-10T00:08:08.338Z",
+      "completedAt": "2026-10-10T00:08:09.339Z",
+      "rows": 12,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791590888835,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791590888837,
+          "secureConnectedAt": 1791590888837,
+          "responseAt": 1791590889326,
+          "completedAt": 1791590889326,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/openOrders",
+      "startedAt": "2026-10-10T00:08:08.338Z",
+      "completedAt": "2026-10-10T00:08:09.846Z",
+      "rows": 12,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791590889338,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791590889339,
+          "secureConnectedAt": 1791590889339,
+          "responseAt": 1791590889835,
+          "completedAt": 1791590889835,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v1/openAlgoOrders",
+      "startedAt": "2026-10-10T00:08:08.338Z",
+      "completedAt": "2026-10-10T00:08:10.281Z",
+      "rows": 0,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791590889845,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791590889847,
+          "secureConnectedAt": 1791590889847,
+          "responseAt": 1791590890276,
+          "completedAt": 1791590890277,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    },
+    {
+      "endpoint": "/fapi/v3/account",
+      "startedAt": "2026-10-10T00:08:08.339Z",
+      "completedAt": "2026-10-10T00:08:10.823Z",
+      "rows": null,
+      "dispatch": {
+        "decision": "ADMITTED",
+        "status": 200,
+        "networkTiming": {
+          "startedAt": 1791590890281,
+          "proxyConnectStartedAt": null,
+          "proxyConnectedAt": null,
+          "socketAssignedAt": 1791590890282,
+          "secureConnectedAt": 1791590890282,
+          "responseAt": 1791590890817,
+          "completedAt": 1791590890818,
+          "reusedSocket": true,
+          "failurePhase": null
+        }
+      }
+    }
+  ],
+  "gate": "UNKNOWN",
+  "positionMode": {
+    "dualSidePosition": true
+  },
+  "nonzeroPositions": 12,
+  "ordinaryOpenOrders": 12,
+  "openAlgoOrders": 0,
+  "candidateProtectionMatches": 12,
+  "account": {
+    "walletFactFinite": true,
+    "availableFactFinite": true,
+    "availablePositive": true
+  },
+  "exactProtection": [
+    {
+      "symbolHash": "19aa16aed07f38e9beb894bb1fa1131d164e72a1fff057b80ed35e55a1ad0334",
+      "positionSide": "LONG",
+      "orderIdHash": "06df980a979770021d537e7afc9f13aef9529a39654cd9d72ae82a66b47231c4",
+      "clientOrderIdHash": "d1853db7b2e8a063de917edb9945dd46d5ae81afb8060318667a9d4eb4167459",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "7e6e9fceedc4d56e8469b0c6024197b663e8da6210a18bbc24657cf91c730f2e",
+      "positionSide": "LONG",
+      "orderIdHash": "fe3c93968d3f345e4ddc42ea875400111deebc84318619fa579ddb250febbc16",
+      "clientOrderIdHash": "4a20bb6501d247bd36f99af4b8debf21ddcaa21399ee2b140ce68833d2289c34",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "10feb615345011936a67003b48d7831c61201fc728885f495b4546897bdc74f9",
+      "positionSide": "LONG",
+      "orderIdHash": "4ab09d5265dcb0d8d9cb603af115d9b50074bd49801cf3bc9b992f0249447f0f",
+      "clientOrderIdHash": "8214a0188c84ac463161dfa3637629f9cd39d8f2ce597a26b624fc0e36f243a5",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "970cf680acc08b56d0d0ba9c5d68208931e084354bd58395390741d567259292",
+      "positionSide": "LONG",
+      "orderIdHash": "93c1f331d1296642cdd9f0c4eef3bb499093764369815bce2392f06b658b1554",
+      "clientOrderIdHash": "55b82eb631d69d0590842992b5c7b6b467385e4d58e4d5731c6bc87ad4a1091a",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "33b1e83c9b898cd95e91afe45e7fbc2e2ee48bdaa2b5f647e8b8d42145d85134",
+      "positionSide": "LONG",
+      "orderIdHash": "78bc374021fb4e9b14106aa1e70f4fe8f0e300fac3a4843c98eb64a0906dd599",
+      "clientOrderIdHash": "a130787fb602dd79d06cfc87b924906867bb7454fba637055fb144973983b8a3",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "62c56fad00031d56dfa15d81073c5dbee0936d6e9b81bcb9259273f8d5b7bb60",
+      "positionSide": "LONG",
+      "orderIdHash": "d431bf398b13ca103fecfa2e7f24d41a809d395fbc3803720324597be66a9f36",
+      "clientOrderIdHash": "cb02f37a34858bf1751b2a5139d49578ed9e3c15eef24b3daece4d8d2657b5ae",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "4c57f41d6b05cb9f0df7a8a60936ab9730769da1a2cd08ba30bbac0f0bad02dd",
+      "positionSide": "LONG",
+      "orderIdHash": "600c612e48e2224c2b68ee8ded13e938496ca91ac6b9098473b61ee576564cae",
+      "clientOrderIdHash": "f06099b2d88da072da4195dfae3a3bf929c45251a795bbb7da37001b1d692cfc",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "65007313a157103ad38b9574768715be219ccf79dcf2a53cac5624a574f82f18",
+      "positionSide": "SHORT",
+      "orderIdHash": "71644390b9a84c3022656af8699146737acc579114ae9ad99857862b2ea1f52b",
+      "clientOrderIdHash": "2cba46ff8931c346209b46c2ca074c640fc7e4f38db1922b326be5c77f53ba86",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "0465f3eeb0f6a6cdb5207012a24ee4eed488d5285f82f96b7d4abe46ec574045",
+      "positionSide": "LONG",
+      "orderIdHash": "fdefb0eca595ed6d2d0692214b8f9dd86b586d5163d09b795576f3c737486e53",
+      "clientOrderIdHash": "36537ef7863843bc76f67605c398c5026e8ee0872a98122b271466fb31d4b173",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "b5d13a6196a1fac4ed1918744f7c6b6c013a70a2735f84f73b12af347356c904",
+      "positionSide": "LONG",
+      "orderIdHash": "91df88c41743ae70e31cc90d551c863e5a10f33be47ccecad8c78f8440f8794c",
+      "clientOrderIdHash": "30f5d09c4cdf8d1854f6e6b8859231c4e19fe4a26f51ab940cee41156d80f7f3",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "04d591cb32d6ba5c0222dc626beb575942113a1c97a5e65ce60fd15b8a3ec996",
+      "positionSide": "LONG",
+      "orderIdHash": "c67de2ac022a2c17eeac08fd5905d5a7590d5548f80c88035c6098a82420807d",
+      "clientOrderIdHash": "8a4accb1627e123fb31d0d6ac5e6e9be781d32d134bbec825749326a973a38b7",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    },
+    {
+      "symbolHash": "3778967091ffae98a5f98df5d56eae42a2fbc98dc5299d4a4375c1631045a01e",
+      "positionSide": "LONG",
+      "orderIdHash": "21949d08985aa93dfcd88bcc999e872b2445f856818387c9d391880b3f2b9972",
+      "clientOrderIdHash": "69400bb7be6e22cbe86307e414e0672161c4e3464cf56f7abf9478390ee51b25",
+      "checks": {
+        "oneOrder": true,
+        "exactDualId": true,
+        "closingSide": true,
+        "reduceOnly": true,
+        "openStatus": true,
+        "fullRemainingQuantity": true,
+        "localQuantity": true,
+        "localPrice": true,
+        "positivePrice": true
+      },
+      "result": "PASS"
+    }
+  ],
+  "eligibilityAssessment": "UNKNOWN_REQUIRES_OFFICIAL_ACCOUNT_REGION_CONFIRMATION",
+  "protectionAssessment": "SIGNED_EXACT_DUAL_ID_SIDE_QTY_PRICE_MATCH"
+}

@@ -1,0 +1,10 @@
+﻿{
+    "attemptedAt":  "2026-10-10T00:08:25.0954802Z",
+    "hostPid":  26576,
+    "launchId":  "v398-approved-bb45c11-20261010-one",
+    "formalHostScript":  "D:\\MITS-RELEASES\\ZDJMITS-v398-main-6f228cd\\scripts\\start-zdj-engine-host.ps1",
+    "enginePath":  "D:\\MITS-RELEASES\\ZDJMITS-v398-main-6f228cd\\apps\\engine\\dist\\main.js",
+    "receiptPath":  "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\diagnostics\\issue22-cutover-20261010\\new-engine-receipt.json",
+    "lifecyclePath":  "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\diagnostics\\issue22-cutover-20261010\\new-engine-lifecycle.jsonl",
+    "automaticRetries":  0
+}

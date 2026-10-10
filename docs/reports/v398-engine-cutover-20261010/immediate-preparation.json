@@ -1,0 +1,31 @@
+{
+  "observedAt": "2026-10-10T00:07:20.930Z",
+  "sourceMain": "362355e09f844ee8416a95693fef3735b8c47f3c",
+  "frozenStageCommit": "6f228cd90f9146405761f3221b70096f7ca85ed5",
+  "runtimeCodeMatchesLatestMain": true,
+  "verifiedFiles": 1923,
+  "stage": "D:/MITS-RELEASES/ZDJMITS-v398-main-6f228cd",
+  "buildId": "3.9.8-bb45c11acbe9819a3456",
+  "sourceHash": "9d9f1d0a3865cec28c759766d3fca820aa978c9f809740731f84819b4cb3d73f",
+  "artifactHash": "bb45c11acbe9819a34566eb59f5eaaf0beff8912d92955bbdd882d035e06117e",
+  "entrypointSha256": "df014d7d4da78af092844fa646c3ac1409bff38ec27c35da5db3de0caf072376",
+  "settings": {
+    "version": 253,
+    "payloadSha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151",
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED"
+  },
+  "backup": {
+    "privatePath": "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\diagnostics\\issue22-cutover-20261010\\immediate-before-cutover.sqlite",
+    "bytes": 1026117632,
+    "sha256": "3c970675dceb21228a68fc834d5ac8dfe6666b22c711cc3926346210bb50b2d6",
+    "quickCheck": "ok",
+    "settingsMatch": true
+  },
+  "oldApprovalSha256": "378c2e9407e1057195357e6a7b69a208c4859362a0b6fcfc359ebcc3807886ca",
+  "qualificationBasis": "LATEST_DIRECT_USER_OPERATIONAL_ATTESTATION_EXISTING_SINGAPORE_PROXY; NOT_INDEPENDENT_OFFICIAL_ACCOUNT_CONFIRMATION",
+  "operatorInstruction": "Do not wait for additional official proof; perform normal controlled TESTNET release without route changes",
+  "lifecycleAttempts": 0,
+  "exchangeWrites": 0,
+  "settingsWrites": 0
+}

@@ -1,0 +1,13 @@
+﻿{
+    "at":  "2026-10-10T00:15:45.9356720Z",
+    "taskName":  "ZDJ-V398-24h-20261010",
+    "taskPath":  "\\ZDJMITS\\",
+    "collector":  "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\diagnostics\\issue22-acceptance-24h-20261010\\acceptance-checkpoint.mjs",
+    "outDir":  "C:\\Users\\5700x\\.codex\\worktrees\\666a\\MITS\\docs\\reports\\v398-engine-cutover-20261010\\acceptance",
+    "intervalSeconds":  60,
+    "hiddenWscript":  true,
+    "disabledUntilAllGatesAndT0":  true,
+    "noTaskStartYet":  true,
+    "noEngineLifecycle":  true,
+    "collectorSha256":  "16DE092E76599CAB897B0CA13560CC08CAF3CAABED006A4859C3DC76CDCAD89E"
+}

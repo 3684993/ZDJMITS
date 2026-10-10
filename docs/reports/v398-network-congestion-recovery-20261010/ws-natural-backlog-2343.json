@@ -1,0 +1,778 @@
+{
+  "asOf": 1791647037346,
+  "state": "LIVE",
+  "retainedSymbols": 24,
+  "streamTraffic": {
+    "PUBLIC": {
+      "last60sDecodedBytes": 1729107,
+      "last60sMessages": 4526,
+      "last60sByType": {
+        "DEPTH": {
+          "messages": 1108,
+          "decodedBytes": 1160482
+        },
+        "BOOK_TICKER": {
+          "messages": 3418,
+          "decodedBytes": 568625
+        }
+      },
+      "totalByType": {
+        "CONTROL_OR_OTHER": {
+          "messages": 3,
+          "decodedBytes": 66
+        },
+        "DEPTH": {
+          "messages": 10315,
+          "decodedBytes": 10795086
+        },
+        "BOOK_TICKER": {
+          "messages": 35155,
+          "decodedBytes": 5807903
+        }
+      },
+      "totalDecodedBytes": 16603055,
+      "totalMessages": 45473,
+      "windowAsOf": 1791647037345,
+      "windowResolutionMs": 1000,
+      "requestedGlobalStreams": [],
+      "subscriptionEvidence": "EXCHANGE_ACKED",
+      "measurement": "DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES"
+    },
+    "MARKET": {
+      "last60sDecodedBytes": 1421481,
+      "last60sMessages": 5801,
+      "last60sByType": {
+        "KLINE": {
+          "messages": 2946,
+          "decodedBytes": 884111
+        },
+        "AGG_TRADE": {
+          "messages": 1308,
+          "decodedBytes": 208546
+        },
+        "TICKER_24H": {
+          "messages": 515,
+          "decodedBytes": 154115
+        },
+        "MARK_PRICE": {
+          "messages": 1032,
+          "decodedBytes": 174709
+        }
+      },
+      "totalByType": {
+        "CONTROL_OR_OTHER": {
+          "messages": 4,
+          "decodedBytes": 88
+        },
+        "TICKER_24H": {
+          "messages": 4834,
+          "decodedBytes": 1446188
+        },
+        "KLINE": {
+          "messages": 24544,
+          "decodedBytes": 7418926
+        },
+        "AGG_TRADE": {
+          "messages": 11081,
+          "decodedBytes": 1767874
+        },
+        "MARK_PRICE": {
+          "messages": 9777,
+          "decodedBytes": 1655228
+        }
+      },
+      "totalDecodedBytes": 12288304,
+      "totalMessages": 50240,
+      "windowAsOf": 1791647037345,
+      "windowResolutionMs": 1000,
+      "requestedGlobalStreams": [],
+      "subscriptionEvidence": "EXCHANGE_ACKED",
+      "measurement": "DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES"
+    }
+  },
+  "lanes": {
+    "PUBLIC": {
+      "state": "LIVE",
+      "connectedAt": 1791646457351,
+      "lastMessageAt": 1791647036205,
+      "reconnects": 8,
+      "lastError": null,
+      "subscriptions": 48,
+      "confirmedSubscriptions": 48,
+      "pendingControls": 0,
+      "lastAckAt": 1791646458215
+    },
+    "MARKET": {
+      "state": "LIVE",
+      "connectedAt": 1791646447783,
+      "lastMessageAt": 1791647036605,
+      "reconnects": 8,
+      "lastError": null,
+      "subscriptions": 144,
+      "confirmedSubscriptions": 144,
+      "pendingControls": 0,
+      "lastAckAt": 1791646458225
+    }
+  },
+  "quoteFactFreshness": {
+    "evaluatedAt": 1791647037345,
+    "maxAgeMs": 5000,
+    "retainedSymbols": 24,
+    "staleByField": {
+      "last": 24,
+      "mark": 24,
+      "bid": 24,
+      "ask": 24
+    },
+    "samples": [
+      {
+        "symbol": "SOLUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646895748,
+            "ageMs": 141597,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646895748,
+            "ageMs": 141597,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646833914,
+            "ageMs": 203431,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646833914,
+            "ageMs": 203431,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646833914,
+            "ageMs": 203431,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646833914,
+            "ageMs": 203431,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "BCHUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646894441,
+            "ageMs": 142904,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646894441,
+            "ageMs": 142904,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646834931,
+            "ageMs": 202414,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646834931,
+            "ageMs": 202414,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646834931,
+            "ageMs": 202414,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646834931,
+            "ageMs": 202414,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "ETHUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646893858,
+            "ageMs": 143487,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646893858,
+            "ageMs": 143487,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646834695,
+            "ageMs": 202650,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646834695,
+            "ageMs": 202650,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646834695,
+            "ageMs": 202650,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646834695,
+            "ageMs": 202650,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "BNBUSDC",
+        "fields": {
+          "bid": {
+            "at": 1791646894868,
+            "ageMs": 142477,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646894868,
+            "ageMs": 142477,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646835305,
+            "ageMs": 202040,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646835305,
+            "ageMs": 202040,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646835305,
+            "ageMs": 202040,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646835305,
+            "ageMs": 202040,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "XLMUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646894535,
+            "ageMs": 142810,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646894535,
+            "ageMs": 142810,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646834821,
+            "ageMs": 202524,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646834821,
+            "ageMs": 202524,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646834821,
+            "ageMs": 202524,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646834821,
+            "ageMs": 202524,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "BTCUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646896035,
+            "ageMs": 141310,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646896035,
+            "ageMs": 141310,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646833995,
+            "ageMs": 203350,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646833995,
+            "ageMs": 203350,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646833995,
+            "ageMs": 203350,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646833995,
+            "ageMs": 203350,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "NEARUSDC",
+        "fields": {
+          "bid": {
+            "at": 1791646895996,
+            "ageMs": 141349,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646895996,
+            "ageMs": 141349,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646833459,
+            "ageMs": 203886,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646833459,
+            "ageMs": 203886,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646833459,
+            "ageMs": 203886,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646833459,
+            "ageMs": 203886,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "INJUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646894328,
+            "ageMs": 143017,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646894328,
+            "ageMs": 143017,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646834544,
+            "ageMs": 202801,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646834544,
+            "ageMs": 202801,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646834544,
+            "ageMs": 202801,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646834544,
+            "ageMs": 202801,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "TIAUSDC",
+        "fields": {
+          "bid": {
+            "at": 1791646893862,
+            "ageMs": 143483,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646893862,
+            "ageMs": 143483,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646834512,
+            "ageMs": 202833,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646834512,
+            "ageMs": 202833,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646834512,
+            "ageMs": 202833,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646834512,
+            "ageMs": 202833,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "RAYSOLUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646894483,
+            "ageMs": 142862,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646894483,
+            "ageMs": 142862,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646833227,
+            "ageMs": 204118,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646833227,
+            "ageMs": 204118,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646833227,
+            "ageMs": 204118,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646833227,
+            "ageMs": 204118,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "ONDOUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646896092,
+            "ageMs": 141253,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646896092,
+            "ageMs": 141253,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646834318,
+            "ageMs": 203027,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646834318,
+            "ageMs": 203027,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646834318,
+            "ageMs": 203027,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646834318,
+            "ageMs": 203027,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "ADAUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646895422,
+            "ageMs": 141923,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646895422,
+            "ageMs": 141923,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646833229,
+            "ageMs": 204116,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646833229,
+            "ageMs": 204116,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646833229,
+            "ageMs": 204116,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646833229,
+            "ageMs": 204116,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "FETUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646894290,
+            "ageMs": 143055,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646894290,
+            "ageMs": 143055,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646834535,
+            "ageMs": 202810,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646834535,
+            "ageMs": 202810,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646834535,
+            "ageMs": 202810,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646834535,
+            "ageMs": 202810,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "JTOUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646895983,
+            "ageMs": 141362,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646895983,
+            "ageMs": 141362,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646833736,
+            "ageMs": 203609,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646833736,
+            "ageMs": 203609,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646833736,
+            "ageMs": 203609,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646833736,
+            "ageMs": 203609,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "ENAUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646895487,
+            "ageMs": 141858,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646895487,
+            "ageMs": 141858,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646833404,
+            "ageMs": 203941,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646833404,
+            "ageMs": 203941,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646833404,
+            "ageMs": 203941,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646833404,
+            "ageMs": 203941,
+            "fresh": false
+          }
+        }
+      },
+      {
+        "symbol": "LDOUSDT",
+        "fields": {
+          "bid": {
+            "at": 1791646895831,
+            "ageMs": 141514,
+            "fresh": false
+          },
+          "ask": {
+            "at": 1791646895831,
+            "ageMs": 141514,
+            "fresh": false
+          },
+          "mark": {
+            "at": 1791646835000,
+            "ageMs": 202345,
+            "fresh": false
+          },
+          "last": {
+            "at": 1791646833637,
+            "ageMs": 203708,
+            "fresh": false
+          },
+          "quoteVolumeUsd24h": {
+            "at": 1791646833637,
+            "ageMs": 203708,
+            "fresh": false
+          },
+          "priceChangePercent24h": {
+            "at": 1791646833637,
+            "ageMs": 203708,
+            "fresh": false
+          },
+          "tradeCount24h": {
+            "at": 1791646833637,
+            "ageMs": 203708,
+            "fresh": false
+          }
+        }
+      }
+    ]
+  },
+  "recovery": {
+    "active": 0,
+    "queued": 0,
+    "maxConcurrent": 2,
+    "minStartIntervalMs": 500
+  },
+  "unit": "DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES",
+  "readOnly": true
+}

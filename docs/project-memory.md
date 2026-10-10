@@ -1,3 +1,16 @@
+# 2026-10-10 12:18+08 · 交易记录24小时盈亏与退出来源冲突修复（新增任务）
+
+ChatGPT 本轮已从GitHub核对 Draft PR31/33/32 的精确HEAD与CI SUCCESS，当前main仍为 `b55f427eeda150c7cdc7b8beaaaddfd39aa9e6e1`，三个PR均**尚未合并/部署**。按用户新授权已提交隔离分支 `chatgpt/v398-trade24h-provenance-and-release-20261010` 的真实代码：
+- `apps/engine/src/services/trade24hReadModel.ts` / tests，`apps/engine/src/api/router.ts`：GET `/api/v3/trade-records/24h`，仅用settled `closedAt` + 唯一cycle + 本地双订单关联及守恒事实，分别统计 USDT/USDC 过去24小时完整交易盈利/亏损/净值/费用/funding覆盖。缺少资金费不影响 ex-funding，但正式 all-in 仍严格资格；金额未知不造0，USDT/USDC无FX不汇总。后端在24h裁剪后才做昂贵per-cycle projection，避开无关历史。
+- `apps/dashboard/src/views/TradeRecordsView.vue` + `api/client.ts`：新增最近24h分币种盈利、亏损及净额/手续费与sync coverage warning。独立于此前性能驾驶舱PR31。
+- `apps/engine/src/services/exitProvenance.ts` + test、`apps/dashboard/src/views/tradeClosePresentation.ts`：源冲突不静默修成TP；新增可核查具体原因/证据状态，UI明确 `integrity classification conflict=0` 与 `exit closeProvenance=CONFLICT` 口径不同。六条现场 CONFLICT 要在主机只读对比 registry+TP/manual订单、双ID和qty，再修事实或真实误报。
+- **本轮Codex指令**：`docs/prompts/CODEX_V398_TRADE24H_CONFLICT_AND_CONTROLLED_DEPLOY_20261010.md`；实施回执 `docs/reports/v398-trade24h-release-20261010/INITIAL_CODE_AND_SAFETY_STATE.md`；后续必须完整 verify/CI、综合 PR31/33/32和本PR整合CI、受控部署实证并Github存档。
+
+**旧24小时尝试已在北京时间2026-10-10 08:34:00.270 因 LOCAL_TP_GATE_NOT_CLOSED 正式 ABORTED**（main `acceptance/state.json` 已终止），没有有效旧计时可继续/再停止；用户明确授权后续一次满足门禁的Engine-only受控重启和完整**新T0**24h。当前没有Windows主机部署工具，GitHub PR、CI不等于本机部署；02:10Z signed25/25只是历史，只读最新全仓签名TP/Production0/TESTNET/私有同步/订单双ID/no-add/HUMAN_MANAGED及备份任何UNKNOWN即 NO_GO，不得为赶进度停保护Engine。后续Codex获用户正式重启授权，但不能绕过安全性证明。
+
+
+---
+
 ## 2026-10-10 新聊天入口：v3.9.8仪表盘性能优化（GPU2利用率及统一驾驶舱）
 
 - **主新ChatGPT提示词**：[CHATGPT_V398_PERFORMANCE_DASHBOARD_GPU_NEXT_CHAT_20261010](./prompts/CHATGPT_V398_PERFORMANCE_DASHBOARD_GPU_NEXT_CHAT_20261010.md)。

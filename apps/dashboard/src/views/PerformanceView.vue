@@ -6,12 +6,13 @@ import {useSystemStore} from '../stores/system';
 import Panel from '../components/Panel.vue';
 import PerformanceTrend from '../components/PerformanceTrend.vue';
 import FinancePerformance from '../components/FinancePerformance.vue';
-import {aiLamp,proxyLamp,privateLamp,exchangeLamp,uniqueAiRunStats,numberOrNull,stale,withSampleGaps,type LampFact} from '../utils/performanceFacts';
+import {aiLamp,privateLamp,uniqueAiRunStats,numberOrNull,stale,withSampleGaps,type LampFact} from '../utils/performanceFacts';
+import {cockpitSignals,effectiveProxySignal} from '../utils/cockpitStatus';
 import type {HostPerformanceRead,GpuPerformanceRead} from '@zdj/contracts';
 
 const store=useSystemStore();
 const hostRead=ref<HostPerformanceRead|null>(null),gpuRead=ref<GpuPerformanceRead|null>(null),resources=ref<any[]>([]),governance=ref<any>(null);
-const privateSync=ref<any>(null),stream=ref<any>(null),runs=ref<any[]>([]);
+const privateSync=ref<any>(null),stream=ref<any>(null),runs=ref<any[]>([]),accountRead=ref<any>(null);
 const checkedAt=ref<number|null>(null),error=ref<string|null>(null),windowKey=ref('1h');
 const options=[{value:'15m',label:'15 分钟',ms:900_000},{value:'1h',label:'1 小时',ms:3_600_000},{value:'6h',label:'6 小时',ms:21_600_000},{value:'24h',label:'24 小时',ms:86_400_000},{value:'7d',label:'7 天',ms:604_800_000}];
 const rangeMs=computed(()=>options.find(x=>x.value===windowKey.value)?.ms??3_600_000);
@@ -22,15 +23,10 @@ const stamp=(n:unknown)=>numberOrNull(n)===null?'UNKNOWN':new Date(Number(n)).to
 const val=(n:unknown,digits=1)=>numberOrNull(n)===null?'UNKNOWN':Number(n).toFixed(digits);
 const mib=(n:unknown)=>numberOrNull(n)===null?'UNKNOWN':val(Number(n)/1048576,0)+' MiB';
 const lampClass=(fact:LampFact)=>'perf-light '+fact.tone;
-const lampLabel=(fact:LampFact)=>({good:'绿 · ',warn:'黄 · ',bad:'红 · ',unknown:'灰 · '})[fact.tone]+fact.text;
+const lampLabel=(fact:LampFact)=>fact.text;
 const privateFact=computed(()=>privateLamp(store.snapshot,now.value));
-const proxyFact=computed(()=>proxyLamp(governance.value?.routes));
-const statusRows=computed(()=>[
-  {name:'SOCKS / SSH 代理',...proxyFact.value},
-  {name:'Binance 交易网络',...exchangeLamp(store.snapshot,store.incidents.active,now.value)},
-  {name:'Binance 私有同步',...privateFact.value},
-  ...resources.value.map(r=>({name:String(r.role??r.id),...aiLamp(r,now.value)})),
-]);
+const proxyFact=computed(()=>effectiveProxySignal(governance.value?.routes,store.snapshot,now.value));
+const statusRows=computed(()=>cockpitSignals({snapshot:store.snapshot,routes:governance.value?.routes,resources:resources.value,incidents:store.incidents.active,now:now.value}).map(row=>({name:row.label,...row})));
 const runFacts=computed(()=>uniqueAiRunStats(runs.value));
 const cutOff=computed(()=>now.value-rangeMs.value);
 const history=computed(()=>{
@@ -61,6 +57,7 @@ async function load(){
   const results=await Promise.allSettled([
     api.performanceHost(signal),api.brainResources(signal),api.binanceGovernance(signal),
     api.privateSync(signal),api.marketStreamTraffic(signal),brainRuns(q.toString(),signal),api.performanceGpu(signal),
+    typeof api.accountAssets==='function'?api.accountAssets():Promise.resolve(null),
   ]);
   if(deadline)clearTimeout(deadline);deadline=null;
   if(!alive||id!==sequence){inFlight=false;return;}
@@ -78,6 +75,7 @@ async function load(){
   take<any>(4,v=>stream.value=v,()=>stream.value=null);
   take<any>(5,v=>runs.value=Array.isArray(v?.items)?v.items:[],()=>runs.value=[]);
   take<GpuPerformanceRead>(6,v=>gpuRead.value=v,()=>gpuRead.value=null);
+  take<any>(7,v=>accountRead.value=v,()=>accountRead.value=null);
   error.value=failures?failures+' 个只读数据源请求失败，当前指标 UNKNOWN':null;
   checkedAt.value=now.value;
   inFlight=false;
@@ -101,14 +99,14 @@ onUnmounted(()=>{alive=false;sequence++;controller?.abort();if(deadline)clearTim
       <span class="perf-small">本机采样只有当前 Engine 的短窗内存历史；不将 6h/24h/7d 当作已有完整覆盖</span>
     </div>
     <p v-if="error" class="perf-warning" role="status">{{error}}</p>
-    <Panel title="关键链路状态灯" subtitle="绿：最近有证据的正常；黄：降级、拥堵或仅配置可见；红：明确错误；灰：UNKNOWN / 过期。">
+    <Panel title="关键链路状态灯" subtitle="圆点反映最近可验证的链路事实；文字只显示状态，不重复颜色名称。">
       <div class="perf-lamp-grid">
         <article v-for="row in statusRows" :key="row.name" class="perf-lamp-card">
           <div class="perf-light-row"><span class="perf-light-dot" :class="lampClass(row)"></span><strong>{{row.name}}</strong></div>
           <span :class="lampClass(row)">{{lampLabel(row)}}</span>
           <small>{{row.detail}}</small>
         </article>
-        <article v-if="!resources.length" class="perf-lamp-card"><strong>AI 模型</strong><span class="perf-light unknown">灰 · 未取得资源</span><small>不推断模型健康状态</small></article>
+        <article v-if="!resources.length" class="perf-lamp-card"><strong>AI 模型</strong><span class="perf-light unknown">资源待确认</span><small>不推断模型健康状态</small></article>
       </div>
     </Panel>
     <div class="perf-kpis">
@@ -117,7 +115,7 @@ onUnmounted(()=>{alive=false;sequence++;controller?.abort();if(deadline)clearTim
       <div class="perf-kpi"><span>Engine RSS / Heap</span><strong class="perf-kpi-compact">{{mib(host?.engine.rssBytes)}}</strong><small>Heap Used {{mib(host?.engine.heapUsedBytes)}}</small></div>
       <div class="perf-kpi"><span>受保护的当前持仓</span><strong>{{protectedPositions===null?'UNKNOWN':protectedPositions}} / {{activePositions===null?'UNKNOWN':activePositions}}</strong><small>来源 DashboardSnapshot；不替代最新交易所签名TP核验</small></div>
     </div>
-    <FinancePerformance :snapshot="store.snapshot" :now="now" :range-ms="rangeMs" :instance-id="hostRead?.instanceId??null"/>
+    <FinancePerformance :snapshot="store.snapshot" :account-read="accountRead" :now="now" :range-ms="rangeMs" :instance-id="hostRead?.instanceId??null"/>
     <div class="perf-columns">
       <Panel title="主机 CPU 趋势" subtitle="Windows 原生 CPU time 差分；只有实际采样点"><PerformanceTrend :points="cpuPoints" unit="%" label="CPU使用率"/><p class="perf-small">数据点 {{cpuPoints.length}} · 当前实例 {{host?.instanceId??'UNKNOWN'}}</p></Panel>
       <Panel title="主机内存趋势" subtitle="已用物理内存 · MiB"><PerformanceTrend :points="ramPoints" unit="MiB" label="物理内存"/><p class="perf-small">可用 {{mib(host?.memory.freeBytes)}} · 来源 {{host?.source??'UNKNOWN'}}</p></Panel>

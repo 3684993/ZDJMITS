@@ -78,3 +78,9 @@ Windows 可使用 NSSM / WinSW / Task Scheduler 中任一成熟方式；Codex �
 - reconciliation drift
 - REST/WS errors
 - process memory/CPU/GPU health
+
+## 2026-10-10 V3.9.8 现网 SSH/SOCKS 与 451 排障经验
+
+现网 Engine :8080，本机 SOCKS5H 127.0.0.1:20091 经 SSH :22091 到 Ubuntu 出口；三个实际模型监听为 :8081/:8083/:8084（以上 :8082 是早期设计，不作现网断言）。2026-10-10 单次 Engine 切换旧 PID18100→新23688，代理和模型 PID 保持不变。本次20次有界交易所GET全部200，未重现历史451；并未修改任何代理配置或脚本。
+
+HTTP 451 先检查应答来源与交易所政策含义，不能无证据认定代理脚本故障、也不能切换地区出口规避限制。代理排障分层：请求队列 → ssh / SOCKS negotiation → TLS → HTTP → signed private / TP 同步，并保存阶段时间与类型。VPS公共GET200不等于账户API权限或适用地区资格。完整实证与操作经验见 [V398代理451/发布复盘](./reports/v398-engine-cutover-20261010/NETWORK_PROXY_451_RELEASE_LESSONS_20261010.md)。

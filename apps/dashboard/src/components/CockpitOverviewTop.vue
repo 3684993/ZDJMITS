@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import {computed,ref,watch} from 'vue';
 import FactBars from './FactBars.vue';
+import FinanceRiskAtlas from './FinanceRiskAtlas.vue';
 import {stale} from '../utils/performanceFacts';
 import PerformanceTrend from './PerformanceTrend.vue';
 import {financePerformance} from '../utils/financePerformance';
@@ -78,6 +79,7 @@ const lastUpdated=computed(()=>assets.value.find(a=>a.asOf)?.asOf??null);
    <article><h3>可用资金 · 原生币种</h3><FactBars :rows="records.map(r=>({label:r.asset,value:r.balance?.available??null,color:({bad:'#d94c52',warn:'#d49b30',good:'#14976b'} as any)[r.balance?.tone]??'#8795a8'}))" unit="USDT / USDC 分别计量" label="双币种可用资金"/></article>
    <article><h3>七日交易所收益 · 资金费</h3><FactBars :rows="incomeRows" unit="USD · 已含手续费，资金费单列" label="交易所收益结构"/></article>
   </div>
+  <FinanceRiskAtlas :snapshot="snapshot" :valuation="valuation" :now="now"/>
   <div class="cockpit-grid">
    <article v-for="record in records" :key="record.asset" class="cockpit-card" :data-asset-chart="record.asset">
     <div class="card-head"><span class="card-kicker">AVAILABLE MARGIN</span><span class="availability" :class="record.balance?.tone??'unknown'"><i></i>{{record.balance?.tone==='bad'?'低于 500':record.balance?.tone==='warn'?'500–999':record.balance?.tone==='good'?'充足':'待同步'}}</span></div>

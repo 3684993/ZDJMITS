@@ -1,3 +1,5 @@
+> **网络P0接续（2026-10-10 22:00+08）：** 新ChatGPT提示词 `docs/prompts/CHATGPT_V398_NETWORK_CONGESTION_NEXT_CHAT_20261010.md`，Codex执行书 `docs/prompts/CODEX_V398_NETWORK_CONGESTION_EXECUTE_20261010.md`，主计划 `docs/plans/V398_NETWORK_CONGESTION_ENGINE_ISOLATION_RECOVERY_20261010.md`。Engine OFF、SSH同PID12212后公众访问4/4成功/sshd Send-Q基本0；Engine ON曾0/8失败且2.7MB积压。PR41双CI成功未merge，PR42减全市场WS draft/CI进行，下一步CI后受控发布、必要服务重启和30m+90m稳定验收；当前签名TP及私有事实UNKNOWN。历史描述以新计划为准。
+>
 > 2026-10-10 20:18 北京时间已实际部署（覆盖下方 NO_GO 历史）：用户重新明确授权强制停止 Engine，并撤销 Engine 启动/重启前的新鲜签名 TP/私有同步发布门禁，要求保持建仓授权。执行一次 Stop-Process -Force，仅停止旧 Engine12140；新 host25736 / Engine13476 / instance d78966bf-820d-4cad-8ab0-b993774b2a21 已监听0.0.0.0:8080。源码 e3dc48b6832f48569b76a1240bb8040f5f6f3dfd，build `3.9.8-a790207862ad258b41a0`，sourceHash/artifactHash与封存包一致。npm ci/build PASS，精确源码两次 GitHub CI SUCCESS。
 >
 > 本次及后续 Engine 生命周期不再以新鲜签名 TP/私有同步作为用户要求的发布前置拦截；这些事实仍如实显示 UNKNOWN/不可用，不伪造PASS。本次更新了精确构建的 ONE_TESTNET_ENGINE_SWITCH 审批绑定，保留原审批文件与原到期时间；启动参数 TESTNET_ENTRY_ENABLED / admissionDisabled=0，浏览器显示 AUTO_RUNNING、TESTNET自动建仓已启用。Primary唯一建仓、禁止补仓、HUMAN_MANAGED、交易TP保护及Production隔离代码未删除。

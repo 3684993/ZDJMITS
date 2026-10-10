@@ -1,0 +1,168 @@
+{
+  "observedAt": "2026-10-10T05:16:21.940Z",
+  "taskExchangeWrites": 0,
+  "taskDatabaseWrites": 0,
+  "exactCycles": [
+    {
+      "recordHash": "2d2861c052d94af504e0205fccf96f820aceb955cecd09ce5d657a89fe4af56d",
+      "http": 200,
+      "elapsedMs": 331.29999999999995,
+      "closeProvenance": "TP",
+      "classification": "COMPLETE",
+      "conflictReasons": [],
+      "provenanceEvidenceStatus": "PROVEN"
+    },
+    {
+      "recordHash": "3ce70590b6f6794b9c3b0035dac0ffd05e538ec3fa57e3adc45f37f1720eeb1c",
+      "http": 200,
+      "elapsedMs": 475.8829999999999,
+      "closeProvenance": "TP",
+      "classification": "PARTIAL",
+      "conflictReasons": [],
+      "provenanceEvidenceStatus": "PROVEN"
+    },
+    {
+      "recordHash": "48f83507d407946272131c36a80998158b2d1161cd263b358de1b064ad2f1dc5",
+      "http": 200,
+      "elapsedMs": 574.9953,
+      "closeProvenance": "TP",
+      "classification": "COMPLETE",
+      "conflictReasons": [],
+      "provenanceEvidenceStatus": "PROVEN"
+    },
+    {
+      "recordHash": "a1b960e43b3be2fb9e2ea3cd5842d4908d11032d659000c96c7be48d79373bb6",
+      "http": 200,
+      "elapsedMs": 384.52080000000024,
+      "closeProvenance": "TP",
+      "classification": "COMPLETE",
+      "conflictReasons": [],
+      "provenanceEvidenceStatus": "PROVEN"
+    },
+    {
+      "recordHash": "eaa1b0b2a2f155972a7ce0e466ec648239292f355a8b5f4c3870d8377dafdd35",
+      "http": 200,
+      "elapsedMs": 380.34010000000035,
+      "closeProvenance": "TP",
+      "classification": "COMPLETE",
+      "conflictReasons": [],
+      "provenanceEvidenceStatus": "PROVEN"
+    },
+    {
+      "recordHash": "eee819d5024bdcc9d4cba8f42a85a553ef816cc8277876bfd8fb60f0322acd00",
+      "http": 200,
+      "elapsedMs": 328.4448000000002,
+      "closeProvenance": "TP",
+      "classification": "COMPLETE",
+      "conflictReasons": [],
+      "provenanceEvidenceStatus": "PROVEN"
+    }
+  ],
+  "daily": [
+    {
+      "http": 200,
+      "elapsedMs": 372.5128999999997,
+      "asOf": 1791609381555,
+      "cacheSameAsOf": true,
+      "status": "SYNC_ERROR",
+      "byAsset": {
+        "USDT": {
+          "cycles": 21,
+          "profitFinite": true,
+          "lossFinite": true,
+          "netFinite": true,
+          "netConserved": true
+        },
+        "USDC": {
+          "cycles": 5,
+          "profitFinite": true,
+          "lossFinite": true,
+          "netFinite": true,
+          "netConserved": true
+        }
+      },
+      "coverage": {
+        "closedRows": 28,
+        "eligibleClosedCycles": 26,
+        "excludedClosedRows": 2,
+        "completeClosedRows": 26,
+        "ledgerUnprovenClosedRows": 2,
+        "cycleCollisionRows": 0,
+        "unknownAssetCycles": 0,
+        "closedObservedWithoutSettledAt": 2,
+        "lastSyncSuccessAt": null,
+        "syncStatus": "ERROR"
+      }
+    },
+    {
+      "http": 200,
+      "elapsedMs": 30.492199999999684,
+      "asOf": 1791609381555,
+      "cacheSameAsOf": true,
+      "status": "SYNC_ERROR",
+      "byAsset": {
+        "USDT": {
+          "cycles": 21,
+          "profitFinite": true,
+          "lossFinite": true,
+          "netFinite": true,
+          "netConserved": true
+        },
+        "USDC": {
+          "cycles": 5,
+          "profitFinite": true,
+          "lossFinite": true,
+          "netFinite": true,
+          "netConserved": true
+        }
+      },
+      "coverage": {
+        "closedRows": 28,
+        "eligibleClosedCycles": 26,
+        "excludedClosedRows": 2,
+        "completeClosedRows": 26,
+        "ledgerUnprovenClosedRows": 2,
+        "cycleCollisionRows": 0,
+        "unknownAssetCycles": 0,
+        "closedObservedWithoutSettledAt": 2,
+        "lastSyncSuccessAt": null,
+        "syncStatus": "ERROR"
+      }
+    },
+    {
+      "http": 200,
+      "elapsedMs": 77.1590000000001,
+      "asOf": 1791609381555,
+      "cacheSameAsOf": true,
+      "status": "SYNC_ERROR",
+      "byAsset": {
+        "USDT": {
+          "cycles": 21,
+          "profitFinite": true,
+          "lossFinite": true,
+          "netFinite": true,
+          "netConserved": true
+        },
+        "USDC": {
+          "cycles": 5,
+          "profitFinite": true,
+          "lossFinite": true,
+          "netFinite": true,
+          "netConserved": true
+        }
+      },
+      "coverage": {
+        "closedRows": 28,
+        "eligibleClosedCycles": 26,
+        "excludedClosedRows": 2,
+        "completeClosedRows": 26,
+        "ledgerUnprovenClosedRows": 2,
+        "cycleCollisionRows": 0,
+        "unknownAssetCycles": 0,
+        "closedObservedWithoutSettledAt": 2,
+        "lastSyncSuccessAt": null,
+        "syncStatus": "ERROR"
+      }
+    }
+  ]
+}

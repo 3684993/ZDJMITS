@@ -1,0 +1,8 @@
+To https://github.com/3684993/ZDJMITS.git
+   b55f427..6533e4d  6533e4d5bbedfe758336f3dd40c188bad37413cd -> main
+ConvertTo-Json: D:\MITS-OPERATIONS\trade24h-private-20261010\controlled-switch.ps1:46
+Line |
+  46 |  $receipt | ConvertTo-Json -Depth 6 | Set-Content (Join-Path $privateR …
+     |             ~~~~~~~~~~~~~~~~~~~~~~~
+     | The type 'System.Collections.Hashtable' is not supported for serialization or deserialization of a dictionary.
+     | Keys must be strings.

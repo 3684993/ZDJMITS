@@ -1,0 +1,42 @@
+{
+  "observedAt": "2026-10-10T05:20:15.410Z",
+  "screenshotsPrivate": true,
+  "views": [
+    {
+      "routePath": "/",
+      "hidden": false,
+      "requested": [],
+      "pageErrors": [],
+      "blockedWrites": 0,
+      "documentOverflow": false,
+      "canvasCount": 0,
+      "firstPanel": "真实资产",
+      "realAssetPanels": 1,
+      "duplicateAdmissionPanels": 0
+    },
+    {
+      "routePath": "/trade-records",
+      "hidden": false,
+      "requested": [
+        "/api/v3/trade-records",
+        "/api/v3/trade-records/24h"
+      ],
+      "pageErrors": [],
+      "blockedWrites": 0,
+      "documentOverflow": false,
+      "canvasCount": 0,
+      "dailyAsOf": 1791609604060,
+      "nativeNumbersMatch": true,
+      "syncErrorVisible": true
+    },
+    {
+      "routePath": "/performance",
+      "hidden": false,
+      "requested": [],
+      "pageErrors": [],
+      "blockedWrites": 0,
+      "documentOverflow": false,
+      "canvasCount": 11
+    }
+  ]
+}

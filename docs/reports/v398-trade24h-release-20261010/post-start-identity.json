@@ -1,0 +1,118 @@
+{
+  "observedAt": "2026-10-10T05:31:09.391Z",
+  "verdict": "IDENTITY_CLOSED_6_OF_6",
+  "checks": {
+    "approvedFrozenSourceMatchesCurrentMainRuntimeCode": true,
+    "actualSourceIdentity": true,
+    "actualArtifactBuildIdentity": true,
+    "actualEntrypointIdentity": true,
+    "actualSettingsAccountIdentity": true,
+    "actualChildHostAdmissionIdentity": true
+  },
+  "safety": {
+    "ready": true,
+    "privateFresh": true,
+    "signedFactsFresh": true,
+    "allSignedPositionsExactTp": true,
+    "exchangeTradingPermission": true,
+    "productionZero": true
+  },
+  "modelReadback": [
+    {
+      "port": 8081,
+      "http": 200,
+      "alias": "qwen3.5:9b"
+    },
+    {
+      "port": 8083,
+      "http": 200,
+      "alias": "qwen/qwen3.8-27b"
+    },
+    {
+      "port": 8084,
+      "http": 200,
+      "alias": "qwen/qwen3.8-27b"
+    }
+  ],
+  "currentMain": "6533e4d5bbedfe758336f3dd40c188bad37413cd",
+  "frozenSourceCommit": "6533e4d5bbedfe758336f3dd40c188bad37413cd",
+  "identity": {
+    "pid": 23936,
+    "hostPid": 12440,
+    "instanceId": "d071f59f-9eba-4efa-b3da-3d4289f3671f",
+    "buildId": "3.9.8-0de7665352d82b261c1d",
+    "sourceHash": "6a320a861565a991d24a36d847801f99c8e762c8362344dbd6fb09de1e5770e8",
+    "artifactHash": "0de7665352d82b261c1d620fc65de91e24d628ccffe875b1ee7a878b8a1fd7f6",
+    "entrypointSha256": "df014d7d4da78af092844fa646c3ac1409bff38ec27c35da5db3de0caf072376"
+  },
+  "settings": {
+    "version": 253,
+    "payloadSha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151"
+  },
+  "entry": {
+    "status": "READY",
+    "executionFactsStatus": "READY",
+    "mode": "TESTNET_ENTRY_ENABLED",
+    "analysisAllowed": true,
+    "riskObservation": true,
+    "orderAuthorization": true,
+    "reason": "EXPLICIT_TESTNET_APPROVAL_VALID",
+    "executionMode": "TESTNET_ENABLED",
+    "autoExecutionMode": "AUTO_RUNNING"
+  },
+  "private": {
+    "snapshotAgeMs": 9080,
+    "consecutiveFailures": 0,
+    "lastError": null
+  },
+  "signed": {
+    "positions": 30,
+    "protected": 30,
+    "signedAgeMs": 4714,
+    "permissionAgeMs": 1527,
+    "canTrade": true,
+    "requests": 7,
+    "http451": 0,
+    "http502": 0
+  },
+  "production": {
+    "environment": "TESTNET",
+    "executionMode": "TESTNET_ENABLED",
+    "lockedToTestnet": true,
+    "testnetWrites": 14,
+    "productionWrites": 0,
+    "blockedProductionWriteAttempts": 0,
+    "lastWriteAt": 1791610185328,
+    "lastWritePath": "/fapi/v1/order"
+  },
+  "localTp": {
+    "status": "READY",
+    "unverifiedTp": 0,
+    "required": 30,
+    "protected": 30,
+    "missing": 0,
+    "repairing": 0,
+    "repairFailed": 0,
+    "manualReviewRequired": 0,
+    "positionFactUnresolved": 0,
+    "positionFactUnresolvedSymbols": [],
+    "orphanTp": 0,
+    "duplicateTp": 0,
+    "qtyMismatch": 0,
+    "wrongSide": 0,
+    "tpMissing": 0,
+    "retryQueue": 0
+  },
+  "market": {
+    "status": "RECOVERING",
+    "count": 40,
+    "quoteFreshRatio": 1,
+    "klineFreshRatio": 1
+  },
+  "qualificationBasis": "PRIOR_DIRECT_OPERATOR_ATTESTATION_EXISTING_SINGAPORE_ROUTE_PERSISTS; NOT_OFFICIAL_VERIFICATION",
+  "actualEngineStops": 1,
+  "actualEngineStarts": 1,
+  "automaticRetries": 0,
+  "taskManualExchangeWrites": 0,
+  "taskSettingsWrites": 0
+}

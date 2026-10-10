@@ -1,0 +1,18 @@
+{
+  "at": "2026-10-10T05:15:37.5212396Z",
+  "taskName": "ZDJ-MITS-AfterReboot-TESTNET",
+  "taskPath": "\\",
+  "newStableRoot": "D:\\MITS-RELEASES\\ZDJMITS-v398-trade24h-6533e4d",
+  "approvalFile": "C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\entry-authorization\\v398-testnet-entry-trade24h-6533e4d-20261010.json",
+  "hiddenWscript": true,
+  "restartSettingsPreserved": true,
+  "principalPreserved": true,
+  "triggerCountPreserved": true,
+  "taskStarted": false,
+  "liveEngineStarts": 0,
+  "action": {
+    "Execute": "C:\\Windows\\System32\\wscript.exe",
+    "Arguments": "//B //Nologo \"C:\\Users\\5700x\\AppData\\Local\\ZDJMITS\\task-launchers\\_ZDJ-MITS-AfterReboot-TESTNET.vbs\"",
+    "WorkingDirectory": "D:\\MITS-RELEASES\\ZDJMITS-v398-trade24h-6533e4d"
+  }
+}

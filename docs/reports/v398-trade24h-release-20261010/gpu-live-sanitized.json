@@ -1,0 +1,167 @@
+{
+  "asOf": 1791609975205,
+  "instanceId": "14e02fd0-4f14-46a8-a374-b402e6cf4aab",
+  "sampleSource": "WINDOWS_WDDM_PROCESS_COUNTERS",
+  "ttlMs": 45000,
+  "measureStatus": "MEASURED",
+  "reason": null,
+  "services": [
+    {
+      "resourceId": "llama:8081",
+      "port": 8081,
+      "pid": 3400,
+      "processStartedAt": 1791514774332,
+      "duty": "SCOUT",
+      "luid": [
+        "0x00000000_0x0000edc6",
+        "0x00000000_0x0000f452",
+        "0x00000000_0x000122ec"
+      ],
+      "measureStatus": "MEASURED",
+      "utilizationPct": 0,
+      "dedicatedBytes": 5535555584,
+      "sharedBytes": 13197312,
+      "physicalDeviceIdVerified": false,
+      "physicalDeviceId": null
+    },
+    {
+      "resourceId": "llama:8083",
+      "port": 8083,
+      "pid": 14020,
+      "processStartedAt": 1791515445128,
+      "duty": "REVIEW_BRAIN",
+      "luid": [
+        "0x00000000_0x0000edc6",
+        "0x00000000_0x0000f452",
+        "0x00000000_0x000122ec"
+      ],
+      "measureStatus": "MEASURED",
+      "utilizationPct": 0,
+      "dedicatedBytes": 17348911104,
+      "sharedBytes": 552484864,
+      "physicalDeviceIdVerified": false,
+      "physicalDeviceId": null
+    },
+    {
+      "resourceId": "llama:8084",
+      "port": 8084,
+      "pid": 22336,
+      "processStartedAt": 1791515847749,
+      "duty": "PRIMARY_BRAIN",
+      "luid": [
+        "0x00000000_0x0000edc6",
+        "0x00000000_0x0000f452",
+        "0x00000000_0x000122ec"
+      ],
+      "measureStatus": "MEASURED",
+      "utilizationPct": 0,
+      "dedicatedBytes": 17359347712,
+      "sharedBytes": 1089355776,
+      "physicalDeviceIdVerified": false,
+      "physicalDeviceId": null
+    }
+  ],
+  "window": {
+    "coveredFrom": 1791609975205,
+    "coveredTo": 1791609975205,
+    "sampleCount": 1,
+    "droppedSampleCount": 0
+  },
+  "unit": {
+    "utilization": "% busiest process engine",
+    "memory": "bytes"
+  },
+  "physicalDeviceMapping": [
+    {
+      "pid": 14020,
+      "bus": 5,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x0000edc6",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 32768
+    },
+    {
+      "pid": 14020,
+      "bus": 19,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x0000f452",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 1077248
+    },
+    {
+      "pid": 14020,
+      "bus": 22,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x000122ec",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 17347801088
+    },
+    {
+      "pid": 22336,
+      "bus": 5,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x0000edc6",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 32768
+    },
+    {
+      "pid": 22336,
+      "bus": 19,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x0000f452",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 17348866048
+    },
+    {
+      "pid": 22336,
+      "bus": 22,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x000122ec",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 10448896
+    },
+    {
+      "pid": 3400,
+      "bus": 5,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x0000edc6",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 5533401088
+    },
+    {
+      "pid": 3400,
+      "bus": 19,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x0000f452",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 1077248
+    },
+    {
+      "pid": 3400,
+      "bus": 22,
+      "device": 0,
+      "function": 0,
+      "luid": "0x00000000_0x000122ec",
+      "status": "MEASURED",
+      "source": "D3DKMT_ADAPTERADDRESS_AND_WDDM_PROCESS_MEMORY",
+      "dedicatedBytes": 1077248
+    }
+  ],
+  "scope": "CURRENT_MODEL_PIDS_COUNTER_SNAPSHOT_NOT_INFERENCE_BENCHMARK"
+}

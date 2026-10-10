@@ -1,0 +1,6 @@
+node : (node:25292) [UNDICI-EHPA] Warning: EnvHttpProxyAgent is experimental, expect them to change at any time.
+At D:\MITS-OPERATIONS\trade24h-private-20261010\controlled-switch.ps1:9 char:1
++ node (Join-Path $privateRoot 'verify-seal.mjs') *> (Join-Path $privat ...
++ ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+    + CategoryInfo          : NotSpecified: ((node:25292) [U...ge at any time.:String) [], RemoteException
+    + FullyQualifiedErrorId : NativeCommandError

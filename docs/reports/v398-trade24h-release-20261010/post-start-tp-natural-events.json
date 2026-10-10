@@ -1,0 +1,288 @@
+{
+  "manualExchangeWrites": 0,
+  "events": [
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791609238533,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791609238539,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791603299139",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791609239281,
+      "reason": null,
+      "source": "USER_DATA_WS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_FAILED",
+      "ts": 1791609240870,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_MISMATCH_CANCEL_RESULT",
+      "ts": 1791609248457,
+      "reason": "QTY_MISMATCH_BEFORE_REPAIR",
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791609304603,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791609304605,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791603299139",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791609305735,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_PROTECTED",
+      "ts": 1791609307687,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791609387022,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791609387024,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791598816652",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791609388384,
+      "reason": null,
+      "source": "USER_DATA_WS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_MISMATCH_CANCEL_RESULT",
+      "ts": 1791609389146,
+      "reason": "QTY_MISMATCH_BEFORE_REPAIR",
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_FAILED",
+      "ts": 1791609389906,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791609452922,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791609452927,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791598816652",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791609454886,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_PROTECTED",
+      "ts": 1791609456743,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791609715479,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791609715480,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791598816652",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_FAILED",
+      "ts": 1791609718895,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_MISMATCH_CANCEL_RESULT",
+      "ts": 1791609718898,
+      "reason": "QTY_MISMATCH_BEFORE_REPAIR",
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791609782712,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791609782715,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791598816652",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791609783851,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_PROTECTED",
+      "ts": 1791609785611,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791609967386,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791609967388,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791598816652",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TERMINAL_FACT_PROJECTED",
+      "ts": 1791609968117,
+      "reason": null,
+      "source": "USER_DATA_WS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_MISMATCH_CANCEL_RESULT",
+      "ts": 1791609969091,
+      "reason": "QTY_MISMATCH_BEFORE_REPAIR",
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_FAILED",
+      "ts": 1791609969976,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791610033261,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791610033266,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791598816652",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791610034678,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_SUBMISSION_NOT_SENT",
+      "ts": 1791610035929,
+      "reason": "Error: TP_LOCAL_PREWIRE_FAILED: database is locked",
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_FAILED",
+      "ts": 1791610035930,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_REPAIR_STARTED",
+      "ts": 1791610159086,
+      "reason": null,
+      "source": "DETERMINISTIC_POSITION_FACTS",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_TARGET_SELECTED",
+      "ts": 1791610159088,
+      "reason": "AI_HORIZON_EXPIRED_AT_1791598816652",
+      "source": "FIXED_PROFITABLE",
+      "symbolHash": null
+    },
+    {
+      "type": "TP_SUBMISSION_PREPARED",
+      "ts": 1791610160262,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    },
+    {
+      "type": "TP_PROTECTED",
+      "ts": 1791610162432,
+      "reason": null,
+      "source": null,
+      "symbolHash": null
+    }
+  ],
+  "postStartGapSamples": 2,
+  "lastSignedAndLocalProtection": "30/30",
+  "acceptanceStarted": false
+}

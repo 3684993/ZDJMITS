@@ -1,0 +1,40 @@
+{
+  "observedAt": "2026-10-10T05:03:40.983Z",
+  "stagePath": "D:/MITS-RELEASES/ZDJMITS-v398-trade24h-6533e4d",
+  "frozenGitHead": "6533e4d5bbedfe758336f3dd40c188bad37413cd",
+  "cleanSource": true,
+  "sourceHash": "6a320a861565a991d24a36d847801f99c8e762c8362344dbd6fb09de1e5770e8",
+  "artifactHash": "0de7665352d82b261c1d620fc65de91e24d628ccffe875b1ee7a878b8a1fd7f6",
+  "buildId": "3.9.8-0de7665352d82b261c1d",
+  "entrypointSha256": "df014d7d4da78af092844fa646c3ac1409bff38ec27c35da5db3de0caf072376",
+  "settings": {
+    "version": 253,
+    "payloadSha256": "9edea9f1bc02a3b844b2baf50f0be541871d167860ef6bb5fcb8449e0b744151"
+  },
+  "approval": {
+    "revoked": true,
+    "accountScopeHash": "81bf573e577cdf58e76b1d26b9d71788cd7c74631c09658f228e9e19ec094ad2"
+  },
+  "backup": {
+    "bytes": 1187463168,
+    "sha256": "7bb3ab80e1c1befc70e9f7c2917d3af831a5aaabf7445b7f1f73dab54101ef7b",
+    "elapsedMs": 2411,
+    "quickCheck": "ok",
+    "fsync": true,
+    "settingsMatch": true
+  },
+  "rollback": {
+    "stagePath": "D:\\MITS-RELEASES\\ZDJMITS-v398-main-6f228cd",
+    "pid": 23688,
+    "buildId": "3.9.8-bb45c11acbe9819a3456",
+    "sourceHash": "9d9f1d0a3865cec28c759766d3fca820aa978c9f809740731f84819b4cb3d73f",
+    "artifactHash": "bb45c11acbe9819a34566eb59f5eaaf0beff8912d92955bbdd882d035e06117e",
+    "preserveCurrentDurableDb": true,
+    "automaticStaleDbRestore": false
+  },
+  "qualificationBasis": "PRIOR_DIRECT_OPERATOR_ATTESTATION_EXISTING_SINGAPORE_ROUTE_PERSISTS; NOT_OFFICIAL_VERIFICATION",
+  "taskSettingsWrites": 0,
+  "taskExchangeWrites": 0,
+  "lifecycleAttempts": 0,
+  "filesCount": 1986
+}

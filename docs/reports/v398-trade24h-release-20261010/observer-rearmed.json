@@ -1,0 +1,13 @@
+{
+  "at": "2026-10-10T05:15:08.9665718Z",
+  "oldObserverEndedNaturallyWithOldEngine": true,
+  "oldObserverKilledByTask": false,
+  "task": "ZDJ-MITS-Engine-Crash-Observer",
+  "hiddenWscript": true,
+  "principalPreserved": true,
+  "restartSettingsPreserved": true,
+  "newReceipt": "D:\\MITS-OPERATIONS\\trade24h-private-20261010\\new-engine-receipt.json",
+  "newRepositoryRoot": "D:\\MITS-RELEASES\\ZDJMITS-v398-trade24h-6533e4d",
+  "newSourceCommit": "6533e4d5bbedfe758336f3dd40c188bad37413cd",
+  "state": "Running"
+}

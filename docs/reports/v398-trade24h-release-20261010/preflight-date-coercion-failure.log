@@ -1,0 +1,5 @@
+Exception: D:\MITS-OPERATIONS\trade24h-private-20261010\controlled-switch.ps1:20
+Line |
+  20 |  … UniversalTime()).TotalSeconds -ge 60){throw 'SIGNED_SAMPLE_EXPIRED'}}
+     |                                          ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+     | SIGNED_SAMPLE_EXPIRED

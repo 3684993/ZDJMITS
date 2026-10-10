@@ -4,6 +4,6 @@ Clean independent branch codex/v398-trade24h-final starts at PR34 89a63872ff4f88
 
 npm ci PASS. Original targeted tests 14/17 passed; all original RED and intermediate logs retained. Final verify:ci exit0 includes dependencies/scripts/release/S00/typecheck/build, contracts2/core63/dashboard138/Engine572+602+409+414 = 2200 passing tests. S00 initially detected intentional merged entrypoint inventory drift; mechanically regenerated 200-entry review and reran the normal gate. No S00 rule removed. See verify-ci-combined-final.log. Targeted identity/UI regression logs are also retained.
 
-Combined exact-head hosted CI is PENDING at this source commit; individual PR greens are not combined evidence. Hosted results and job logs will be committed after readback. Release/main promotion/lifecycle remains gated until combined hosted CI and fresh runtime safety close.
+Combined exact-source6533e4d hosted CI38025974065 SUCCESS. Full job log and exact head/step metadata archived in github-actions-integration.json and github-ci-integration-38025974065-success.log. Individual PR greens were not substituted. Actual main promotion and lifecycle occurred only after this CI and fresh gates; see CONTROLLED_DEPLOY_RECEIPT.md. Subsequent closeout commits modify evidence/docs only; deployed runtime stays frozen at6533e4d.
 
 PR33 borrow is default OFF; reasoner/output mismatch is not relaxed and no live cross-GPU Primary routing enabled. PR32 is TP_SHADOW only with no real TP execution provider. Primary remains the sole Entry authority.

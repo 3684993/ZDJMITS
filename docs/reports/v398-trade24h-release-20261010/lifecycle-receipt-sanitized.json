@@ -1,0 +1,37 @@
+{
+  "preStop": {
+    "at": "2026-10-10T05:09:33.2865187Z",
+    "sourceCommit": "6533e4d5bbedfe758336f3dd40c188bad37413cd",
+    "oldPid": 23688,
+    "oldHostPid": 26576,
+    "oldInstance": "07230a28-51ac-4dda-9c95-20a789b382b4",
+    "oldBuild": "3.9.8-bb45c11acbe9819a3456",
+    "newBuild": "3.9.8-0de7665352d82b261c1d",
+    "oldApprovalUnchanged": true,
+    "privateAgeMs": 1591,
+    "signedPositions": 30,
+    "signedProtected": 30,
+    "canTrade": true,
+    "productionWrites": 0,
+    "blockedProductionAttempts": 0,
+    "modelProxyPids": {
+      "port8081": 3400,
+      "port8084": 22336,
+      "port20091": 18300,
+      "port8083": 14020
+    },
+    "restartAuthorization": "LATEST_USER_ONE_ENGINE_ONLY",
+    "long24h": "HELD_UNTIL_USER_INSTRUCTION",
+    "automaticRetries": 0
+  },
+  "newHostReceipt": {
+    "launchId": "v398-trade24h-6533e4d-20261010-one",
+    "pid": 23936,
+    "hostPid": 12440,
+    "startedAt": 1791608978473,
+    "enginePath": "D:\\MITS-RELEASES\\ZDJMITS-v398-trade24h-6533e4d\\apps\\engine\\dist\\main.js"
+  },
+  "stops": 1,
+  "starts": 1,
+  "automaticEngineRetries": 0
+}

@@ -1,0 +1,20 @@
+{
+  "status": "DEPLOYED_READY_FOR_USER_VERIFICATION",
+  "acceptance24hStatus": "NOT_STARTED_WAITING_USER_INSTRUCTION",
+  "t0": null,
+  "oldAttemptStatus": "ABORTED_SAFETY_FAILURE",
+  "oldAttemptAbortedAt": "2026-10-10T08:34:00.270+08:00",
+  "sourceCommit": "6533e4d5bbedfe758336f3dd40c188bad37413cd",
+  "pid": 23936,
+  "instanceId": "d071f59f-9eba-4efa-b3da-3d4289f3671f",
+  "buildId": "3.9.8-0de7665352d82b261c1d",
+  "observedAt": "2026-10-10T05:27:05.781683+00:00",
+  "newLongAcceptanceStarted": false,
+  "oldHeartbeatStatus": "PAUSED",
+  "oldCheckpointTargetsAbortedState": true,
+  "GPUCollectorIsSeparateBoundedTelemetry": true,
+  "observedPostStartProtectionGaps": 2,
+  "lastSignedProtection": "30/30",
+  "lastProtectionObservedAt": "2026-10-10T13:31:09.391+08:00",
+  "continuousSafetyOrAcceptancePass": false
+}

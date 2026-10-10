@@ -1,0 +1,12 @@
+{
+  "at": "2026-10-10T05:25:59.6532860Z",
+  "collectorPid": 21712,
+  "samples": 241,
+  "intervalSeconds": 15,
+  "readonly": true,
+  "writes": "GPU_TELEMETRY_FILES_ONLY",
+  "outputRoot": "D:/MITS-RELEASES/ZDJMITS-v398-trade24h-6533e4d/apps/engine/scripts/performance",
+  "producerSource": "ORIGINAL_SEALED_COLLECTOR_WITH_EXPLICIT_OUTPUT_DIRECTORY",
+  "engineRestarts": 0,
+  "modelProxyRestarts": 0
+}

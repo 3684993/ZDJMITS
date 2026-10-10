@@ -3,7 +3,7 @@ export type LampFact={tone:LampTone;text:string;detail:string};
 export const numberOrNull=(value:unknown):number|null=>typeof value==='number'&&Number.isFinite(value)?value:null;
 export const ageMs=(stamp:unknown,now=Date.now()):number|null=>{
   const value=numberOrNull(stamp);
-  return value!==null&&value>0&&value<=now?now-value:null;
+  // Tolerate bounded Engine/client wall-clock skew. Far-future timestamps are not trusted.\n  return value!==null&&value>0&&value<=now+10_000?Math.max(0,now-value):null;
 };
 export const stale=(stamp:unknown,now=Date.now(),ttl=60_000)=>{const age=ageMs(stamp,now);return age===null||age>ttl;};
 export function aiLamp(resource:any,now=Date.now()):LampFact{

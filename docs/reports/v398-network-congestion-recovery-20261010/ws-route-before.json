@@ -1,0 +1,257 @@
+{
+  "startedAt": 1791642477486,
+  "completedAt": 1791642497497,
+  "route": {
+    "publicUrl": "wss://fstream.binancefuture.com/public/ws",
+    "marketUrl": "wss://fstream.binancefuture.com/market/ws",
+    "throughSameProxy": true
+  },
+  "exchangeWrites": 0,
+  "metrics": {
+    "quoteFactFreshness": {
+      "evaluatedAt": 1791642497496,
+      "maxAgeMs": 5000,
+      "retainedSymbols": 2,
+      "staleByField": {
+        "last": 0,
+        "mark": 0,
+        "bid": 1,
+        "ask": 1
+      },
+      "samples": [
+        {
+          "symbol": "BTCUSDT",
+          "fields": {
+            "last": {
+              "at": 1791642493092,
+              "ageMs": 4404,
+              "fresh": true
+            },
+            "quoteVolumeUsd24h": {
+              "at": 1791642493092,
+              "ageMs": 4404,
+              "fresh": true
+            },
+            "priceChangePercent24h": {
+              "at": 1791642493092,
+              "ageMs": 4404,
+              "fresh": true
+            },
+            "tradeCount24h": {
+              "at": 1791642493092,
+              "ageMs": 4404,
+              "fresh": true
+            },
+            "mark": {
+              "at": 1791642494000,
+              "ageMs": 3496,
+              "fresh": true
+            },
+            "bid": {
+              "at": 1791642494040,
+              "ageMs": 3456,
+              "fresh": true
+            },
+            "ask": {
+              "at": 1791642494040,
+              "ageMs": 3456,
+              "fresh": true
+            }
+          }
+        },
+        {
+          "symbol": "ETHUSDT",
+          "fields": {
+            "last": {
+              "at": 1791642493647,
+              "ageMs": 3849,
+              "fresh": true
+            },
+            "quoteVolumeUsd24h": {
+              "at": 1791642493647,
+              "ageMs": 3849,
+              "fresh": true
+            },
+            "priceChangePercent24h": {
+              "at": 1791642493647,
+              "ageMs": 3849,
+              "fresh": true
+            },
+            "tradeCount24h": {
+              "at": 1791642493647,
+              "ageMs": 3849,
+              "fresh": true
+            },
+            "mark": {
+              "at": 1791642494000,
+              "ageMs": 3496,
+              "fresh": true
+            },
+            "bid": {
+              "at": 1791642489979,
+              "ageMs": 7517,
+              "fresh": false
+            },
+            "ask": {
+              "at": 1791642489979,
+              "ageMs": 7517,
+              "fresh": false
+            }
+          }
+        }
+      ]
+    },
+    "state": "LIVE",
+    "connectedAt": 1791642482761,
+    "lastMessageAt": 1791642497434,
+    "lastTickerMessageAt": 1791642497429,
+    "lastBookTickerMessageAt": 1791642497434,
+    "lastPongAt": null,
+    "reconnects": 0,
+    "gaps": 0,
+    "gapsByType": {
+      "websocketConnection": 0,
+      "quote": 0,
+      "bookTicker": 0,
+      "depthSequence": 0,
+      "kline": 0,
+      "eventTimestamp": 0,
+      "subscription": 0
+    },
+    "backfills": 0,
+    "subscriptions": 15,
+    "cumulativeSubscriptions": 15,
+    "recoverySuccess": 0,
+    "recoveryFailure": 0,
+    "lastError": null,
+    "recovery": {
+      "active": 0,
+      "queued": 0,
+      "maxConcurrent": 2,
+      "minStartIntervalMs": 500
+    },
+    "lastKlineGap": null,
+    "streamTraffic": {
+      "PUBLIC": {
+        "last60sDecodedBytes": 277981,
+        "last60sMessages": 1436,
+        "last60sByType": {
+          "CONTROL_OR_OTHER": {
+            "messages": 1,
+            "decodedBytes": 22
+          },
+          "BOOK_TICKER": {
+            "messages": 1393,
+            "decodedBytes": 233739
+          },
+          "DEPTH": {
+            "messages": 42,
+            "decodedBytes": 44220
+          }
+        },
+        "totalByType": {
+          "CONTROL_OR_OTHER": {
+            "messages": 1,
+            "decodedBytes": 22
+          },
+          "BOOK_TICKER": {
+            "messages": 1393,
+            "decodedBytes": 233739
+          },
+          "DEPTH": {
+            "messages": 42,
+            "decodedBytes": 44220
+          }
+        },
+        "totalDecodedBytes": 277981,
+        "totalMessages": 1436,
+        "windowAsOf": 1791642497496,
+        "windowResolutionMs": 1000,
+        "requestedGlobalStreams": [
+          "!bookTicker"
+        ],
+        "subscriptionEvidence": "EXCHANGE_ACKED",
+        "measurement": "DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES"
+      },
+      "MARKET": {
+        "last60sDecodedBytes": 72958,
+        "last60sMessages": 301,
+        "last60sByType": {
+          "CONTROL_OR_OTHER": {
+            "messages": 1,
+            "decodedBytes": 22
+          },
+          "KLINE": {
+            "messages": 141,
+            "decodedBytes": 44579
+          },
+          "AGG_TRADE": {
+            "messages": 125,
+            "decodedBytes": 20832
+          },
+          "TICKER_24H": {
+            "messages": 12,
+            "decodedBytes": 3565
+          },
+          "MARK_PRICE": {
+            "messages": 22,
+            "decodedBytes": 3960
+          }
+        },
+        "totalByType": {
+          "CONTROL_OR_OTHER": {
+            "messages": 1,
+            "decodedBytes": 22
+          },
+          "KLINE": {
+            "messages": 141,
+            "decodedBytes": 44579
+          },
+          "AGG_TRADE": {
+            "messages": 125,
+            "decodedBytes": 20832
+          },
+          "TICKER_24H": {
+            "messages": 12,
+            "decodedBytes": 3565
+          },
+          "MARK_PRICE": {
+            "messages": 22,
+            "decodedBytes": 3960
+          }
+        },
+        "totalDecodedBytes": 72958,
+        "totalMessages": 301,
+        "windowAsOf": 1791642497496,
+        "windowResolutionMs": 1000,
+        "requestedGlobalStreams": [],
+        "subscriptionEvidence": "EXCHANGE_ACKED",
+        "measurement": "DECODED_WS_APPLICATION_PAYLOAD_NOT_SSH_WIRE_BYTES"
+      }
+    },
+    "lanes": {
+      "PUBLIC": {
+        "state": "LIVE",
+        "connectedAt": 1791642481355,
+        "lastMessageAt": 1791642497434,
+        "reconnects": 0,
+        "lastError": null,
+        "subscriptions": 3,
+        "confirmedSubscriptions": 3,
+        "pendingControls": 0,
+        "lastAckAt": 1791642482358
+      },
+      "MARKET": {
+        "state": "LIVE",
+        "connectedAt": 1791642482761,
+        "lastMessageAt": 1791642497430,
+        "reconnects": 0,
+        "lastError": null,
+        "subscriptions": 12,
+        "confirmedSubscriptions": 12,
+        "pendingControls": 0,
+        "lastAckAt": 1791642483793
+      }
+    }
+  }
+}

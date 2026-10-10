@@ -1,0 +1,270 @@
+﻿2026-10-10T02:32:46.4083723Z Current runner version: '2.337.0'
+2026-10-10T02:32:46.4118662Z ##[group]Runner Image Provisioner
+2026-10-10T02:32:46.4119687Z Hosted Compute Agent
+2026-10-10T02:32:46.4120356Z Version: 20260901.588
+2026-10-10T02:32:46.4121045Z Commit: f88ec8081b781fac6c440065ac7ff9e710ce3d0b
+2026-10-10T02:32:46.4121867Z Build Date: 2026-09-01T19:56:44Z
+2026-10-10T02:32:46.4122550Z Worker ID: {79b22f9e-c72d-4d88-a014-57db52d8d52c}
+2026-10-10T02:32:46.4123219Z Azure Region: northcentralus
+2026-10-10T02:32:46.4123784Z ##[endgroup]
+2026-10-10T02:32:46.4125070Z ##[group]Operating System
+2026-10-10T02:32:46.4125718Z Microsoft Windows Server 2025
+2026-10-10T02:32:46.4126285Z 10.0.26100
+2026-10-10T02:32:46.4126788Z Datacenter
+2026-10-10T02:32:46.4127269Z ##[endgroup]
+2026-10-10T02:32:46.4127752Z ##[group]Runner Image
+2026-10-10T02:32:46.4128296Z Image: windows-2025-vs2026
+2026-10-10T02:32:46.4128846Z Version: 20260925.250.1
+2026-10-10T02:32:46.4130369Z Included Software: https://github.com/actions/runner-images/blob/win25-vs2026/20260925.250/images/windows/Windows2025-VS2026-Readme.md
+2026-10-10T02:32:46.4132314Z Image Release: https://github.com/actions/runner-images/releases/tag/win25-vs2026%2F20260925.250
+2026-10-10T02:32:46.4133399Z ##[endgroup]
+2026-10-10T02:32:46.4134437Z ##[group]GITHUB_TOKEN Permissions
+2026-10-10T02:32:46.4136254Z Contents: read
+2026-10-10T02:32:46.4136865Z Metadata: read
+2026-10-10T02:32:46.4137362Z ##[endgroup]
+2026-10-10T02:32:46.4139331Z Secret source: Actions
+2026-10-10T02:32:46.4140203Z Cache mode: write
+2026-10-10T02:32:46.4140881Z Prepare workflow directory
+2026-10-10T02:32:46.4541075Z Prepare all required actions
+2026-10-10T02:32:46.4589260Z Getting action download info
+2026-10-10T02:32:46.6205512Z Download action repository 'actions/checkout@v4' (SHA:11d5960a326750d5838078e36cf38b85af677262)
+2026-10-10T02:32:46.7544330Z Download action repository 'actions/setup-node@v4' (SHA:49933ea5288caeca8642d1e84afbd3f7d6820020)
+2026-10-10T02:32:47.0670828Z Complete job name: verify
+2026-10-10T02:32:47.2135930Z ##[group]Run actions/checkout@v4
+2026-10-10T02:32:47.2136942Z with:
+2026-10-10T02:32:47.2137354Z   fetch-depth: 0
+2026-10-10T02:32:47.2137799Z   repository: 3684993/ZDJMITS
+2026-10-10T02:32:47.2141511Z   token: ***
+2026-10-10T02:32:47.2141915Z   ssh-strict: true
+2026-10-10T02:32:47.2142333Z   ssh-user: git
+2026-10-10T02:32:47.2142744Z   persist-credentials: true
+2026-10-10T02:32:47.2143208Z   clean: true
+2026-10-10T02:32:47.2143627Z   sparse-checkout-cone-mode: true
+2026-10-10T02:32:47.2144125Z   fetch-tags: false
+2026-10-10T02:32:47.2144550Z   show-progress: true
+2026-10-10T02:32:47.2144969Z   lfs: false
+2026-10-10T02:32:47.2145807Z   submodules: false
+2026-10-10T02:32:47.2146275Z   set-safe-directory: true
+2026-10-10T02:32:47.2146757Z   allow-unsafe-pr-checkout: false
+2026-10-10T02:32:47.2147514Z ##[endgroup]
+2026-10-10T02:32:47.3563058Z Syncing repository: 3684993/ZDJMITS
+2026-10-10T02:32:47.3564764Z ##[group]Getting Git version info
+2026-10-10T02:32:47.3565454Z Working directory is 'D:\a\ZDJMITS\ZDJMITS'
+2026-10-10T02:32:47.4479794Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-10T02:32:47.6564241Z git version 2.55.0.windows.5
+2026-10-10T02:32:47.6608791Z ##[endgroup]
+2026-10-10T02:32:47.6627682Z Temporarily overriding HOME='D:\a\_temp\2abbf0ec-ce4c-4955-897c-b2cea5413791' before making global git config changes
+2026-10-10T02:32:47.6628982Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T02:32:47.6638016Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\ZDJMITS\ZDJMITS
+2026-10-10T02:32:47.6949064Z Deleting the contents of 'D:\a\ZDJMITS\ZDJMITS'
+2026-10-10T02:32:47.6955018Z ##[group]Initializing the repository
+2026-10-10T02:32:47.6964079Z [command]"C:\Program Files\Git\bin\git.exe" init D:\a\ZDJMITS\ZDJMITS
+2026-10-10T02:32:47.7461077Z Initialized empty Git repository in D:/a/ZDJMITS/ZDJMITS/.git/
+2026-10-10T02:32:47.7499559Z [command]"C:\Program Files\Git\bin\git.exe" remote add origin https://github.com/3684993/ZDJMITS
+2026-10-10T02:32:47.7806593Z ##[endgroup]
+2026-10-10T02:32:47.7815490Z ##[group]Disabling automatic garbage collection
+2026-10-10T02:32:47.7816310Z [command]"C:\Program Files\Git\bin\git.exe" config --local gc.auto 0
+2026-10-10T02:32:47.8088508Z ##[endgroup]
+2026-10-10T02:32:47.8089208Z ##[group]Setting up auth
+2026-10-10T02:32:47.8100883Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T02:32:47.8377195Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-10T02:32:48.9527667Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T02:32:48.9811410Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-10T02:32:49.5022450Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T02:32:49.5322228Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-10T02:32:50.0455047Z [command]"C:\Program Files\Git\bin\git.exe" config --local http.https://github.com/.extraheader "AUTHORIZATION: basic ***"
+2026-10-10T02:32:50.0743047Z ##[endgroup]
+2026-10-10T02:32:50.0743867Z ##[group]Fetching the repository
+2026-10-10T02:32:50.0755910Z [command]"C:\Program Files\Git\bin\git.exe" -c protocol.version=2 fetch --prune --no-recurse-submodules origin +refs/heads/*:refs/remotes/origin/* +refs/tags/*:refs/tags/* +43350d1d7ab626b52c9664141642e875a92c75fa:refs/remotes/pull/32/merge
+2026-10-10T02:32:53.1883294Z From https://github.com/3684993/ZDJMITS
+2026-10-10T02:32:53.1884652Z  * [new branch]      audit-live-20260912                      -> origin/audit-live-20260912
+2026-10-10T02:32:53.1886035Z  * [new branch]      backup/main-wip-before-v392-release-20260912 -> origin/backup/main-wip-before-v392-release-20260912
+2026-10-10T02:32:53.1887028Z  * [new branch]      chatgpt/reactivity-core-checkpoint-20261008 -> origin/chatgpt/reactivity-core-checkpoint-20261008
+2026-10-10T02:32:53.1888060Z  * [new branch]      chatgpt/reactivity-core-checkpoint-current-main-20261008 -> origin/chatgpt/reactivity-core-checkpoint-current-main-20261008
+2026-10-10T02:32:53.1889099Z  * [new branch]      chatgpt/trade-entry-exit-quality-review-20261008 -> origin/chatgpt/trade-entry-exit-quality-review-20261008
+2026-10-10T02:32:53.1890342Z  * [new branch]      chatgpt/v397-account-network-closeout-20261005 -> origin/chatgpt/v397-account-network-closeout-20261005
+2026-10-10T02:32:53.1891871Z  * [new branch]      chatgpt/v398-performance-real-metrics-d0-d2-20261010 -> origin/chatgpt/v398-performance-real-metrics-d0-d2-20261010
+2026-10-10T02:32:53.1892772Z  * [new branch]      codex/audit-remediation-20261007         -> origin/codex/audit-remediation-20261007
+2026-10-10T02:32:53.1893550Z  * [new branch]      codex/audit-remediation-final-20261007   -> origin/codex/audit-remediation-final-20261007
+2026-10-10T02:32:53.1894345Z  * [new branch]      codex/llama-vulkan-memory-20261009       -> origin/codex/llama-vulkan-memory-20261009
+2026-10-10T02:32:53.1895075Z  * [new branch]      codex/main-maintenance-20261007          -> origin/codex/main-maintenance-20261007
+2026-10-10T02:32:53.1895814Z  * [new branch]      codex/p0-native-failfast-local-20261009  -> origin/codex/p0-native-failfast-local-20261009
+2026-10-10T02:32:53.1896565Z  * [new branch]      codex/reboot-orchestration-20261009      -> origin/codex/reboot-orchestration-20261009
+2026-10-10T02:32:53.1897353Z  * [new branch]      codex/rest-connection-reuse-20261007     -> origin/codex/rest-connection-reuse-20261007
+2026-10-10T02:32:53.1898996Z  * [new branch]      codex/trade-record-cycle-accounting-final -> origin/codex/trade-record-cycle-accounting-final
+2026-10-10T02:32:53.1899777Z  * [new branch]      codex/v393-final-audit-20260915          -> origin/codex/v393-final-audit-20260915
+2026-10-10T02:32:53.1900469Z  * [new branch]      codex/v396-astra-handoff-20260922        -> origin/codex/v396-astra-handoff-20260922
+2026-10-10T02:32:53.1901200Z  * [new branch]      codex/v396-design-completion-20260921    -> origin/codex/v396-design-completion-20260921
+2026-10-10T02:32:53.1902103Z  * [new branch]      codex/v396-entry-frequency-risk-audit-20260927 -> origin/codex/v396-entry-frequency-risk-audit-20260927
+2026-10-10T02:32:53.1903649Z  * [new branch]      codex/v396-final-convergence-20260922    -> origin/codex/v396-final-convergence-20260922
+2026-10-10T02:32:53.1904466Z  * [new branch]      codex/v396-project-plan-20260921         -> origin/codex/v396-project-plan-20260921
+2026-10-10T02:32:53.1905263Z  * [new branch]      codex/v396-s00-reviewed-baseline-20260921 -> origin/codex/v396-s00-reviewed-baseline-20260921
+2026-10-10T02:32:53.1906185Z  * [new branch]      codex/v398-ai-entry-execution-context-20261009 -> origin/codex/v398-ai-entry-execution-context-20261009
+2026-10-10T02:32:53.1906942Z  * [new branch]      codex/v398-gpu2-tp-shadow                -> origin/codex/v398-gpu2-tp-shadow
+2026-10-10T02:32:53.1907545Z  * [new branch]      codex/v398-network-n1                    -> origin/codex/v398-network-n1
+2026-10-10T02:32:53.1908183Z  * [new branch]      codex/v398-network-n2-mark-scope         -> origin/codex/v398-network-n2-mark-scope
+2026-10-10T02:32:53.1908870Z  * [new branch]      codex/v398-network-n3-recvwindow         -> origin/codex/v398-network-n3-recvwindow
+2026-10-10T02:32:53.1909658Z  * [new branch]      codex/v398-order-lifecycle-visibility-20261009 -> origin/codex/v398-order-lifecycle-visibility-20261009
+2026-10-10T02:32:53.1911779Z  * [new branch]      codex/v398-order-lifecycle-visibility-fix-20261009 -> origin/codex/v398-order-lifecycle-visibility-fix-20261009
+2026-10-10T02:32:53.1912969Z  * [new branch]      codex/v398-passive-proxy-health-20261009 -> origin/codex/v398-passive-proxy-health-20261009
+2026-10-10T02:32:53.1914200Z  * [new branch]      codex/v398-performance-dashboard-d0-d2   -> origin/codex/v398-performance-dashboard-d0-d2
+2026-10-10T02:32:53.1915423Z  * [new branch]      codex/v398-primary-cadence-cutover-evidence-20261009 -> origin/codex/v398-primary-cadence-cutover-evidence-20261009
+2026-10-10T02:32:53.1916375Z  * [new branch]      codex/v398-primary-cadence-fix-20261009  -> origin/codex/v398-primary-cadence-fix-20261009
+2026-10-10T02:32:53.1917189Z  * [new branch]      codex/v398-primary-cadence-p0-20261009   -> origin/codex/v398-primary-cadence-p0-20261009
+2026-10-10T02:32:53.1918050Z  * [new branch]      codex/v398-silent-reboot-registration-20261010 -> origin/codex/v398-silent-reboot-registration-20261010
+2026-10-10T02:32:53.1918892Z  * [new branch]      docs/v395-24h-final-audit-20260921       -> origin/docs/v395-24h-final-audit-20260921
+2026-10-10T02:32:53.1919890Z  * [new branch]      docs/v395-24h-final-report-20260921      -> origin/docs/v395-24h-final-report-20260921
+2026-10-10T02:32:53.1920716Z  * [new branch]      docs/v395-actions-recovery-deploy-20260919 -> origin/docs/v395-actions-recovery-deploy-20260919
+2026-10-10T02:32:53.1922048Z  * [new branch]      docs/v395-handover-20260919              -> origin/docs/v395-handover-20260919
+2026-10-10T02:32:53.1922834Z  * [new branch]      docs/v395-r13-early-adjudication-20260920 -> origin/docs/v395-r13-early-adjudication-20260920
+2026-10-10T02:32:53.1923718Z  * [new branch]      docs/v395-r15-terminal-audit-governance-20260920 -> origin/docs/v395-r15-terminal-audit-governance-20260920
+2026-10-10T02:32:53.1924574Z  * [new branch]      docs/v395-r16-final-safety-24h-20260920  -> origin/docs/v395-r16-final-safety-24h-20260920
+2026-10-10T02:32:53.1925879Z  * [new branch]      docs/v395-shadow-deploy-20260919         -> origin/docs/v395-shadow-deploy-20260919
+2026-10-10T02:32:53.1926581Z  * [new branch]      fix/v392-astra-final-fixes               -> origin/fix/v392-astra-final-fixes
+2026-10-10T02:32:53.1927469Z  * [new branch]      gpt56-closeout-20260912                  -> origin/gpt56-closeout-20260912
+2026-10-10T02:32:53.1928171Z  * [new branch]      gpt56-final-convergence-20260913         -> origin/gpt56-final-convergence-20260913
+2026-10-10T02:32:53.1928883Z  * [new branch]      gpt56-optimize-v392-20260912             -> origin/gpt56-optimize-v392-20260912
+2026-10-10T02:32:53.1929579Z  * [new branch]      integrate/8096-main-sync-20261003        -> origin/integrate/8096-main-sync-20261003
+2026-10-10T02:32:53.1930280Z  * [new branch]      integrate/v392-release-20260912          -> origin/integrate/v392-release-20260912
+2026-10-10T02:32:53.1931165Z  * [new branch]      main                                     -> origin/main
+2026-10-10T02:32:53.1931936Z  * [new branch]      online/v397-account-network-closeout-20261005 -> origin/online/v397-account-network-closeout-20261005
+2026-10-10T02:32:53.1932816Z  * [new branch]      online/v397-account-network-final-20261005 -> origin/online/v397-account-network-final-20261005
+2026-10-10T02:32:53.1933705Z  * [new branch]      online/v397-post-ai-authority-collapse-20261004 -> origin/online/v397-post-ai-authority-collapse-20261004
+2026-10-10T02:32:53.1934508Z  * [new branch]      snapshot/8096-2a6b864-20261003           -> origin/snapshot/8096-2a6b864-20261003
+2026-10-10T02:32:53.1935224Z  * [new branch]      trading-quality-stage1-3-20260914        -> origin/trading-quality-stage1-3-20260914
+2026-10-10T02:32:53.1935943Z  * [new branch]      v393-a1-eligibility-contract             -> origin/v393-a1-eligibility-contract
+2026-10-10T02:32:53.1936934Z  * [new branch]      v393-a1-working                          -> origin/v393-a1-working
+2026-10-10T02:32:53.1937667Z  * [new branch]      v393-a2-working                          -> origin/v393-a2-working
+2026-10-10T02:32:53.1938321Z  * [new branch]      v393-final-closeout-20260915             -> origin/v393-final-closeout-20260915
+2026-10-10T02:32:53.1939023Z  * [new branch]      v393-final-closeout-fix-20260915         -> origin/v393-final-closeout-fix-20260915
+2026-10-10T02:32:53.1939708Z  * [new branch]      v393-offline-checkpoints                 -> origin/v393-offline-checkpoints
+2026-10-10T02:32:53.1940312Z  * [new branch]      v393-offline-ci                          -> origin/v393-offline-ci
+2026-10-10T02:32:53.1940879Z  * [new branch]      v393-offline-dev                         -> origin/v393-offline-dev
+2026-10-10T02:32:53.1941992Z  * [new branch]      v393-offline-final-working               -> origin/v393-offline-final-working
+2026-10-10T02:32:53.1942630Z  * [new branch]      v393-offline-impl                        -> origin/v393-offline-impl
+2026-10-10T02:32:53.1943331Z  * [new branch]      v393-offline-implementation-20260914     -> origin/v393-offline-implementation-20260914
+2026-10-10T02:32:53.1944028Z  * [new branch]      v393-offline-review                      -> origin/v393-offline-review
+2026-10-10T02:32:53.1944614Z  * [new branch]      v393-offline-stage                       -> origin/v393-offline-stage
+2026-10-10T02:32:53.1945276Z  * [new branch]      v393-p0-runtime-recovery-20260915        -> origin/v393-p0-runtime-recovery-20260915
+2026-10-10T02:32:53.1946159Z  * [new branch]      v393-p0-tp-risk-recovery-20260915        -> origin/v393-p0-tp-risk-recovery-20260915
+2026-10-10T02:32:53.1947034Z  * [new branch]      v393-private-truth-tp-canary-20260916    -> origin/v393-private-truth-tp-canary-20260916
+2026-10-10T02:32:53.1948039Z  * [new branch]      v393-runtime-stability-final-20260915    -> origin/v393-runtime-stability-final-20260915
+2026-10-10T02:32:53.1948741Z  * [new branch]      v393-source-ffd225e                      -> origin/v393-source-ffd225e
+2026-10-10T02:32:53.1949472Z  * [new branch]      v394-binance-governance-settings-20260918 -> origin/v394-binance-governance-settings-20260918
+2026-10-10T02:32:53.1950451Z  * [new branch]      v395-economics-human-managed-20260919    -> origin/v395-economics-human-managed-20260919
+2026-10-10T02:32:53.1951196Z  * [new branch]      v395-enforce-readiness-20260919          -> origin/v395-enforce-readiness-20260919
+2026-10-10T02:32:53.1951799Z  * [new ref]         43350d1d7ab626b52c9664141642e875a92c75fa -> pull/32/merge
+2026-10-10T02:32:53.1953057Z ##[endgroup]
+2026-10-10T02:32:53.1953452Z ##[group]Determining the checkout info
+2026-10-10T02:32:53.1953886Z ##[endgroup]
+2026-10-10T02:32:53.1954221Z [command]"C:\Program Files\Git\bin\git.exe" sparse-checkout disable
+2026-10-10T02:32:53.2271735Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all extensions.worktreeConfig
+2026-10-10T02:32:53.2547302Z ##[group]Checking out the ref
+2026-10-10T02:32:53.2554794Z [command]"C:\Program Files\Git\bin\git.exe" checkout --progress --force refs/remotes/pull/32/merge
+2026-10-10T02:32:54.3207437Z Updating files:  65% (2303/3535)
+2026-10-10T02:32:54.3418646Z Updating files:  66% (2334/3535)
+2026-10-10T02:32:54.3634844Z Updating files:  67% (2369/3535)
+2026-10-10T02:32:54.3818882Z Updating files:  68% (2404/3535)
+2026-10-10T02:32:54.4087195Z Updating files:  69% (2440/3535)
+2026-10-10T02:32:54.4244031Z Updating files:  70% (2475/3535)
+2026-10-10T02:32:54.5943917Z Updating files:  71% (2510/3535)
+2026-10-10T02:32:54.6646277Z Updating files:  72% (2546/3535)
+2026-10-10T02:32:54.6831034Z Updating files:  73% (2581/3535)
+2026-10-10T02:32:54.7485253Z Updating files:  74% (2616/3535)
+2026-10-10T02:32:54.7750224Z Updating files:  75% (2652/3535)
+2026-10-10T02:32:54.7870690Z Updating files:  76% (2687/3535)
+2026-10-10T02:32:54.7974660Z Updating files:  77% (2722/3535)
+2026-10-10T02:32:54.8059516Z Updating files:  78% (2758/3535)
+2026-10-10T02:32:54.8245022Z Updating files:  79% (2793/3535)
+2026-10-10T02:32:54.8497369Z Updating files:  80% (2828/3535)
+2026-10-10T02:32:55.0079074Z Updating files:  81% (2864/3535)
+2026-10-10T02:32:55.0180736Z Updating files:  82% (2899/3535)
+2026-10-10T02:32:55.0714281Z Updating files:  83% (2935/3535)
+2026-10-10T02:32:55.0797462Z Updating files:  84% (2970/3535)
+2026-10-10T02:32:55.0893638Z Updating files:  85% (3005/3535)
+2026-10-10T02:32:55.0985101Z Updating files:  86% (3041/3535)
+2026-10-10T02:32:55.1087354Z Updating files:  87% (3076/3535)
+2026-10-10T02:32:55.1171338Z Updating files:  88% (3111/3535)
+2026-10-10T02:32:55.1513146Z Updating files:  89% (3147/3535)
+2026-10-10T02:32:55.1660733Z Updating files:  90% (3182/3535)
+2026-10-10T02:32:55.1738543Z Updating files:  91% (3217/3535)
+2026-10-10T02:32:55.1802945Z Updating files:  92% (3253/3535)
+2026-10-10T02:32:55.1904713Z Updating files:  93% (3288/3535)
+2026-10-10T02:32:55.2009067Z Updating files:  94% (3323/3535)
+2026-10-10T02:32:55.2090661Z Updating files:  95% (3359/3535)
+2026-10-10T02:32:55.2174614Z Updating files:  96% (3394/3535)
+2026-10-10T02:32:55.2284426Z Updating files:  97% (3429/3535)
+2026-10-10T02:32:55.2380530Z Updating files:  98% (3465/3535)
+2026-10-10T02:32:55.2473230Z Updating files:  99% (3500/3535)
+2026-10-10T02:32:55.2473697Z Updating files: 100% (3535/3535)
+2026-10-10T02:32:55.2474124Z Updating files: 100% (3535/3535), done.
+2026-10-10T02:32:55.2611153Z Note: switching to 'refs/remotes/pull/32/merge'.
+2026-10-10T02:32:55.2611713Z
+2026-10-10T02:32:55.2612063Z You are in 'detached HEAD' state. You can look around, make experimental
+2026-10-10T02:32:55.2612947Z changes and commit them, and you can discard any commits you make in this
+2026-10-10T02:32:55.2613750Z state without impacting any branches by switching back to a branch.
+2026-10-10T02:32:55.2614046Z
+2026-10-10T02:32:55.2614238Z If you want to create a new branch to retain commits you create, you may
+2026-10-10T02:32:55.2614841Z do so (now or later) by using -c with the switch command. Example:
+2026-10-10T02:32:55.2615315Z
+2026-10-10T02:32:55.2615575Z   git switch -c <new-branch-name>
+2026-10-10T02:32:55.2617077Z
+2026-10-10T02:32:55.2617235Z Or undo this operation with:
+2026-10-10T02:32:55.2617525Z
+2026-10-10T02:32:55.2617652Z   git switch -
+2026-10-10T02:32:55.2617854Z
+2026-10-10T02:32:55.2618229Z Turn off this advice by setting config variable advice.detachedHead to false
+2026-10-10T02:32:55.2618804Z
+2026-10-10T02:32:55.2619525Z HEAD is now at 43350d1 Merge 47605605ba1a9eb0506e4b3ae3fd03978918aefe into b55f427eeda150c7cdc7b8beaaaddfd39aa9e6e1
+2026-10-10T02:32:55.2831505Z ##[endgroup]
+2026-10-10T02:32:55.3179033Z [command]"C:\Program Files\Git\bin\git.exe" log -1 --format=%H
+2026-10-10T02:32:55.3460725Z 43350d1d7ab626b52c9664141642e875a92c75fa
+2026-10-10T02:32:55.3968945Z ##[group]Run actions/setup-node@v4
+2026-10-10T02:32:55.3969260Z with:
+2026-10-10T02:32:55.3969448Z   node-version: 22
+2026-10-10T02:32:55.3969742Z   cache: npm
+2026-10-10T02:32:55.3970066Z   always-auth: false
+2026-10-10T02:32:55.3970260Z   check-latest: false
+2026-10-10T02:32:55.3972714Z   token: ***
+2026-10-10T02:32:55.3972891Z ##[endgroup]
+2026-10-10T02:32:55.5613529Z Found in cache @ C:\hostedtoolcache\windows\node\22.23.3\x64
+2026-10-10T02:32:55.5622837Z (node:2792) [DEP0040] DeprecationWarning: The `punycode` module is deprecated. Please use a userland alternative instead.
+2026-10-10T02:32:55.5623786Z (Use `node --trace-deprecation ...` to show where the warning was created)
+2026-10-10T02:32:55.5627565Z ##[group]Environment details
+2026-10-10T02:33:00.4973885Z node: v22.23.3
+2026-10-10T02:33:00.4974161Z npm: 10.9.9
+2026-10-10T02:33:00.4974337Z yarn: 1.22.22
+2026-10-10T02:33:00.4975610Z ##[endgroup]
+2026-10-10T02:33:00.5826758Z [command]C:\Windows\system32\cmd.exe /D /S /C "C:\hostedtoolcache\windows\node\22.23.3\x64\npm.cmd config get cache"
+2026-10-10T02:33:01.2304278Z C:\npm\cache
+2026-10-10T02:33:01.5927987Z Cache hit for: node-cache-Windows-x64-npm-3bb9c99a4d7c104cc81d06ffc077d46589631620ce5ff16b98c237f6f0c99e31
+2026-10-10T02:33:01.6050791Z (node:2792) [DEP0169] DeprecationWarning: `url.parse()` behavior is not standardized and prone to errors that have security implications. Use the WHATWG URL API instead. CVEs are not issued for `url.parse()` vulnerabilities.
+2026-10-10T02:33:02.1960432Z Received 38045033 of 38045033 (100.0%), 73.2 MBs/sec
+2026-10-10T02:33:02.1962897Z Cache Size: ~36 MB (38045033 B)
+2026-10-10T02:33:02.1994573Z [command]"C:\Program Files\Git\usr\bin\tar.exe" -xf D:/a/_temp/6e0c7864-eff3-404e-9c20-fc58292052ed/cache.tzst -P -C D:/a/ZDJMITS/ZDJMITS --force-local --use-compress-program "zstd -d"
+2026-10-10T02:33:03.4204086Z Cache restored successfully
+2026-10-10T02:33:03.4246222Z Cache restored from key: node-cache-Windows-x64-npm-3bb9c99a4d7c104cc81d06ffc077d46589631620ce5ff16b98c237f6f0c99e31
+2026-10-10T02:33:03.4624698Z ##[group]Run $base = git merge-base origin/main HEAD
+2026-10-10T02:33:03.4625151Z [36;1m$base = git merge-base origin/main HEAD[0m
+2026-10-10T02:33:03.4625471Z [36;1mgit diff --check "$base..HEAD"[0m
+2026-10-10T02:33:03.4625833Z [36;1mif ($LASTEXITCODE -ne 0) { exit $LASTEXITCODE }[0m
+2026-10-10T02:33:03.5012663Z shell: C:\Program Files\PowerShell\7\pwsh.EXE -command ". '{0}'"
+2026-10-10T02:33:03.5013032Z ##[endgroup]
+2026-10-10T02:33:03.9816055Z docs/reports/v398-performance-dashboard-20261010/GPU2_TP_SHADOW_VALIDATION.md:14: new blank line at EOF.
+2026-10-10T02:33:04.0405616Z ##[error]Process completed with exit code 1.
+2026-10-10T02:33:04.0709775Z Post job cleanup.
+2026-10-10T02:33:04.2845163Z [command]"C:\Program Files\Git\bin\git.exe" version
+2026-10-10T02:33:04.3122421Z git version 2.55.0.windows.5
+2026-10-10T02:33:04.3191792Z Temporarily overriding HOME='D:\a\_temp\4e7c04b8-b2fa-4ced-9b1a-27352f57ce99' before making global git config changes
+2026-10-10T02:33:04.3195055Z Adding repository directory to the temporary git global config as a safe directory
+2026-10-10T02:33:04.3204434Z [command]"C:\Program Files\Git\bin\git.exe" config --global --add safe.directory D:\a\ZDJMITS\ZDJMITS
+2026-10-10T02:33:04.3520716Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp core\.sshCommand
+2026-10-10T02:33:04.3833384Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'core\.sshCommand' && git config --local --unset-all 'core.sshCommand' || :\""
+2026-10-10T02:33:04.9742939Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp http\.https\:\/\/github\.com\/\.extraheader
+2026-10-10T02:33:04.9999477Z http.https://github.com/.extraheader
+2026-10-10T02:33:05.0039991Z [command]"C:\Program Files\Git\bin\git.exe" config --local --unset-all http.https://github.com/.extraheader
+2026-10-10T02:33:05.0343750Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "sh -c \"git config --local --name-only --get-regexp 'http\.https\:\/\/github\.com\/\.extraheader' && git config --local --unset-all 'http.https://github.com/.extraheader' || :\""
+2026-10-10T02:33:05.5819143Z [command]"C:\Program Files\Git\bin\git.exe" config --local --name-only --get-regexp ^includeIf\.gitdir:
+2026-10-10T02:33:05.6130021Z [command]"C:\Program Files\Git\bin\git.exe" submodule foreach --recursive "git config --local --show-origin --name-only --get-regexp remote.origin.url"
+2026-10-10T02:33:06.1623511Z Cleaning up orphan processes
+2026-10-10T02:33:06.1677675Z ##[warning]Node.js 20 is deprecated. The following actions target Node.js 20 but are being forced to run on Node.js 24: actions/checkout@v4, actions/setup-node@v4. For more information see: https://github.blog/changelog/2025-09-19-deprecation-of-node-20-on-github-actions-runners/

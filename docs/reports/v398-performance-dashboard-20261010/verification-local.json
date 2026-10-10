@@ -35,5 +35,21 @@
     ],
     "passedTotal": 2163,
     "scope": "offline full workspaces and four Engine shards; not release acceptance"
+  },
+  "shadow": {
+    "command": "npm run verify:ci",
+    "exitCodeObserved": 0,
+    "sourceCommit": "47605605ba1a9eb0506e4b3ae3fd03978918aefe",
+    "passedGroups": [
+      2,
+      62,
+      127,
+      568,
+      620,
+      404,
+      378
+    ],
+    "passedTotal": 2161,
+    "scope": "offline full workspaces and four Engine shards; not release acceptance"
   }
 }

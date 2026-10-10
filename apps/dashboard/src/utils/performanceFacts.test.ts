@@ -1,5 +1,5 @@
 import {describe,it,expect} from 'vitest';
-import {aiLamp,proxyLamp,privateLamp,p95,uniqueAiRunStats} from './performanceFacts';
+import {aiLamp,proxyLamp,privateLamp,exchangeLamp,p95,uniqueAiRunStats} from './performanceFacts';
 describe('performance evidence and status lamps',()=>{
   const now=100_000;
   it('never turns stale or absent source into a green light',()=>{
@@ -10,6 +10,13 @@ describe('performance evidence and status lamps',()=>{
     expect(privateLamp({account:{status:'READY',asOf:1000}},now).tone).toBe('warn');
     expect(privateLamp({account:{status:'READY',asOf:99_000}},now).tone).toBe('good');
     expect(privateLamp({account:{status:'UNAVAILABLE',asOf:99_000}},now).tone).toBe('bad');
+  });
+  it('does not relabel HTTP451 exchange refusal as proxy failure, or color stale health green',()=>{
+    const healthy={health:[{id:'trading-network',status:'HEALTHY',updatedAt:99_000,detail:'healthy'}]};
+    expect(exchangeLamp(healthy,[],now).tone).toBe('good');
+    expect(exchangeLamp(healthy,[{active:true,category:'EXCHANGE',httpStatus:451}],now)).toMatchObject({tone:'bad',text:'HTTP 451'});
+    expect(exchangeLamp(healthy,[{active:true,category:'EXCHANGE',httpStatus:429}],now).tone).toBe('warn');
+    expect(exchangeLamp({health:[{id:'trading-network',status:'HEALTHY',updatedAt:1}]},[],now).tone).toBe('unknown');
   });
   it('reports proxy config only as warning, never as verified reachability',()=>{
     expect(proxyLamp([{rest:{throughProxy:true,failClosed:true}}]).tone).toBe('warn');

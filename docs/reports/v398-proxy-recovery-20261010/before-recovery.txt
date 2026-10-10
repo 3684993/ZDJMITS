@@ -1,0 +1,25 @@
+{
+  "at": "2026-10-10T12:29:37.3984360Z",
+  "proxy": "127.0.0.1:20091",
+  "target": "demo-fapi.binance.com:443",
+  "stages": [
+    {
+      "elapsedMs": 1324,
+      "phase": "LOCAL_TCP_CONNECT"
+    },
+    {
+      "elapsedMs": 1339,
+      "phase": "SOCKS_GREETING"
+    }
+  ],
+  "healthy": false,
+  "pid": 10588,
+  "failurePhase": "SOCKS_CONNECT_REPLY",
+  "error": "PROBE_DEADLINE_EXHAUSTED",
+  "elapsedMs": 8018
+}
+Exception: C:\Users\5700x\.codex\worktrees\9af9\MITS\scripts\vpn\zdj-trade-proxy-client-windows.ps1:187
+Line |
+ 187 |  … on -Depth 8;if(-not $health.healthy){throw 'TUNNEL_UNHEALTHY'};return …
+     |                                         ~~~~~~~~~~~~~~~~~~~~~~~~
+     | TUNNEL_UNHEALTHY

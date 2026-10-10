@@ -89,3 +89,17 @@ it('uses global save only on ordinary parameter tabs and independent actions on 
   expect(w.text()).toContain('新增空白资源');expect(w.text()).toContain('保存资源');expect(w.text()).toContain('取消修改');
   expect(w.text()).toContain('候选 Scout 异步观察');expect(w.text()).toContain('保存工作负载策略');
 });
+
+it('shows failed independent proxy verification and sends only an authenticated backend proxy action',async()=>{
+  vi.mocked(api.proxyPassiveHealth).mockResolvedValue({status:'REQUEST_QUEUE_TIMEOUT',validation:{status:'VALIDATION_FAILED',asOf:Date.now(),pid:123,manageable:true,reason:'CONNECTION_TIMEOUT'}} as never);
+  const transport=vi.fn(async()=>new Response(JSON.stringify({status:'VERIFIED',asOf:Date.now()+1,pid:456,manageable:true})));vi.stubGlobal('fetch',transport);
+  const w=await open();await tabButton(w,'网络代理').trigger('click');await flushPromises();
+  expect(w.text()).toContain('验证未通过');expect(w.text()).toContain('不代表代理掉线');expect(tabButton(w,'启动代理').attributes('disabled')).toBeDefined();
+  await w.find('input[type="password"]').setValue('x'.repeat(32));await tabButton(w,'启动代理').trigger('click');await flushPromises();
+  expect(transport).toHaveBeenCalledTimes(1);const [url,options]=transport.mock.calls[0] as any;expect(url).toBe('/api/v3/settings/resources/proxy/binance-proxy/lifecycle');expect(JSON.parse(options.body)).toEqual({action:'start'});expect(options.headers['x-model-operation-token']).toHaveLength(32);expect(w.text()).toContain('验证通过');
+});
+
+it('expires cached connection proof instead of keeping a green saved resource forever',async()=>{
+  vi.mocked(api.resources).mockImplementation(async(kind:string)=>({settingsVersion:1,items:structuredClone(kind==='proxy'?proxy.map(r=>({...r,validation:{status:'VERIFIED',asOf:Date.now()-120001,manageable:true}})):kind==='exchange'?exchange:ai)}) as never);
+  const w=await open();await tabButton(w,'网络代理').trigger('click');await flushPromises();expect(w.text()).toContain('验证已过期');
+});

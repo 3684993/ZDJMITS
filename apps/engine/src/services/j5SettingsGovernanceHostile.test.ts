@@ -10,6 +10,7 @@ import { OwnershipMigration, type MigrationSubject } from './ownershipMigration.
 import { V396ExitRuntime } from './v396ExitRuntime.js';
 import { ONE_WAY_CAPABILITIES } from './v396ExitTestHarness.js';
 import { applyGovernancePatch, changedGovernancePaths, governanceFieldOf, governanceReadback, V396_GOVERNANCE_FIELDS } from '../config/governanceSettingsMatrix.js';
+import { ProxyLifecycleService } from './proxyLifecycle.js';
 import { createRuntimeSettingsResourcesRouter } from '../api/runtimeSettingsResources.js';
 
 /**
@@ -199,7 +200,7 @@ describe('S08 settings API: the matrix is enforced at the boundary', () => {
         if (state.settings.settingsVersion !== expected) throw new Error('SETTINGS_VERSION_CONFLICT');
         state.settings = { ...input, settingsVersion: expected + 1 }; return state.settings;
       }) });
-    const app = express(); app.use(express.json()); app.use(createRuntimeSettingsResourcesRouter(runtime));
+    const app = express(); app.use(express.json()); app.use(createRuntimeSettingsResourcesRouter(runtime,{proxyLifecycle:new ProxyLifecycleService({directory:join(tmpdir(),"zdj-proxy-hostile"),run:async()=>({status:"VALIDATION_FAILED",asOf:Date.now()})})}));
     const server = app.listen(0); servers.push(server);
     await new Promise(resolve => server.once('listening', resolve));
     return { runtime, state, url: `http://127.0.0.1:${(server.address() as any).port}` };
